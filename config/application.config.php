@@ -12,7 +12,6 @@ if (file_exists(__DIR__.'/'.$host.'.php')) {
 return array(
     'version' => '0.4',
     'modules' => array(
-	'Console',
         'Index',
         'Admin',
 	),
