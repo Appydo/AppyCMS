@@ -128,8 +128,8 @@ return array(
         'driver_options' => array(
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
         ),
-        'username' => 'YOUR USERNAME HERE',
-        'password' => 'YOUR PASSWORD HERE',
+        'username' => '{$_POST['user']}',
+        'password' => '{$_POST['password']}',
     ),
     'install' => 1,
     'zone' => 'Europe/Paris',
