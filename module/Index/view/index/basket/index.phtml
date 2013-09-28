@@ -1,0 +1,111 @@
+<form action="<?php echo $this->url('index', array('controller'=>'basket','action'=>'index')); ?>" method="post">
+
+<table style="width:100%" class="table table-striped">
+
+    <tr>
+        <th style="width: 50%;">Articles</th>
+        <th>Quantité</th>
+        <th>Prix unitaire</th>
+        <th>Total</th>
+        <th><i class="icon-trash"></i></th>
+    </tr>
+        
+    <?php
+    if (count($this->baskets)>0):
+    foreach($this->baskets as $entity):
+    ?>
+        <tr>
+            <td>
+            <img style="border:solid 1px #dedede;border-radius:10px;margin-right: 10px;max-height: 6em;float: left;" src="<?php echo $this->basePath($entity['image_path'] . 'thumb/' . $entity['image_name']); ?>" />
+            <a href="<?php echo $this->url('index', array('controller'=>'product','action'=>'show','id'=>$entity['product_id'])); ?>"><?php echo $entity['name']; ?></a><br />
+                <?php foreach(json_decode($entity['attributes']) as $key=>$attribute): ?>
+                    <b><?php echo $key; ?></b>
+                    <?php echo $attribute; ?>
+                <?php endforeach; ?>
+            </td>
+            <td>
+                <input class="input-mini" type="number" name="basket_count[<?php echo $entity['id']; ?>]" value="<?php echo $entity['count']; ?>" size="3" max="30" min="0" />
+            </td>
+            <td><?php echo $entity['price']; ?> &euro;</td>
+            <td><?php echo $entity['total']; ?> &euro;</td>
+            <td><button name="delete_basket" value="<?php echo $entity['id']; ?>" class="close" style="float:none">&times;</button></td>
+        </tr>
+    <?php endforeach; ?>
+
+    <tr>
+        <td></td>
+        <td></td>
+        <td>Frais de port</td>
+        <td style="font-weight:bold;">
+            <?php echo $this->transport; ?> &euro;
+            <?php /*
+            (<?php $kg = $this->weight/1000; echo $kg; ?>kg)
+             */ ?>
+        </td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td></td>
+        <td>
+        </td>
+        <td><b>Total</b></td>
+        <td style="font-weight:bold;"><?php $total = $this->total + $this->transport; echo $total; ?> &euro;</td>
+        <td></td>
+    </tr>
+    
+    <?php endif; ?>
+
+    </table>
+       
+
+    <p>
+        <?php if (count($this->baskets)>0):?>
+        <input class="btn" type="submit" value="Recalculer" />
+        <input name="empty_basket" class="btn" type="submit" value="Vider mon panier" />
+        <?php endif; ?>
+        <a style="text-decoration: none;" href="<?php echo $this->url('index', array('controller'=>'product','action'=>'shop')); ?>" class="btn<?php if (count($this->baskets)==0):?> btn-primary<?php endif; ?>">Poursuivre mes achats</a>
+    </p>
+
+</form>
+
+
+<?php if($this->layout()->user): ?>
+    <?php if (count($this->baskets)>0):?>
+    <form action="<?php echo $this->url('index', array('controller'=>'basket','action'=>'valid')); ?>" method="post">
+        <input type="hidden" name="order" value="<?php echo ''; ?>" />
+        <p><input class="btn-primary btn" type="submit" value="Valider ma commande" /></p>
+        <p><textarea placeholder="Commentaire sur la commande" style="border: solid 1px #dedede;padding: 10px; border-radius: 10px; width:500px;height:120px;" name="shop_comment" id="shop_comment"></textarea></p>
+    </form>
+    <?php endif; ?>
+<?php else: ?>
+    <?php if (count($this->baskets)>0):?>
+    <p><a class="btn btn-primary" href="<?php echo $this->url('breizhadonf', array('controller'=>'auth','action'=>'login')); ?>">Valider ma commande</a></p>
+    <?php endif; ?>
+    <form action="<?php echo $this->url('breizhadonf', array('controller'=>'auth','action' => 'login')); ?>" method="post" name="auth" id="auth">
+<dl class="zend_form">
+    <input name="id" type="hidden" value="">    <input type="hidden" name="csrf" value="8393a1e3680c5801c9d861b2dc29515f">    <dt><label for="username">Email</label></dt>
+    <dd><input name="username" type="text" value=""></dd>
+    <dt><label for="password">Mot de passe</label></dt>
+    <dd><input name="password" type="password" value=""></dd>
+    <dd><input name="submit" type="submit" id="submitbutton" class="btn btn-primary" value="Identification"></dd>
+    <?php echo $this->formInput($form->get('csrf')); ?>
+</dl>
+
+<p>
+    Pas encore de compte ? <a href="<?php echo $this->url('breizhadonf', array('controller' => 'auth', 'action' => 'signup')); ?>">Inscrivez vous !</a>
+    <br />    
+    <a href="<?php echo $this->url('breizhadonf', array('controller' => 'auth', 'action' => 'recovery')); ?>">Mot de passe perdu</a>
+</p>
+
+</form>
+<?php endif; ?>
+<div style="border-radius: 10px;margin:auto;border:solid 1px #dedede;width:200px;font-weight:bold;padding:10px;text-align:center;">
+    Besoin de conseils ?<br />
+    <span style="color: orange;">02 51 12 98 61</span> ( 9h30 - 17h30 )<br />
+    <span style="color: orange;"><a href="<?php echo $this->url('index', array('controller'=>'contact','action'=>'index')); ?>" accesskey="5" title="">Contact</a></span> ( 24/24, 7j/7 )<br />
+    
+</div>
+<div style="margin:auto;text-align:center;margin-top:10px;">
+    <img style="border-radius:5px;margin-left:10px;margin-bottom:10px;" src="<?php echo $this->basePath('/themes/breizhadonf/images/secure.gif'); ?>" />
+</div>

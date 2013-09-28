@@ -1,0 +1,72 @@
+<?php
+
+foreach ($this->form->getMessages() as $key => $errors) {
+    echo '<div class="alert alert-error">';
+    echo '<h4 class="alert-heading">';
+    echo $key;
+    echo '</h4>';
+    foreach ($errors as $error) {
+        echo $error;
+    }
+    echo '</div>';
+}
+$file = $this->file;
+
+?>
+
+    <form class="form-horizontal" action="<?php echo $this->url('image_show', array('path' => $file)); ?>" method="post">
+        <div style="text-align:center;">
+                <input type="hidden" name="subdir" value="<?php echo $this->subdir; ?>" />
+                <?php if(is_dir(ROOT_PATH . '/public/uploads/' . $this->layout()->project['id'] . '/' . $this->subdir . '/' . $file)): ?>
+                    <a href="<?php echo $this->url('admin', array('controller' => 'document', 'action' => 'index', 'id' => $file)); ?>">
+                        <img src="<?php echo $this->basePath('/themes/default/img/admin/folder.png'); ?>" style="border-radius: 10px;max-width:80px;" />
+                    </a>
+                <?php else: ?>
+                    <a href="<?php echo $this->basePath('uploads/' . $this->layout()->project['id'] . '/' . $file); ?>">
+                        <img class="img-polaroid" src="<?php echo $this->basePath('uploads/' . $this->layout()->project['id'] . '/' . $file . '?nocache='.time()); ?>" />
+                    </a>
+                <?php endif; ?>
+        </div>
+        
+        
+        
+            <div class="well">
+                    <div>
+                        <input type="text" name="width" placeholder="width" />
+                        x
+                        <input type="text" name="height" placeholder="height" />
+                        <button class="btn" name="resize" value="1" type="submit">Resize</button>
+                    </div>
+                    <div>
+                        <button class="btn" name="reverse" value="1" type="submit">Reverse color</button>
+                    </div>
+                    <div>
+                        <button class="btn" name="filter" value="1" type="submit">Filter</button>
+                    </div>
+                    <div>
+                        <button class="btn" name="heart" value="1" type="submit">Magie</button>
+                    </div>
+                <div>
+                    <?php if (!empty($this->size[$key])) echo $this->size[$key].'ko'; ?> 
+                </div>
+                <div class="input-append">
+                    <a class="btn" href="<?php echo $this->basePath('uploads/' . $this->layout()->project['id'] . '/' . $file); ?>"><i class="icon-zoom-out"></i></a>
+                    <input type="text" name="rename-text" value="<?php echo $file; ?>" />
+                    <button type="submit" class="btn" name="rename" value="<?php echo $file; ?>">
+                        Rename
+                    </button>
+                    <button type="submit" class="btn btn-danger" name="delete" value="<?php echo $file; ?>"><i class="icon-trash icon-white"></i></button>
+                </div>
+                <?php $slash =  (!empty($this->subdir)) ? '/' : '' ?>
+                <div><?php echo $this->serverUrl() . $slash . $this->subdir . $this->basePath('uploads/' . $this->layout()->project['id'] . '/' . $file); ?></div>
+            </div>
+
+    </form>
+
+<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
+    <form class="form-search" action="" method="post">
+        <a class="btn" href="<?php echo $this->url('admin', array('controller'=>'document','action'=>'index')); ?>">
+            <?php echo $this->translate('Retour'); ?>
+        </a>
+    </form>
+</div>

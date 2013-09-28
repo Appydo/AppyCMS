@@ -1,0 +1,36 @@
+<form action="<?php echo $this->url(array('module' => 'admin', 'controller' => 'topic', 'action' => 'linkcreate')); ?>" method="post" {{ form_enctype(form) }}>
+      <fieldset>
+        <legend>New Link</legend>
+
+        <div class="control-group">
+            <label class="control-label">Name</label>
+            <div class="controls"><input type="password" name="name" id="link" value=""></div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Link</label>
+            <div class="controls"><input type="password" name="link" id="link" value=""></div>
+        </div>
+
+        <div class="controls">
+            <label for="topic">Parent</label>
+            <select>
+                <?php foreach ($this->topics as $topic): ?>
+                    <option value="<?php echo $topic['id']; ?>"><?php echo $topic['name']; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <?php echo $this->form->csrf; ?>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">
+                Save
+            </button>
+            <a class="btn" href="<?php echo $this->url(array('module' => 'admin', 'controller' => 'topic', 'action' => 'index')); ?>">
+                Menu
+            </a>
+        </div>
+
+    </fieldset>
+</form>

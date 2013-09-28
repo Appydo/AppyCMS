@@ -1,0 +1,6 @@
+<?php if($this->exist): ?>
+    <p>Votre email <b><?php echo $this->email; ?></b> à déjà été ajouté le <?php echo date('d-m-Y', $this->created); ?>.</p>
+<?php else: ?>
+    <p>Nous vous remercions pour votre intérêt.</p>
+    <p>Votre email <b><?php echo $this->email; ?></b> à bien été ajouté.</p>
+<?php endif; ?>

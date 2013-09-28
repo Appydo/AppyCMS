@@ -1,0 +1,72 @@
+<div class="well" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
+    <form class="form-search" action="" method="post">
+        <button class="btn btn-primary" type="submit">Restore</button>
+        <button class="btn btn-danger" type="submit">Empty</button>
+        <div style="padding-left: 20px;" class="input-append">
+            <input type="text" class="search-query">
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+    </form>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Rss</th>
+            <th>Comment</th>
+            <th>Created</th>
+            <th>Updated</th>
+            <th>Language</th>
+            <th>Author</th>
+            <th><input type="checkbox" name="action" onclick="javascript:checkAll('action[]')" /></th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach($this->topics as $topic): ?>
+        <tr>
+            <td><input type="checkbox" /></td>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'topic','action'=>'edit', 'id'=>$topic['id'])); ?>"><?php echo $topic['name']; ?></a></td>
+            <td><?php echo $topic['rss'] ?></td>
+            <td><?php echo $topic['comments'] ?></td>
+            <td><?php echo date('d-m-Y H:i',$topic['created']); ?></td>
+            <td><?php echo date('d-m-Y H:i',$topic['updated']); ?></td>
+            <td><?php echo $topic['language'] ?></td>
+            <td><a href="{{ path('user_show', { 'id': entity.author.id }) }}"><?php echo $topic['author'] ?></a></td>
+            <td><input type="checkbox" name="action[]" value="<?php echo $topic['id']; ?>" /></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<div class="input-append" style="float:right">
+    <select>
+        <option>Delete</option>
+    </select>
+    <button class="btn" type="submit"><?php echo $this->translate('Valid'); ?></button>
+</div>
+
+<div class="pagination">
+  <ul>
+    <li><a href="{{ path('_topic_trash_list',{page:previous}) }}">Prev</a></li>
+    <li class="active">
+      <a href="{{ path('_topic_trash_list',{page:1}) }}">1</a>
+    </li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="{{ path('_topic_trash_list',{page:next}) }}">Next</a></li>
+  </ul>
+</div>
+
+<div class="well" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
+    <form class="form-search" action="" method="post">
+        <button class="btn btn-primary" type="submit">Restore</button>
+        <button class="btn btn-danger" type="submit">Empty</button>
+        <div style="padding-left: 20px;" class="input-append">
+            <input type="text" class="search-query">
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+    </form>
+</div>

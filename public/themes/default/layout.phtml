@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>AppyCMS</title>
+        <link rel="shortcut icon" href="<?php echo $this->basePath('/favicon.ico'); ?>" />
+
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+	<meta name="generator" content="Appydo CMS" />
+        <meta name="author" content="Appydo">
+        <meta name="robots" content="all" />
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+        <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <!-- Le styles -->
+        <link href="<?php echo $this->basePath('/themes/default/css/bootstrap.min.css'); ?>" rel="stylesheet" />
+        <style type="text/css">
+        body, input, textarea, p {
+            color: #373737 !important;
+            font: 15px "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+            font-weight: 300 !important;
+            line-height: 1.625 !important;
+        }
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+            /* background-image: url({{ asset('bundles/appydotest/img/background.png') }}); */
+            background-repeat: repeat-x;
+        }
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+        </style>
+        <link href="<?php echo $this->basePath('/themes/default/css/bootstrap-responsive.css'); ?>" rel="stylesheet">
+
+        <!-- Le fav and touch icons -->
+        <link rel="alternate" 
+          type="application/rss+xml" 
+          title="RSS" 
+          href="/rss/rss?id=${global?.id}&name=${global?.name}" />
+        <link rel="shortcut icon" href="/public/images/favicon.ico">
+        <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    </head>
+    <body>
+
+        <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                
+                <a class="brand" href=""><?php echo $this->project['name']; ?></a>
+
+                <div class="nav-collapse">
+                    <ul class="nav">
+                    <?php if(isset($this->project['name'])): ?>
+                        <li class="active"><a href="<?php // echo $this->url(array('project'=>$this->project['name']), 'project', true); ?>" accesskey="1">Home</a></li>
+                    <?php else: ?>
+                        <li class="active"><a href="<?php echo $this->url('home'); ?>" accesskey="1">Home</a></li>
+                    <?php endif; ?>
+
+                        <li><a href="<?php echo $this->url('index', array('controller' => 'contact', 'action' => 'index')); ?>" accesskey="2" title=""><span>Contact</span></a></li>
+
+                    <?php if($this->user!=null): ?>
+
+                        <li><a href="<?php echo $this->url('admin', array('action'=>'index')); ?>" accesskey="3">Admin</a></li>
+                        <li><a href="<?php echo $this->url('auth', array('action'=>'logout')); ?>" accesskey="4">Logout</a></li>
+
+                    <?php else: ?>
+
+                        <li><a href="<?php echo $this->url('auth', array('action'=>'login')); ?>" accesskey="3">Login</a></li>
+
+                        <li><a href="<?php echo $this->url('signup'); ?>"><span>Signup</span></a></li>
+
+                    <?php endif; ?>
+                    <li>
+                        <form class="navbar-search pull-left">
+                            <input type="text" class="search-query" placeholder="Rechercher un évenement">
+                        </form>
+                    </li>
+                    </ul>
+                    <?php if($this->user): ?>
+                    <p class="navbar-text pull-right">
+                        Logged in as <a href="<?php echo $this->url('admin', array('action'=>'index'), null, true); ?>"><?php echo $this->username; ?></a>
+                    </p>
+                    <?php endif; ?>
+                </div><!--/.nav-collapse -->
+                </div>
+            </div>
+        </div>
+
+        <?php if($this->notice): ?>
+            <div class="flash-message">
+                <em>Notice</em>: {{ app.session.flash('notice') }}
+            </div>
+        <?php endif; ?>
+
+    <div class="container-fluid">
+<?php /*
+        <ul class="breadcrumb">
+            <li>
+                <?php if($this->name): ?>
+                    <a href="<?php echo $this->url(array('module' => 'default','controller'=>'index','action'=>'index'), null, true); ?>">Home</a>
+                <?php else: ?>
+                    <a href="<?php echo $this->url(array('module' => 'default','controller'=>'index','action'=>'index'), null, true); ?>">Home</a>
+                <?php endif; ?>
+            </li>
+        </ul>
+*/ ?>
+      <div class="row-fluid">
+        <div class="span2">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="nav-header">Menu</li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+
+        <div class="span8">
+            <div style="border-radius:20px;background:white;padding: 15px;">
+                <?php echo $this->content; ?>
+            </div>
+        </div>
+        <div class="span2">
+        <?php if($this->description): ?>
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="nav-header">Presentation</li>
+              <li><?php echo $this->description ?></li>
+            </ul>
+          </div>
+        <?php endif; ?>
+        </div>
+      </div>
+        <footer class="footer">
+        <p class="pull-right"><a class="btn" href="#">Aller en haut</a></p>
+        <p style="text-align: center;"><a href="http://www.appydo.com">Appdyo</a> © 2011/<?php echo date('Y'); ?></p>
+      </footer>
+    </div>
+</html>

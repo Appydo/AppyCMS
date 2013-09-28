@@ -1,0 +1,33 @@
+<form class="form-horizontal" action="<?php echo $this->url('index', array('controller'=>'contact','action'=>'send')); ?>" method="post">
+    <fieldset>
+    <legend>Contact</legend>
+
+        <div class="control-group">
+            <label class="control-label" for="contact_name">Name</label>
+            <div class="controls">
+                <input type="text" name="contact_name" id="contact_name" value="<?php echo $this->name; ?>" />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="contact_email">Email</label>
+            <div class="controls">
+                <input type="text" name="contact_email" id="contact_email" value="<?php echo $this->email; ?>" />
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="contact_message">Message</label>
+            <div class="controls"><textarea type="text" name="contact_message" id="contact_message" value="<?php echo $this->message; ?>"></textarea></div>
+        </div>
+
+        <?php echo $this->formInput($this->form->get('csrf')); ?>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Envoyer</button>
+            <a class="btn" href="<?php echo $this->url('home'); ?>">
+                Retour
+            </a>
+        </div>
+    </fieldset>
+</form>

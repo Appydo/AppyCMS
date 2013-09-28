@@ -1,0 +1,21 @@
+<form class="form-horizontal" action="<?php echo $this->url('admin', array('controller' => 'design', 'action' => 'import')); ?>" method="post" enctype="multipart/form-data">
+    <fieldset>
+        <legend>Import theme</legend>
+        <?php echo $this->formInput($form->get('csrf')); ?>
+
+        <?php if ($this->themeError == true): ?>
+            <div class="alert alert-error">
+                <strong>Error !</strong> Upload directory not exist.
+            </div>
+        <?php endif; ?>
+
+        <div class="control-group">
+            <label class="control-label" for="document">Theme :</label>
+            <div class="controls"><input type="file" name="document" id="document" /></div>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Import</button>
+        </div>
+    </fieldset>
+</form>

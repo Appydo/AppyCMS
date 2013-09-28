@@ -1,0 +1,44 @@
+<?php
+$title = 'Login';
+$this->headTitle($title);
+$form = $this->form;
+$form->setAttribute('action', $this->url('auth', array('action' => 'login')));
+$form->setAttribute('class', 'form-signin');
+echo $this->form()->openTag($form);
+?>
+
+<h2><?php echo $this->escapeHtml($title); ?></h2>
+
+    <?php echo $this->formInput($form->get('id')); ?>
+    <?php echo $this->formInput($form->get('csrf')); ?>
+    
+    <?php $element = 'username'; ?>
+    <div class="control-group<?php if(count($this->form->get($element)->getMessages())>0): ?> error<?php endif; ?>">
+        <?php /*<label class="control-label" for="<?php echo $element; ?>"><?php echo $this->formLabel($this->form->get($element)); ?></label> */ ?>
+        <div class="controls">
+            <input placeholder="Email" type="text" class="input-xlarge" id="<?php echo $element; ?>" name="<?php echo $element; ?>" value="<?php echo $this->form->get($element)->getValue(); ?>">
+        </div>
+    </div>
+    
+    <?php $element = 'password'; ?>
+    <div class="control-group<?php if(count($this->form->get($element)->getMessages())>0): ?> error<?php endif; ?>">
+        <?php /*<label class="control-label" for="<?php echo $element; ?>"><?php echo $this->formLabel($this->form->get($element)); ?></label> */ ?>
+        <div class="controls">
+            <input placeholder="Password" type="password" class="input-xlarge" id="<?php echo $element; ?>" name="<?php echo $element; ?>" value="<?php echo $this->form->get($element)->getValue(); ?>">
+        </div>
+    </div>
+
+
+<label class="checkbox">
+    <input type="checkbox" value="remember-me"> Se souvenir de moi
+</label>
+        <button class="btn btn-primary btn-large" type="submit">Login</button>
+        <a href="<?php echo $this->url('home'); ?>" class="btn btn-large" type="submit">Retour</a>
+        
+<?php echo $this->form()->closeTag($form); ?>
+
+<div style="text-align: center;">
+    Pas encore de compte ? <a href="<?php echo $this->url('index', array('controller' => 'auth', 'action' => 'signup')); ?>">Inscrivez vous !</a>
+    <br />    
+    <a href="<?php echo $this->url('index', array('controller' => 'auth', 'action' => 'recovery')); ?>">Mot de passe perdu</a>
+</div>

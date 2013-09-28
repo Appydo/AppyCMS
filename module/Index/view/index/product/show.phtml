@@ -1,0 +1,120 @@
+<script type="text/javascript" src="<?php echo $this->basePath('themes/breizhadonf/js/fancy/source/jquery.fancybox.js?v=2.0.6'); ?>"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->basePath('themes/breizhadonf/js/fancy/source/jquery.fancybox.css?v=2.0.6'); ?>" media="screen" />
+<script type="text/javascript">
+        $(document).ready(function() {
+                // $('.fancybox').fancybox();
+                $(".fancybox").fancybox({
+                        openEffect  : 'none',
+                        closeEffect : 'none'
+                });
+        });
+</script>
+<style type="text/css">
+        .fancybox-custom .fancybox-skin {
+                box-shadow: 0 0 50px #222;
+        }
+</style>
+
+<div style="width:100%;" itemscope itemtype="http://schema.org/Product">
+    <form method="post" action="<?php echo $this->url('product', array('category'=>$this->entity['topic_name'],'name'=>str_replace(array('/','\\'),array('%2F','%5C'),$this->entity['name']),'id'=>$this->entity['id'])); ?>">
+    <ul class="breadcrumb">
+        <li><a href="<?php echo $this->url('shop_category', array('id' => $this->entity['parent_id'], 'category' => $this->entity['parent_name'])); ?>"><?php echo $this->entity['parent_name']; ?></a> <span class="divider">/</span></li>
+        <li><a href="<?php echo $this->url('shop_category', array('id' => $this->entity['topic_id'], 'category' => $this->entity['topic_name'])); ?>"><?php echo $this->entity['topic_name']; ?></a> <span class="divider">/</span></li>
+        <li class="active"><?php echo $this->entity['name']; ?></li>
+  </ul>
+        <?php if($this->order): ?>
+        <div class="alert alert-info">
+            Le produit à bien été ajouté à votre <a href="<?php echo $this->url('index', array('controller'=>'basket','action'=>'index')); ?>">panier</a>.
+        </div>
+        <?php endif; ?>
+    <div style="text-align: center;float:left;width:260px;padding:10px;border:solid 1px #dedede;border-radius:10px;" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+        <a class="fancybox" href="<?php echo $this->basePath($this->image_path . 'large/' . $this->entity['image_name']); ?>"><img alt="<?php echo basename($this->entity['image_name']); ?>" style="max-width: 260px;border-radius:10px" src="<?php echo $this->basePath($this->image_path . 'medium/' . $this->entity['image_name']); ?>" /></a>
+            <?php if(!empty($this->entity['price'])): ?>
+            <div style="text-align:center" itemprop="price"><?php echo $this->entity['price']; ?> &euro; <link itemprop="itemCondition" href="http://schema.org/NewCondition" /></div>
+        <?php endif; ?>
+		
+        <p>
+            <button class="btn btn-primary" name="order" type="submit">
+                <span><i class="icon-shopping-cart icon-white"></i> Commander</span>
+            </button>
+        </p>
+        
+        <?php if($this->layout()->user!=null and $this->layout()->user->id==1): ?>
+            <p style="text-align:center"><a class="btn" href="<?php echo $this->url('admin', array('controller'=>'product','action'=>'edit', 'id'=>$this->entity['id'])); ?>">Edit</a></p>
+        <?php endif; ?>
+    </div>
+    <div style="margin-left: 300px;">
+    <div itemprop="name"><strong><?php echo $this->entity['name']; ?></strong></div>
+    <div itemprop="description"><?php echo nl2br($this->entity['description']); ?></div>
+
+    <?php $title = null; ?>
+    <?php foreach($this->options as $option): ?>
+    
+    <?php if($title!=$option['sa_name']): ?>
+        <?php if($title!=null): ?></select></div></div><?php endif; ?>
+        <?php $title = $option['sa_name']; ?>
+        <div class="control-group" style="border:solid 1px #dedede;border-radius: 10px;padding:10px;">
+            <label style="font-weight:bold;" class="control-label" for="<?php echo $element; ?>"><?php echo $option['sa_name']; ?></label>
+            <div class="controls">
+                <select name="attributes[<?php echo $option['sa_id']; ?>]">
+        <?php endif; ?>
+            
+                <option <?php if($option['sac_default']==1): ?>selected="selected"<?php endif; ?> value="<?php echo $option['sac_id']; ?>"><?php echo $option['sac_name']; ?></option>
+            
+    <?php endforeach; ?>
+        <?php if($title!=null): ?></select></div></div><?php endif; ?>
+
+<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
+<a class="addthis_button_preferred_1"></a>
+<a class="addthis_button_preferred_2"></a>
+<a class="addthis_button_preferred_3"></a>
+<a class="addthis_button_preferred_4"></a>
+<a class="addthis_button_compact"></a>
+</div>
+<script type="text/javascript">var addthis_config = {"data_track_addressbar":true};</script>
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-50f5b517666baac2"></script>
+
+</div>
+</form>
+</div>
+
+
+<ul style="clear:both;list-style: none;display:block;vertical-align: top;margin-top: 2em;">
+<?php foreach($this->files as $file): ?>
+    <li style="list-style: none;width:150px;min-height:150px;max-height:150px;padding:10px;margin:5px;border-radius:10px;display: inline-block;vertical-align: top;">
+        <div style="text-align:center;">
+            <a class="fancybox" href="<?php echo $this->basePath($this->image_path . 'large/' . $file['productfile_name']); ?>">
+                <img alt="<?php echo basename($file['productfile_name']); ?>" style="border:solid 1px black;border-radius:10px;max-height:150px;" src="<?php echo $this->basePath($this->image_path . 'thumb/' . $file['productfile_name']); ?>" />
+            </a>
+        </div>
+    </li>
+<?php endforeach;?>
+</ul>
+
+<?php if(count($this->products)>0): ?>
+<h2 style="clear:both;border-top:solid 1px #dedede;padding-top:2em;">
+    <a href="<?php echo $this->url('index', array('controller'=>'product','action'=>'index', 'id'=>$this->entity['topic_id'])); ?>">
+        <?php echo $this->entity['topic_name']; ?>
+    </a>
+</h2>
+
+<ul style="clear:both;list-style: none;display:block;vertical-align: top;margin-top: 2em;">
+<?php foreach($this->products as $product): ?>
+    <li style="list-style: none;border:solid 1px #dedede;width:160px;min-height:150px;padding:10px;margin:5px;border-radius:10px;display: inline-block;vertical-align: top;">
+        <div style="text-align:center;">
+            <a href="<?php echo $this->url('product', array('category'=>$product['topic_name'],'name'=>str_replace(array('/','\\'),array('%2F','%5C'),$product['name']),'id'=>$product['id'])); ?>">
+            <img alt="<?php echo basename($product['image_name']); ?>" style="max-width: 160px;" src="<?php echo $this->basePath($this->image_path . 'thumb/' . $product['image_name']); ?>" />
+            </a>
+        </div>
+        <p style="font-weight:bold">
+            <a style="text-decoration:none;" href="<?php echo $this->url('product', array('category'=>$product['topic_name'],'name'=>str_replace(array('/','\\'),array('%2F','%5C'),$product['name']),'id'=>$product['id'])); ?>">
+                <?php echo $product['name']; ?>
+            </a>
+        </p>
+        <?php if(!empty($product['price'])): ?>
+        <p style="text-align:center"><?php echo $product['price']; ?> &euro;</p>
+        <?php endif; ?>
+    </li>
+<?php endforeach;?>
+</ul>
+<?php endif; ?>

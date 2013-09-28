@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Admin</title>
+        <link rel="shortcut icon" href="<?php echo $this->basePath('favicon.ico'); ?>" />
+        <meta name="description" content="Appydo Administration">
+        <meta name="keywords" content="Appydo Administration">
+        <meta name="generator" content="Appydo CMS" />
+        <meta name="author" content="Appydo">
+        <meta name="robots" content="no-robots" />
+
+        <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <!-- Le styles -->
+        <link href="<?php echo $this->basePath('themes/default/css/bootstrap.css'); ?>" rel="stylesheet" />
+        <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+        .page-header h1 {
+            font-size: medium;
+            font-weight: normal;
+        }
+        option[selected] { background: white; }
+        </style>
+        <link href="<?php echo $this->basePath('themes/default/css/bootstrap-responsive.css'); ?>" rel="stylesheet">
+
+        <!-- Le fav and touch icons -->
+        <link rel="alternate" 
+          type="application/rss+xml" 
+          title="RSS" 
+          href="/rss/rss?id=${global?.id}&amp;name=${global?.name}" />
+        <link rel="shortcut icon" href="/public/images/favicon.ico">
+        <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    </head>
+    <body>
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <a class="brand" href="<?php echo $this->url('admin', array('action'=>'index')); ?>">Admin</a>
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li class="active"><a href="<?php echo $this->url('admin', array('action'=>'index')); ?>">Dashboard</a></li>
+                            <li><a href="<?php echo $this->url('preview',array('project'=>$this->layout()->project['name'])); ?>">Preview</a></li>
+                        <?php if($this->user!=null): ?>
+                            <li><a href="<?php echo $this->url('auth', array('action'=>'logout')); ?>">Logout</a></li>
+                        <?php else: ?>
+                            <li><a href="">Login</a></li>
+                            <li><a href="">Signup</a></li>
+                        <?php endif;?>
+                            <?php /*
+                            <li><form style="margin-bottom:0;padding-top:5px;" class="form-search" action="" method="post">
+                                <div class="input-append">
+                                    <input type="text" class="search-query">
+                                    <button type="submit" class="btn">Search</button>
+                                </div>
+                            </form></li> */ ?>
+                    </ul>
+                    
+                    <?php if($this->user!=null): ?>
+                    <p class="navbar-text pull-right">
+                        Logged in as <a href=""><?php echo $user->username; ?></a>
+                    </p>
+                    <?php endif;?>
+                </div><!--/.nav-collapse -->
+                </div>
+            </div>
+        </div>
+
+        <?php if (isset($notice)): ?>
+            <div class="flash-message">
+                <em>Notice</em>: {{ app.session.flash('notice') }}
+            </div>
+        <?php endif; ?>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span2">
+    
+          <div class="sidebar-nav">
+            <ul class="nav nav-list">
+                <form style="margin: 0;overflow: hidden;" method="post" action="<?php echo $this->url('admin', array('controller'=>'project','action'=>'index')); ?>">
+                    <select name="select" onchange="submit();" style="font-weight: bold;-webkit-appearance: none;border: 0;background: transparent;width: 80px;">
+                        <?php foreach($this->layout()->projects as $project): ?>
+                            <option <?php if($project['id']==$this->layout()->project['id']): ?>selected="selected"<?php endif; ?> style="border: 0;background: white;" value="<?php echo $project['id'] ?>"><?php echo $project['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php /*
+                    <input class="btn" type="submit" value="switch" />
+                     */ ?>
+                </form>
+              <?php if($this->user!=null): ?>
+              <?php //if (isset($project) and $project!=null): ?>
+                <li class="nav-header">Content</li>
+                <li<?php if($this->controller=='topic' and $this->action!='trash'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'topic', 'action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/pages.png'); ?>" alt="pages" /> Contents</a></li>
+                <li<?php if($this->controller=='document'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'document', 'action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/files.png'); ?>" alt="pages" /> Files</a></li>
+                <li<?php if($this->controller=='mail'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'mail', 'action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/comments.png'); ?>" alt="pages" /> Messages</a></li>
+                <li<?php if($this->controller=='comment'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'comment','action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/comments.png'); ?>" alt="pages" /> Comments</a></li>
+                <li<?php if($this->action=='trash'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'topic','action'=>'trash')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/trash.png'); ?>" alt="trash" /> Corbeille</a></li>
+              <?php if($this->user!=null): ?>
+              <?php /*
+              <li class="nav-header">Shop</li>
+              <li><a href="<?php // echo $this->url(array('module' => 'admin','controller'=>'user','action'=>'index'), null, true); ?>">Clients</a></li>
+              <li><a href="#">Factures</a></li>
+              <li><a href="#">Inventaire</a></li>
+              <li><a href="{{ path('admin_shop_ipn') }}">Commandes</a></li>
+              <li><a href="<?php // echo $this->url(array('module' => 'admin','controller'=>'product','action'=>'index'), null, true); ?>">Produits</a></li>              
+              */ ?>
+              <?php endif;?>
+              
+              <li class="nav-header">Shop</li>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'product','action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/comments.png'); ?>" alt="Products" /> Products</a></li>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'shopattribute','action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/comments.png'); ?>" alt="Options" /> Options</a></li>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'product','action'=>'stock')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/comments.png'); ?>" alt="Stocks" /> Stocks</a></li>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'bill','action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/comments.png'); ?>" alt="Bills" /> Bills</a></li>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'devis','action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/comments.png'); ?>" alt="Devis" /> Devis</a></li>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'delivery','action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/comments.png'); ?>" alt="Delivery" /> Delivery</a></li>
+              <li class="nav-header">Options</li>
+              <?php /*
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'index','action'=>'info')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/comments.png'); ?>" alt="Information" /> Information</a></li>
+              */ ?>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'project','action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/system.png'); ?>" alt="system" /> Parameter</a></li>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'design','action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/system.png'); ?>" alt="system" /> Design</a></li>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'log','action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/log.png'); ?>" alt="log" /> Log</a></li>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'newsletter','action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/profil.png'); ?>" alt="profil" /> Mailchimp</a></li>
+              
+              
+              <li class="nav-header">Utilisateur</li>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'profil')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/profil.png'); ?>" alt="Profil" /> Profil</a></li>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/profil.png'); ?>" alt="Members" /> Membres</a></li>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'acl','action'=>'index')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/profil.png'); ?>" alt="Acl" /> Acl</a></li>
+              
+              <?php /* <li><a href="<?php echo $this->url('auth', array('action'=>'logout')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/logout.png'); ?>" alt="logout" /> Déconnection</a></li> */ ?>
+              <?php endif;?>
+              
+              <li class="nav-header">Modules</li>
+              
+              <li class="nav-header">Shortcuts</li>
+              <?php foreach($this->services as $service): ?>
+                <li><a href="<?php echo $service['url']; ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/comments.png'); ?>" alt="Serveur" /> <?php echo $service['name']; ?></a></li>
+              <?php endforeach; ?>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'service','action'=>'new')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/comments.png'); ?>" alt="Serveur" /> Ajouter</a></li>
+              
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+
+        <div class="span9">
+            <?php echo $this->layout()->content; ?>
+        </div>
+        </div>
+        </div>
+</html>

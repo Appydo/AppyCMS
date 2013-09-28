@@ -1,0 +1,128 @@
+<script type="text/javascript">
+function checkAll(field)
+{
+    var elements = document.getElementsByName(field);
+    for (i = 0; i < elements.length; i++)
+	elements[i].checked = !elements[i].checked ;
+}
+</script>
+
+<style>
+    th {
+        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -ms-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -o-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        line-height: 12px;text-shadow: white 0px 1px 0px;font-size: 12px;background-color:#dedede;
+        color:#5E6469;
+        border: solid 1px #cdcdcd;
+        padding: 0;
+    }
+</style>
+
+<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
+    <form class="form-search" action="" method="post">
+        <div style="padding-left: 20px;" class="input-append">
+            <input type="text" class="search-query">
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+    </form>
+</div>
+
+<form name="ship_form" method="post" action="<?php echo $this->url('admin', array('controller'=>'ship','action'=>'index')); ?>">
+
+
+<table class="table table-striped">
+    
+    <?php $thead=false; ?>
+    <?php foreach($this->entities as $i=>$entity): ?>
+    <?php if($thead==false): ?>
+        <thead>
+            <tr>
+                <th><a href="?order=<?php echo $title; ?>&sort=ASC">Code Facture<a></th>
+                <th><a href="?order=<?php echo $title; ?>&sort=ASC"><?php echo $this->translate('Price'); ?><a></th>
+                <th><a href="?order=<?php echo $title; ?>&sort=ASC">Paiement<a></th>
+                <th><a href="?order=<?php echo $title; ?>&sort=ASC">Date livraison<a></th>
+                <th><input type="checkbox" name="action" onclick="javascript:checkAll('action[]')" /></th>
+            </tr>
+        </thead>
+        <tbody>
+    <?php $thead=true; ?>
+    <?php endif; ?>
+        <tr>
+            <td><?php echo "<a href='" . $this->url('breizhadonf', array('controller'=>'bill','action'=>'show', 'id'=>$entity['id'])) . "'>".date('y-m-', $entity['created']).$entity['id']."</a>"; ?></td>
+            <td><?php echo $entity['price']; ?> &euro;</td>
+            <td><?php echo date('d/m/Y h:i', $entity['created']); ?></td>
+            <td><?php echo date('d/m/Y', $entity['created']+(15*3600*24));; ?></td>
+            <td><input type="checkbox" name="action[]" value="<?php echo $entity['id']; ?>" /></td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                <p><?php echo $entity['firstname']; ?> <?php echo $entity['username']; ?> <?php echo $entity['email']; ?></p>
+                <p><?php echo $entity['address']; ?> <?php echo $entity['city']; ?> <?php echo $entity['postal']; ?></p>
+                    <?php
+                    if (count($this->baskets)>0):
+                    foreach($this->baskets[$i] as $basket):
+                    ?>
+                            <div style="clear:both">
+                            <img style="border:solid 1px #dedede;border-radius:10px;margin-right: 10px;max-height: 6em;float: left;" src="<?php echo $this->basePath($basket['image_path'] . 'thumb/' . $basket['image_name']); ?>" />
+                            <a href="<?php echo $this->url('index', array('controller'=>'product','action'=>'show','id'=>$basket['product_id'])); ?>"><?php echo $basket['count']; ?> <?php echo $basket['name']; ?></a><br />
+                                <?php foreach(json_decode($basket['attributes']) as $key=>$attribute): ?>
+                                    <b><?php echo $key; ?></b>
+                                    <?php echo $attribute; ?>
+                                <?php endforeach; ?>
+                            </div>
+                    <?php endforeach; ?>
+            </td>
+        </tr>
+        <?php $first = false; ?>
+        <?php endif; ?>
+        <?php endforeach; ?>
+        <?php /* foreach($entity as $title=>$value): ?>
+            <td>
+                <?php
+                if($first==false){echo "<a href='" . $this->url('breizhadonf', array('controller'=>'bill','action'=>'show', 'id'=>$entity['id'])) . "'>";}
+                if ($title=='payment' and $value) { echo '<i class="icon-ok"></i>'; }
+                elseif ($title=='created') { echo date('d/m/Y h:i', $value); }
+                elseif ($title=='date') { echo date('d/m/Y', $value+(15*3600*24)); }
+                elseif ($title=='email') { echo "<a href='" . $this->url('admin', array('controller'=>'user','action'=>'edit', 'id'=>$entity['user_id'])) . "'>";echo $value;echo '</a>'; }
+                else { echo $value; }
+                if($first==false){echo "</a>";$first=true;}
+               ?>
+            </td>
+        <?php endforeach; */ ?>
+    </tbody>
+</table>
+
+    <div class="input-append" style="float:right">
+        <select name="action_select">
+            <option value="send"><?php echo $this->translate('Send'); ?></option>
+            <option value="delete"><?php echo $this->translate('Delete'); ?></option>
+        </select>
+        <button name="action_submit" class="btn" type="submit" value="1"><?php echo $this->translate('Submit'); ?></button>
+    </div>
+    
+    <div class="pagination">
+  <ul>
+    <li><a href="">Prev</a></li>
+    <li class="active">
+      <a href="">1</a>
+    </li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="">Next</a></li>
+  </ul>
+</div>
+
+</form>
+
+<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;clear:both;">
+    <form class="form-search" action="" method="post">
+        <div style="padding-left: 20px;" class="input-append">
+            <input type="text" class="search-query">
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+    </form>
+</div>

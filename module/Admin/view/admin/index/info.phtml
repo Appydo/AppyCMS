@@ -1,0 +1,6 @@
+<?php
+    ob_start();
+    phpinfo();
+    $info = ob_get_contents();
+    ob_get_clean();
+    echo str_replace ( '<table', '<table class="table table-striped"', preg_replace ( '%^.*<body>(.*)</body>.*$%ms', '$1', $info ));
