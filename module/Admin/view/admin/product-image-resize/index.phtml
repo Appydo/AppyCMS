@@ -44,7 +44,9 @@ function checkAll(field)
             <thead>
                 <tr>
                 <?php foreach($entity as $title=>$value): ?>
-                    <th><a href="?order=<?php echo $title; ?>&sort=ASC"><?php echo $title; ?><a></th>
+                    <?php if($title!='pir_id'): ?>
+                        <th><a href="?order=<?php echo $title; ?>&sort=ASC"><?php echo $title; ?><a></th>
+                    <?php endif; ?>
                 <?php endforeach; ?>
                      <th><input type="checkbox" name="action" onclick="javascript:checkAll('action[]')" /></th>
                 </tr>
@@ -54,15 +56,20 @@ function checkAll(field)
         <?php endif; ?>
         <tr>
             <?php foreach($entity as $title=>$value): ?>
+                <?php if($title!='pir_id'): ?>
                 <td>
                     <?php
-                    if($title==$this->id){echo "<a href='" . $this->url('admin', array('controller'=>$this->controller,'action'=>'edit', 'id'=>$entity[$this->id])) . "'>";}
+                    if($title=='name'){echo "<a href='" . $this->url('admin', array('controller'=>$this->controller,'action'=>'edit', 'id'=>$entity[$this->id])) . "'>";}
                     if ($title=='created') echo date('d/m/Y H:i',$value);
                     elseif ($title=='updated') echo date('d/m/Y H:i',$value);
+                    elseif ($title=='active') {
+                        echo (!$value) ? '<i class="icon-ok"></i>' : '<i class="icon-minus-sign"></i>';
+                    }
                     else echo $value; 
-                    if($title==$this->id){echo "</a>";}
+                    if($title=='name'){echo "</a>";}
                    ?>
                 </td>
+                <?php endif; ?>
             <?php endforeach; ?>
             <td><input type="checkbox" name="action[]" value="<?php echo $entity[$this->id]; ?>" /></td>
         </tr>

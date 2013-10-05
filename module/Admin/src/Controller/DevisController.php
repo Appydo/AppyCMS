@@ -19,7 +19,18 @@ class DevisController extends AbstractActionController {
         // $metadata = new \Zend\Db\Metadata\Metadata($this->db);
         // $tableNames = $metadata->getTableNames();
         // $columns = $metadata->getTable($this->table)->getColumns();
-        $page  = 1;
+        if (isset($_GET['page']))
+            $page = $_GET['page'];
+        else
+            $page  = 1;
+        if (isset($_GET['move'])) {
+            if ($_GET['move']=='next') {
+                $page++;
+            } elseif ($_GET['move']=='prev' and $page!=1) {
+                $page--;
+            }
+        }
+        if (empty($page)) $page = 1;
         $nb    = 10;
         $start = ($page * $nb) - $nb;
         
@@ -46,10 +57,10 @@ class DevisController extends AbstractActionController {
                     FROM '.$this->table.' bo
                     LEFT JOIN users u ON u.id=user_id
                     ORDER BY bo.updated '.$sort.'
-                    LIMIT :start, 10
+                    LIMIT '.$start.', 10
                     ');
 
-        $entities = $stmt->execute(array('start'=>$start))
+        $entities = $stmt->execute(array())
                 ->getResource()
                 ->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -74,7 +85,7 @@ class DevisController extends AbstractActionController {
                         ));
         $baskets = array();
         foreach($query as $key=>$basket) {
-            $product = $this->db->query('SELECT * FROM product WHERE id=:id')
+            $product = $this->db->query('SELECT * FROM Product WHERE id=:id')
                     ->execute(array('id'=>$basket['product_id']))
                     ->current();
             $baskets[$key] = $basket;

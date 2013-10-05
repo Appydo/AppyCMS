@@ -71,7 +71,7 @@ class IndexController extends AbstractActionController {
         $config = $this->getServiceLocator()->get('Config');
         return array(
             'auths' => $auths,
-            'version' => $config['version'],
+            'version' => (isset($config['version'])) ? $config['version'] : '',
             'driver' => $config['db']['driver'],
             'note' => $note['note'],
             'form' => $form,

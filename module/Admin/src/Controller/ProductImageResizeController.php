@@ -20,7 +20,7 @@ class ProductImageResizeController extends AbstractActionController {
 
         $stmt = $this->db
                 ->createStatement('
-                    SELECT pir_id, pir_name as name, pir_width as width, pir_height as height, pir_hide as hide
+                    SELECT pir_id, pir_name as name, pir_width as width, pir_height as height, pir_hide as active
                     FROM '.$this->table.'
                     ');
         $entities = $stmt->execute()

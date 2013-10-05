@@ -51,7 +51,7 @@ function checkAll(field)
     <?php $thead=true; ?>
     <?php endif; ?>
         <tr>
-            <td><?php echo "<a href='" . $this->url('breizhadonf', array('controller'=>'bill','action'=>'show', 'id'=>$entity['id'])) . "'>".date('y-m-', $entity['created']).$entity['id']."</a>"; ?></td>
+            <td><?php echo "<a href='" . $this->url('admin', array('controller'=>'bill','action'=>'show', 'id'=>$entity['id'])) . "'>".date('y-m-', $entity['created']).$entity['id']."</a>"; ?></td>
             <td><?php echo $entity['price']; ?> &euro;</td>
             <td><?php echo date('d/m/Y h:i', $entity['created']); ?></td>
             <td><?php echo date('d/m/Y', $entity['created']+(15*3600*24));; ?></td>
