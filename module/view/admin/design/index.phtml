@@ -1,0 +1,45 @@
+<div class="well btn-group">
+    <a class="btn" href="<?php echo $this->url('admin', array('controller'=>'design','action'=>'import')); ?>">
+        <i class="icon-download-alt"></i> Import
+    </a>
+    <a class="btn" href="<?php echo $this->url('admin', array('controller'=>'css','action'=>'index')); ?>">
+        <i class="icon-edit"></i> CSS
+    </a>    
+</div>
+
+<form action="<?php echo $this->url('admin', array('controller'=>'design','action'=>'index')); ?>" method="post">
+    
+    <?php foreach($this->listFiles as $key=>$design): ?>
+    <div style="clear:both;min-width:900px;">
+        
+        <div style="float:left;width:220px;">
+            <?php if(file_exists(ROOT_PATH . '/public/themes/' . $design . '/preview.png')): ?>
+                <img style="border: solid 1px #dedede;border-radius: 10px;" src="<?php echo $this->basePath( 'themes/' . $design . '/preview.png' ); ?>" alt="<?php echo $design; ?>" />
+            <?php endif; ?>
+        </div>
+        
+        <div class="well" style="margin-left:230px;">
+            <div class="input-append">
+                <button class="btn btn-primary<?php if($this->project['theme']==$design): ?> disabled<?php endif; ?>" name="design" value="<?php echo $design; ?>"><i class="icon-chevron-down icon-white"></i></button>
+                <a class="btn" href="<?php echo $this->url('index', array('project'=>$this->project['name'], 'design' => $design)); ?>"><i class="icon-zoom-out"></i></a>
+                <input <?php if($this->project['theme']==$design): ?> disabled<?php endif; ?> type="text" name="rename-text" value="<?php echo $design; ?>" />
+                <button type="submit" class="btn<?php if($this->project['theme']==$design): ?> disabled<?php endif; ?>" name="rename" value="<?php echo $file; ?>">
+                    Rename
+                </button>
+                <a class="btn btn-danger<?php if($this->project['theme']==$design): ?> disabled<?php endif; ?>" href=""><i class="icon-trash icon-white"></i></a>
+            </div>
+            <div style="max-width:320px;text-align: justify">
+                <?php if (isset($this->descriptions[$design])): ?>
+                    <?php echo $this->descriptions[$design]; ?>
+                <?php else: ?>
+                    <?php /* Pas de description. */ ?>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div style="clear:both;padding-top: 1em;">
+
+        </div>
+    </div>
+<?php endforeach; ?>
+</form>

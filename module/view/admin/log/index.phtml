@@ -1,0 +1,28 @@
+<div class="page-header">
+    <h1>Log</h1>
+</div>
+
+<div class="form-actions">
+    <a class="btn btn-danger" href="<?php echo $this->url('admin', array('controller'=>'log','action'=>'empty'), null, true); ?>">
+        Empty
+    </a>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Action</th>
+            <th>User</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach($this->entities as $entity): ?>
+        <tr>
+            <td><a href="{{ path('log_show', { 'id': entity.id }) }}"><?php echo $entity['name']; ?></a></td>
+            <td><?php echo $entity['user']; ?></a></td>
+            <td><?php echo date('Y-m-d H:i:s',$entity['created']); ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

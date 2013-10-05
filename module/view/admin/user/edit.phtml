@@ -1,0 +1,111 @@
+<div class="page-header">
+    <h1>User Profil</h1>
+</div>
+
+<form class="form-horizontal" action="<?php echo $this->url('admin', array('controller' => 'user', 'action' => 'edit', 'id' => $this->entity['id'])); ?>" method="post">
+
+    <fieldset>
+
+        <div class="control-group">
+            <label class="control-label" for="username">Name</label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="username" name="username" value="<?php echo $this->entity['username']; ?>">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="useremail">Email</label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="useremail" name="useremail" value="<?php echo $this->entity['email']; ?>">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="input01">Old Password</label>
+            <div class="controls">
+                <input type="password" class="input-xlarge" id="input01">
+                <p class="help-block">Require only if you want to change your password.</p>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="input01">New Password</label>
+            <div class="controls">
+                <input type="password" class="input-xlarge" id="input01">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="input01">Confirm Password</label>
+            <div class="controls">
+                <input type="password" class="input-xlarge" id="input01">
+                <p class="help-block">Retype the new password.</p>
+            </div>
+        </div>
+
+        <?php $element = 'role'; ?>
+        <div class="control-group<?php if(count($this->form->get($element)->getMessages())>0): ?> error<?php endif; ?>">
+            <label class="control-label" for="<?php echo $element; ?>"><?php echo $this->formLabel($this->form->get($element)); ?></label>
+            <div class="controls">
+                <select id="<?php echo $element; ?>" name="<?php echo $element; ?>">
+                    <?php foreach($this->roles as $role): ?>
+                        <option value="<?php echo $role['role_id']; ?>" <?php if($this->entity['role']==$role['role_id']): ?>selected="selected"<?php endif; ?>><?php echo $role['role_name']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">Registration Date</label>
+            <div class="controls">
+                <p class="help-block"><?php echo date('d-m-Y H:i', $this->entity['created']); ?></p>
+            </div>
+        </div>
+
+		<div class="control-group">
+            <label class="control-label">Last Visit Date</label>
+            <div class="controls">
+                <p class="help-block"><?php echo date('d-m-Y H:i', $this->entity['updated']); ?></p>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">ID</label>
+            <div class="controls">
+                <p class="help-block"><?php echo $this->entity['id']; ?></p>
+            </div>
+        </div>
+
+		<div class="control-group">
+            <label class="control-label"></label>
+            <div class="controls">
+                <label class="checkbox" for="is_active">
+                    <input type="checkbox" name="is_active" <?php if ($this->entity['is_active']) echo 'checked="checked"' ?> />
+                    Actif
+                </label>
+            </div>
+		</div>
+        
+        <div class="control-group">
+            <label class="control-label" for="note">Note</label>
+            <div class="controls">
+                <textarea class="input-xlarge" id="note" name="note"><?php echo $this->entity['note']; ?></textarea>
+            </div>
+        </div>
+
+    </fieldset>
+
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">
+            <i class="icon-pencil icon-white"></i>
+            Editer
+        </button>
+        <a class="btn" href="<?php echo $this->url('admin', array('controller' => 'user', 'action' => 'index')); ?>">
+            Retour
+        </a>
+    </div>
+    
+    <?php echo $this->formInput($this->form->get('csrf')); ?>
+    
+</form>
+

@@ -1,0 +1,118 @@
+<style>
+    th {
+        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -ms-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -o-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        line-height: 12px;text-shadow: white 0px 1px 0px;font-size: 12px;background-color:#dedede;color:#5E6469;
+        border: solid 1px #cdcdcd;
+        padding: 0;
+    }
+    th a {
+        text-decoration: none;
+        color:#5E6469;
+    }
+    th a:hover {
+        text-decoration: none;
+    }
+</style>
+
+<script type="text/javascript">
+function checkAll(field)
+{
+    var elements = document.getElementsByName(field);
+    for (i = 0; i < elements.length; i++)
+	elements[i].checked = !elements[i].checked ;
+}
+</script>
+
+<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
+    <form class="form-search" action="" method="post">
+        <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'devis','action'=>'new')); ?>">
+            <i class="icon-plus icon-white"></i>
+            <?php echo $this->translate('New'); ?>
+        </a>
+        <div style="padding-left: 20px;" class="input-append">
+            <input type="text" class="search-query">
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+    </form>
+</div>
+
+<table class="table table-striped">
+   
+    <?php /* ?>
+    <thead>
+        <tr>
+        <?php foreach($this->columns as $title=>$value): ?>
+            <th><?php echo $value->getName(); ?></th>
+        <?php endforeach; ?>
+        </tr>
+    </thead>
+    <?php */ ?>
+    
+    <?php $thead=false; ?>
+    <?php foreach($this->entities as $entity): ?>
+    <?php if($thead==false): ?>
+        <thead>
+            <tr>
+            <?php foreach($entity as $title=>$value): ?>
+                <th><a href="?order=<?php echo $title; ?>&sort=ASC"><?php echo $title; ?><a></th>
+            <?php endforeach; ?>
+                 <th><input type="checkbox" name="action" onclick="javascript:checkAll('action[]')" /></th>
+            </tr>
+        </thead>
+        <tbody>
+    <?php $thead=true; ?>
+    <?php endif; ?>
+        <tr>
+        <?php $first = false; ?>
+        <?php foreach($entity as $title=>$value): ?>
+            <td>
+                <?php
+                if($first==false){echo "<a href='" . $this->url('admin', array('controller'=>'devis','action'=>'show', 'id'=>$entity['id'])) . "'>";}
+                if ($title=='created') echo date('d/m/Y H:i',$value);
+                else echo $value; 
+                if($first==false){echo "</a>";$first=true;}
+               ?>
+            </td>
+        <?php endforeach; ?>
+            <td><input type="checkbox" name="action[]" value="<?php echo $entity['id']; ?>" /></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+    <div class="input-append" style="float:right">
+        <select>
+            <option>Delete</option>
+        </select>
+        <button class="btn" type="submit">Valider</button>
+    </div>
+
+<div class="pagination">
+  <ul>
+    <li><a href="?page=1">Prev</a></li>
+    <li class="active">
+      <a href="?page=1">1</a>
+    </li>
+    <li><a href="?page=2">2</a></li>
+    <li><a href="?page=3">3</a></li>
+    <li><a href="?page=4">4</a></li>
+    <li><a href="?page=2">Next</a></li>
+  </ul>
+</div>
+
+<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
+    <form class="form-search" action="" method="post">
+        <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'devis','action'=>'new')); ?>">
+            <i class="icon-plus icon-white"></i>
+            <?php echo $this->translate('New'); ?>
+        </a>
+        <div style="padding-left: 20px;" class="input-append">
+            <input type="text" class="search-query">
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+    </form>
+</div>

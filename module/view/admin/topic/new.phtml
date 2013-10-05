@@ -1,0 +1,47 @@
+<form action="<?php echo $this->url('admin', array('controller'=>'topic','action'=>'create')); ?>" method="post" {{ form_enctype(form) }}>
+<fieldset>
+<legend>New page</legend>
+
+    <div class="control-group">
+        <label class="control-label">Title</label>
+        <div class="controls"><?php echo $this->form->content; ?></div>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">
+            Save
+        </button>
+        <a class="btn" href="{{ path('user') }}">
+            List
+        </a>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Parameter</label>
+        <div class="controls">
+            <label class="checkbox" for="appydo_testbundle_topictype_hide">
+                <?php echo $this->form->hide; ?>
+                Hide
+            </label>
+        </div>
+        <div class="controls">
+            <label class="checkbox" for="appydo_testbundle_topictype_comment">
+                Comment
+            </label>
+        </div>
+
+    </div>
+
+    <?php echo $this->form->csrf; ?>
+
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">
+            Save
+        </button>
+        <a class="btn" href="{{ path('user') }}">
+            List
+        </a>
+    </div>
+
+</fieldset>
+</form>

@@ -1,0 +1,50 @@
+<div class="page-header">
+    <h1>Trash list</h1>
+</div>
+
+<form action="{{ path('topic') }}" method="post">
+    <div>
+	<input type="text" />
+        <button class="btn" type="submit">Search</button>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Rss</th>
+            <th>Comment</th>
+            <th>Created</th>
+            <th>Updated</th>
+            <th>Language</th>
+            <th>Author</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach($this->topics as $topic): ?>
+        <tr>
+            <td><a href="<?php echo $this->url(array('module' => 'admin','controller'=>'topic','action'=>'edit', 'id'=>$topic['id'])); ?>"><?php echo $topic['name']; ?></a></td>
+            <td><?php echo $topic['rss'] ?></td>
+            <td><?php echo $topic['comment'] ?></td>
+            <td><?php echo date('d-m-Y H:i',$topic['created']); ?></td>
+            <td><?php echo date('d-m-Y H:i',$topic['updated']); ?></td>
+            <td><?php echo $topic['language'] ?></td>
+            <td><a href="{{ path('user_show', { 'id': entity.author.id }) }}"><?php echo $topic['author'] ?></a></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<div class="pagination">
+  <ul>
+    <li><a href="{{ path('_topic_trash_list',{page:previous}) }}">Prev</a></li>
+    <li class="active">
+      <a href="{{ path('_topic_trash_list',{page:1}) }}">1</a>
+    </li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="{{ path('_topic_trash_list',{page:next}) }}">Next</a></li>
+  </ul>
+</div>
