@@ -33,7 +33,7 @@ class Module {
                         $controller->user = null;
                     }
                     
-                    if (isset($config['install']) and $config['install'] == 0 and $e->getRouteMatch()->getParam('controller', 'index') != 'Index\Controller\Install') {
+                    if ($config['install'] == 0 and $e->getRouteMatch()->getParam('controller', 'index') != 'Index\Controller\Install') {
                         $controller->redirect()->toRoute('index', array('controller' => 'install', 'action' => 'index'));
                         // $e->stopPropagation();
                         return false;
