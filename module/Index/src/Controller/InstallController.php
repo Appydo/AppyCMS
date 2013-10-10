@@ -8,6 +8,7 @@ use Zend\View\Model\ViewModel;
 class InstallController extends AbstractActionController {
 
     public function indexAction() {
+        $this->layout('simple/layout');
         // $this->layout('default/admin');
         $request = $this->getRequest();
         $layout = 'default';
@@ -63,7 +64,7 @@ class InstallController extends AbstractActionController {
     }
 
     public function createAction() {
-        
+        $this->layout('simple/layout');
         $dir = __DIR__ . '/../../..';
 
         switch ($_POST['database']) {
@@ -132,7 +133,8 @@ return array(
         'password' => '{$_POST['password']}',
     ),
     'install' => 1,
-    'zone' => 'Europe/Paris',
+    'version' => 0.3,
+    'zone' => '{$_POST['zone']}',
     'service_manager' => array(
         'factories' => array(
             'Zend\Db\Adapter\Adapter'
@@ -176,7 +178,7 @@ resources.frontController.params.displayExceptions = 1";
 */
         return array(
             'config' => $config,
-            'path'   => __DIR__ . '/../../config/config.ini',
+            'path'   => ROOT_PATH . 'config/localhost.php',
             'put'    => (@file_put_contents($this->view->path, $this->view->config)),
         );
     }
