@@ -16,7 +16,8 @@ class MailjetController extends AbstractActionController {
     
     public function sendAction() {
         $result = array();
-        $result['emails']  = $this->db->query('SELECT u.* FROM users u')
+        $result['emails']  = $this->db
+        			->query('SELECT u.* FROM users u')
                     ->execute(array(
                         'project' => $this->project['id'],
                         ));
@@ -24,15 +25,23 @@ class MailjetController extends AbstractActionController {
     }
     
     public function indexAction() {
+
+    	/*
+    	checker report email sent
+    	api key auth
+    	https://fr.mailjet.com/docs/api/api/keyauthenticate
+    	*/	
         
         // Include Mailjet's API Class
 		include_once(ROOT_PATH . '/module/Admin/src/Vendor/php-mailjet.class-mailjet-0.1.php');
 		 
 		// Create a new Object
-		$mj = new \Mailjet('9dd2d2d3231c124c88271b553a958edf','41cce68dc59aa9a7e4610ac61b2850eb');
+		$mj = new \Mailjet(
+			'9dd2d2d3231c124c88271b553a958edf',
+			'41cce68dc59aa9a7e4610ac61b2850eb'
+			);
 		$response = $mj->messageList();
 		$messages = $response->result;
-		
 
 		foreach($messages as $key=>$message) {
 			$params = array(

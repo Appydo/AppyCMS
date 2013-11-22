@@ -13,6 +13,20 @@ use Zend\InputFilter\InputFilterInterface;
 class ShipController extends AbstractActionController {
 
     private $table = 'BankOrder';
+
+    public function dataAction() {
+        $id = $this->params('id');
+        $entity = $this->db
+                ->query('SELECT * FROM BankData WHERE command=:id')
+                ->execute(array('id'=>$id))
+                ->current();
+        return array(
+            'entity' => $entity,
+            'columns'  => $columns,
+            'baskets'  => $baskets,
+            'total'    => $total,
+        );
+    }
     
     public function indexAction() {
         
@@ -38,15 +52,16 @@ class ShipController extends AbstractActionController {
 
         $stmt = $this->db
                 ->createStatement('
-                    SELECT bo.id, bo.count, bo.price, bo.created, bo.created as date, u.address, u.city, u.postal, u.firstname, u.username, u.email, u.id as user_id
+                    SELECT bo.id, bo.description, bo.count, bo.price, bo.created, bo.created as date, u.address, u.city, u.postal, u.firstname, u.username, u.email, u.id as user_id, bd.bank_code as code, u.phone
                     FROM '.$this->table.' bo
                     LEFT JOIN users u ON u.id=bo.user_id
+                    LEFT JOIN BankData bd ON bo.id=bd.command
                     WHERE (bo.shipment is NULL or bo.shipment=0) and (bo.hide!=1) and bo.payment=1
                     ');
                 $entities = $stmt->execute()
                 ->getResource()
                 ->fetchAll(\PDO::FETCH_ASSOC);
-        
+        $baskets = array();
         foreach($entities as $i=>$entity) {
             $query = $this->db->query('SELECT b.*
                         FROM BasketOrder b
@@ -54,7 +69,7 @@ class ShipController extends AbstractActionController {
                     ->execute(array(
                         'id' => $entity['id']
                     ));
-            $baskets = array();
+            
             foreach ($query as $key => $basket) {
                 $product = $this->db->query('SELECT * FROM Product WHERE id=:id')
                         ->execute(array('id' => $basket['product_id']))

@@ -34,7 +34,7 @@ class BasketController extends AbstractActionController {
         $request   = $this->getRequest();
         $id        = $this->params('id');
         $product   = $this->db->query('SELECT p.* FROM Product p WHERE p.user_id=:user and p.id=:id')->execute(array('id' => $id))->current();
-        $basket    = $this->db->query('INSERT INTO Basket b WHERE b.hide=0 and b.user_id=:user and b.product_id=:id')->execute(array('id' => $id, 'user' => $this->user->id))->current();
+        $basket    = $this->db->query('INSERT INTO Basket b WHERE b.hide=0 and b.user_id=:user and b.product_id=:id')->execute(array('id' => $id, 'user' => $this->user->id));
         
         $entities  = $this->db->query('SELECT b.*, p.price as price, p.weight as weight FROM Basket b LEFT JOIN Product p ON p.id=b.product_id WHERE b.hide=0 and b.user_id=:user')->execute(array('user' => $this->user->id))->current();
         

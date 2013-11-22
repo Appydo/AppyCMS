@@ -40,6 +40,7 @@ class EmailDataController extends AbstractActionController {
                 ->fetchAll(\PDO::FETCH_ASSOC);
 
         return array(
+            'langs'    => $langs,
             'entities' => $entities,
             'columns'  => $columns
         );
@@ -75,8 +76,9 @@ class EmailDataController extends AbstractActionController {
     }
 
     public function newAction() {
-        
+        $langs = $this->db->query('SELECT * FROM Lang')->execute();
         return array(
+            'langs' => $langs,
             'form' => new \Admin\Form\EmailDataForm()
         );
     }
@@ -150,7 +152,10 @@ class EmailDataController extends AbstractActionController {
             die($this->table.' not found.');
         }
 
+        $langs = $this->db->query('SELECT * FROM Lang')->execute();
+
         return array(
+            'langs' => $langs,
             'form' => $form,
             'entity' => $entity
         );

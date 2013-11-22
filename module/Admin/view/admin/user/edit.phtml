@@ -2,7 +2,7 @@
     <h1>User Profil</h1>
 </div>
 
-<form class="form-horizontal" action="<?php echo $this->url('admin', array('controller' => 'user', 'action' => 'edit', 'id' => $this->entity['id'])); ?>" method="post">
+<form class="form-horizontal" action="<?php echo $this->url('admin', array('controller' => 'user', 'action' => 'edit', 'id' => $this->entity['id'])); ?>" method="post" autocomplete="off">
 
     <fieldset>
 
@@ -14,9 +14,30 @@
         </div>
 
         <div class="control-group">
+            <label class="control-label" for="firstname">Firstname</label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="firstname" name="firstname" value="<?php echo $this->entity['firstname']; ?>">
+            </div>
+        </div>
+
+        <div class="control-group">
             <label class="control-label" for="useremail">Email</label>
             <div class="controls">
                 <input type="text" class="input-xlarge" id="useremail" name="useremail" value="<?php echo $this->entity['email']; ?>">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="city">City</label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="city" name="city" value="<?php echo $this->entity['city']; ?>">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="phone">Phone</label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="phone" name="phone" value="<?php echo $this->entity['phone']; ?>">
             </div>
         </div>
 
@@ -49,7 +70,7 @@
             <div class="controls">
                 <select id="<?php echo $element; ?>" name="<?php echo $element; ?>">
                     <?php foreach($this->roles as $role): ?>
-                        <option value="<?php echo $role['role_id']; ?>" <?php if($this->entity['role']==$role['role_id']): ?>selected="selected"<?php endif; ?>><?php echo $role['role_name']; ?></option>
+                        <option value="<?php echo $role['role_id']; ?>" <?php if($this->entity['role_id']==$role['role_id']): ?>selected="selected"<?php endif; ?>><?php echo $role['role_name']; ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>

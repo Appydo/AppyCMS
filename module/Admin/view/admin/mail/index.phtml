@@ -11,14 +11,15 @@
     }
 </style>
 
-<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
-    <form class="form-search" action="" method="post">
+<form class="form-search" method="post" action="<?php echo $this->url('admin', array('controller'=>'mail','action'=>'index')); ?>">
+
+<div class="form-actions" style="padding:10px;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
         <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'mail','action'=>'new')); ?>">
             <i class="icon-plus icon-white"></i>
             <?php echo $this->translate('Message'); ?>
         </a>
         <div style="padding-left: 20px;" class="input-append">
-            <input type="text" class="search-query">
+            <input type="text" class="search-query" name="query">
             <button type="submit" class="btn"><i class="icon-search"></i></button>
         </div>
     </form>
@@ -45,13 +46,13 @@
 
 <div class="pagination">
   <ul>
-    <li><a href="{{ path('_topic_list',{page:previous}) }}">Prev</a></li>
+    <li><a href="{{ path('_topic_list',{page:previous}) }}">&lt;</a></li>
     <li class="active">
       <a href="{{ path('_topic_list',{page:1}) }}">1</a>
     </li>
     <li><a href="#">2</a></li>
     <li><a href="#">3</a></li>
     <li><a href="#">4</a></li>
-    <li><a href="{{ path('_topic_list',{page:next}) }}">Next</a></li>
+    <li><a href="{{ path('_topic_list',{page:next}) }}">&gt;</a></li>
   </ul>
 </div>

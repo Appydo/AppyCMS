@@ -6,6 +6,39 @@ use Zend\View\Model\ViewModel;
 
 class ProductController extends AbstractActionController {
 
+    function remove_accent($str)
+    {
+      $a = array('À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Æ', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ð',
+                    'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'ß', 'à', 'á', 'â', 'ã',
+                    'ä', 'å', 'æ', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ñ', 'ò', 'ó', 'ô', 'õ',
+                    'ö', 'ø', 'ù', 'ú', 'û', 'ü', 'ý', 'ÿ', '.', '.', '.', '.', '.', '.', '.', '.', '.',
+                    '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',
+                    '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',
+                    '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',
+                    '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',
+                    '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 
+                    '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 
+                    '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',
+                    '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.');
+
+      $b = array('A', 'A', 'A', 'A', 'A', 'A', 'AE', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'D', 'N', 'O',
+                    'O', 'O', 'O', 'O', 'O', 'U', 'U', 'U', 'U', 'Y', 's', 'a', 'a', 'a', 'a', 'a', 'a', 'ae', 'c',
+                    'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'n', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u',
+                    'y', 'y', 'A', 'a', 'A', 'a', 'A', 'a', 'C', 'c', 'C', 'c', 'C', 'c', 'C', 'c', 'D', 'd', 'D',
+                    'd', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'G', 'g', 'G', 'g', 'G', 'g', 'G', 'g',
+                    'H', 'h', 'H', 'h', 'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'IJ', 'ij', 'J', 'j', 'K',
+                    'k', 'L', 'l', 'L', 'l', 'L', 'l', 'L', 'l', 'L', 'l', 'N', 'n', 'N', 'n', 'N', 'n', 'n', 'O', 'o',
+                    'O', 'o', 'O', 'o', 'OE', 'oe', 'R', 'r', 'R', 'r', 'R', 'r', 'S', 's', 'S', 's', 'S', 's', 'S',
+                    's', 'T', 't', 'T', 't', 'T', 't', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'W',
+                    'w', 'Y', 'y', 'Y', 'Z', 'z', 'Z', 'z', 'Z', 'z', 's', 'f', 'O', 'o', 'U', 'u', 'A', 'a', 'I', 'i',
+                    'O', 'o', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'A', 'a', 'AE', 'ae', 'O', 'o');
+      return str_replace($a, $b, $str);
+    }
+    function slug($str){
+      return mb_strtolower(preg_replace(array('/[^a-zA-Z0-9 \'-]/', '/[ -\']+/', '/^-|-$/'),
+      array('', '-', ''), $this->remove_accent($str)));
+    }
+
     function generateSalt($max = 15) {
         $characterList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*?";
         $i = 0;
@@ -158,6 +191,7 @@ class ProductController extends AbstractActionController {
             foreach($attributes as $attribute) {
                 $attributes_names[$attribute['sa_name']] = $attribute['sac_name'];
             }
+
             $order =$this->db->query('INSERT INTO Basket (user_id, key, product_id, attributes, hide, count, created, updated)
                 VALUES (:user_id, :key, :product_id, :attributes, :hide, :count, :created, :updated)')->execute(array(
                     'user_id'    => $this->user->id,
@@ -183,6 +217,19 @@ class ProductController extends AbstractActionController {
 
         $entity = $stmt->execute(array('project' => $this->project['id'], 'id' => $id))->current();
 
+        if(!$entity) {
+            return $this->redirect()->toRoute('home');
+        }
+        if($this->slug($entity['name'])!=$this->params('name')) {
+            return $this->redirect()->toRoute('product',
+                array(
+                    'category' => $this->slug($entity['topic_name']),
+                    'name' => $this->slug($entity['name']),
+                    'id'=>$this->params('id')
+                    )
+                );
+        }
+
         $options = $this->db->query('
             SELECT pac.*, sac.sac_name, sa.sa_name, sac.sac_default
             FROM ProductAttribute pa
@@ -202,7 +249,7 @@ class ProductController extends AbstractActionController {
 
         // Trick for rewind
         $products = $query->execute(array('id' => $id, 'project' => $this->project['id'], 'topic' => $entity['topic_id']));
-        
+
         $this->basket($key);
         
         $layout = $this->layout();

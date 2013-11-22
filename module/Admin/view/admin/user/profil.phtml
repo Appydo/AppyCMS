@@ -16,33 +16,44 @@ foreach($this->form->getMessages() as $key=>$errors) {
         <strong>Profil</strong>
     </div>
 
-<form class="form-horizontal" action="<?php echo $this->url('admin', array('controller'=>'user', 'action'=>'profil', 'id' => $this->entity['id'] )); ?>" method="post">
+<form class="form-horizontal" action="<?php echo $this->url('admin', array('controller'=>'user', 'action'=>'profil', 'id' => $this->entity['id'] )); ?>" method="post" autocomplete="off">
     
 
     
     <fieldset>
 
         <div class="control-group">
+            <label class="control-label" for="firstname">Firstname</label>
             <div class="controls">
                 <input type="text" class="input-xlarge" id="firstname" name="firstname" value="<?php echo $this->entity['firstname']; ?>">
             </div>
         </div>
         
         <div class="control-group">
+            <label class="control-label" for="firstname">Lastname</label>
             <div class="controls">
                 <input type="text" class="input-xlarge" id="username" name="username" value="<?php echo $this->entity['username']; ?>">
             </div>
         </div>
         
         <div class="control-group">
+            <label class="control-label" for="phone">Phone</label>
             <div class="controls">
                 <input type="text" class="input-xlarge" id="phone" name="phone" value="<?php echo $this->entity['phone']; ?>">
             </div>
         </div>
         
         <div class="control-group">
+            <label class="control-label" for="email">Email</label>
             <div class="controls">
-                <input type="text" class="input-xlarge" id="phone" name="email" value="<?php echo $this->entity['email']; ?>">
+                <input type="text" class="input-xlarge" id="email" name="email" value="<?php echo $this->entity['email']; ?>">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="city">City</label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="city" name="city" value="<?php echo $this->entity['city']; ?>">
             </div>
         </div>
         

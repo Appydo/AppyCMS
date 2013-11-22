@@ -79,7 +79,7 @@ class UserController extends AbstractActionController {
         else
             $sort  = 'DESC';
         
-        if (!empty($order)) $order_string = 'ORDER BY '.$order.' '.$sort;
+        if (!empty($order)) $order_string = 'ORDER BY u.'.$order.' '.$sort;
         else $order_string = '';
         
         $where_string = '';
@@ -482,9 +482,9 @@ class UserController extends AbstractActionController {
 
     public function editAction() {
         $request = $this->getRequest();
-        $id = $this->params('id');
-        $query = $this->db->query('
-            SELECT *
+        $id      = $this->params('id');
+        $query   = $this->db->query('
+            SELECT r.*
             FROM Role r
             LEFT JOIN users u ON u.project_id = r.project_id
             WHERE u.id=:user_id'
@@ -550,7 +550,7 @@ class UserController extends AbstractActionController {
 
         $entity = $this->db
                 ->query('
-                    SELECT *, a.role_id
+                    SELECT u.*, a.role_id
                     FROM users u
                     LEFT JOIN Acl a ON (a.project_id=:project_id and a.user_id=u.id)
                     WHERE u.id=:id')

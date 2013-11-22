@@ -18,13 +18,15 @@ class ShopAttributeController extends AbstractActionController {
         $request = $this->getRequest();
 
         if ($request->isPost()) {
-            $insert = $this->db->query("INSERT INTO {$this->table} (sa_name, created, updated, user_id)
-                VALUES (:name, :created, :updated, :user_id)", array(
-                'name'    => $request->getPost('option'),
-                'created' => time(),
-                'updated' => time(),
-                'user_id' => $this->user->id,
-                 ));
+            if($request->getPost('option')!='') {
+                $insert = $this->db->query("INSERT INTO {$this->table} (sa_name, created, updated, user_id)
+                    VALUES (:name, :created, :updated, :user_id)", array(
+                    'name'    => $request->getPost('option'),
+                    'created' => time(),
+                    'updated' => time(),
+                    'user_id' => $this->user->id,
+                     ));
+            }
         }
 
         $entities   = $this->db

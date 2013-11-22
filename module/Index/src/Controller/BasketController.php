@@ -116,7 +116,10 @@ class BasketController extends AbstractActionController {
                     ->execute(array('id'=>$basket['product_id']))
                     ->current();
             $baskets[$key] = $basket;
-            $baskets[$key]['price'] = $product['price'];
+            if (!empty($product['discount']))
+                $baskets[$key]['price'] = $product['discount'];
+            else
+                $baskets[$key]['price'] = $product['price'];
             foreach(json_decode($basket['attributes']) as $attribute_name=>$attribute_value) {
                 $sac = $this->db->query('
                     SELECT sac_price
@@ -219,14 +222,18 @@ class BasketController extends AbstractActionController {
                     'bankorder_id' => $bankOrder_id
                     ));
 
-            $price   = $price + ($product['price'] * $basket['count']);
+            
             
             $weight   = $weight + ($product['weight'] * $basket['count']);
             $baskets[$key] = $basket;
-            $baskets[$key]['price'] = $product['price'];
+            // $baskets[$key]['price'] = $product['price'];
             
             $baskets[$key] = $basket;
-            $baskets[$key]['price'] = $product['price'];
+            if (!empty($product['discount']))
+                $baskets[$key]['price'] = $product['discount'];
+            else
+                $baskets[$key]['price'] = $product['price'];
+            $price   = $price + ($baskets[$key]['price'] * $basket['count']);
             foreach(json_decode($basket['attributes']) as $attribute_name=>$attribute_value) {
                 $sac = $this->db->query('SELECT sac_price FROM ShopAttribute LEFT JOIN ShopAttributeChoice USING(sa_id) WHERE sa_name=:attribute_name and sac_name=:attribute_value')
                     ->execute(array(
@@ -367,7 +374,7 @@ class BasketController extends AbstractActionController {
         // mail('rbtcreation@free.fr', '['.$website.'] Nouveau devis ', $email);
         
         $this->mail('mystheme@free.fr', '['.$website.'] Nouveau devis ', $email);
-        $this->mail('rbtcreation@free.fr', '['.$website.'] Nouveau devis ', $email);
+        $this->mail('contact@breizhadonf.com', '['.$website.'] Nouveau devis ', $email);
         
         $project = $this->db->query('SELECT * FROM Project WHERE id=1')->execute(
                 )->current();
@@ -472,7 +479,7 @@ class BasketController extends AbstractActionController {
                 Client : {$this->user->username}
             ";
             mail('mystheme@free.fr', '['.$this->website.'] Facture ' . $order_id, $message);
-            mail('rbtcreation@free.fr', '['.$this->website.'] Facture' . $order_id, $message);
+            mail('contact@breizhadonf.com', '['.$this->website.'] Facture' . $order_id, $message);
             
             $message = "
                 Votre commande à bien été finalisé sur {$this->website}
@@ -665,7 +672,7 @@ class BasketController extends AbstractActionController {
                     'author' => $customer_id
                     ));
 
-            $baskets  = $this->db->query('SELECT bo.*, p.name as product_name, p.price as product_price, p.image_path as image_path, p.image_name as image_name
+            $baskets  = $this->db->query('SELECT bo.*, p.name as product_name, p.price as product_price, p.discount, p.image_path as image_path, p.image_name as image_name
                 FROM BasketOrder bo
                 LEFT JOIN Product p ON bo.product_id=p.id
                 WHERE bo.user_id=:author and bo.bankorder_id=:order
@@ -682,9 +689,13 @@ class BasketController extends AbstractActionController {
                 $img_path     = $this->website . $renderer->basePath($basket['image_path'] . 'thumb/' . $basket['image_name']);
                 $product_path = $this->website . $renderer->url('index', array('controller'=>'product','action'=>'show','id'=>$basket['product_id']));
                 $attributes = (isset($basket['attributes'])) ? "{$basket['attributes']}" : '';
+                if (!empty($product['discount']))
+                    $product_price = $product['discount'];
+                else
+                    $product_price = $product['product_price'];
                 $txt .= "<tr><td>
                 <img style='border:solid 1px #dedede;border-radius:10px;margin-right: 10px;max-height: 6em;float: left;' src='".$img_path."' />
-                <a href='{$product_path}'>{$basket['product_name']}</a><br />{$attributes}</td><td>{$basket['count']}</td><td>{$basket['product_price']} &euro;</td></tr>\n";
+                <a href='{$product_path}'>{$basket['product_name']}</a><br />{$attributes}</td><td>{$basket['count']}</td><td>{$product_price} &euro;</td></tr>\n";
             }
             $txt .= '</table>';
             $price_mail = $tableau[5] / 100;
@@ -697,7 +708,7 @@ class BasketController extends AbstractActionController {
                 <body style='font-family: arial;'>
                 <p>Une nouvelle facture est arrivé sur {$this->website}</p>
                 
-                <p>{$this->website}/creditagricole/admin/show/{$order_id}</p>
+                <p>{$this->website}/admin/bill/show/{$order_id}</p>
 
                 <table>
                 <tr>
@@ -710,7 +721,11 @@ class BasketController extends AbstractActionController {
                 </tr>
                 <tr>
                     <th>Client</th>
-                    <td>{$this->website}/admin/user/{$customer_id}/edit</td>
+                    <td>{$this->website}/admin/user/edit/{$customer_id}</td>
+                </tr>
+                <tr>
+                    <th>Email client</th>
+                    <td>{$customer_email}</td>
                 </tr>
                 <tr>
                     <th>IP</th>
@@ -734,9 +749,6 @@ class BasketController extends AbstractActionController {
                 </body>
                 </html>
             ";
-
-            // mail('mystheme@free.fr', '['.$this->website.'] Facture ' . $order_id, $message);
-            // mail('rbtcreation@free.fr', '['.$this->website.'] Facture' . $order_id, $message);
             
             $this->mail('mystheme@free.fr', '['.$this->website.'] Facture ' . $order_id, $message, $message);
             $this->mail('rbtcreation@free.fr', '['.$this->website.'] Facture ' . $order_id, $message, $message);
@@ -762,6 +774,7 @@ class BasketController extends AbstractActionController {
                 </body>
                 </html>
             ";
+
             $this->mail($customer_email, '['.$this->website.'] Commande finalisé ' . $order_id, $message);
         }
 

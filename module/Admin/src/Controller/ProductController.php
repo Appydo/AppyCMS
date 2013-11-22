@@ -554,7 +554,7 @@ class ProductController extends AbstractActionController {
                 }
                 
                 $update = $this->db->query(
-                        'UPDATE Product SET name=:name, description=:description, project_id=:project_id, price=:price, updated=:updated, weight=:weight, stock=:stock, hide=:hide WHERE id=:id', array(
+                        'UPDATE Product SET name=:name, description=:description, project_id=:project_id, price=:price, updated=:updated, weight=:weight, stock=:stock, hide=:hide, discount=:discount WHERE id=:id', array(
                     'name' => $request->getPost('name'),
                     'description' => $request->getPost('description'),
                     'project_id' => $this->user->project_id,
@@ -562,6 +562,7 @@ class ProductController extends AbstractActionController {
                     // 'topic_id' => ($request->getPost('parent') == 0) ? null : $request->getPost('parent'),
                     'updated' => time(),
                     'weight' => $request->getPost('weight'),
+                    'discount' => $request->getPost('discount'),
                     'stock' => $request->getPost('stock'),
                     'hide' => ($request->getPost('hide') == 'on') ? 1 : 0,
                     'id' => $id

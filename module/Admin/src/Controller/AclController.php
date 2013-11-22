@@ -8,6 +8,14 @@ use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Role\GenericRole as Role;
 use Zend\Permissions\Acl\Resource\GenericResource as Resource;
 
+/*
+ *
+ * example :
+ * role : admin, staff, editor...
+ * ressource : topic, list, create...
+ * allow : ressource
+ */
+
 class AclController extends AbstractActionController {
 
     public function indexAction() {
@@ -27,10 +35,17 @@ class AclController extends AbstractActionController {
         
         $query = $this->db->createStatement('
             SELECT *
-            FROM Resource a
+            FROM Resource a'
+        );
+
+        $resources = $query->execute()->getResource()->fetchAll();
+
+        $query = $this->db->query('
+            SELECT *
+            FROM Allow a
             '
         );
-        $resources = $query->execute()->getResource()->fetchAll();
+        $allows = $query->execute()->getResource()->fetchAll();
         foreach ($allows as $allow) {
             $acl->allow($allow['role_name'], null, $role['privileges']);
         }
@@ -82,9 +97,7 @@ class AclController extends AbstractActionController {
         $acl->addResource(new Resource('delete'));
 
         $acl->addResource(new Resource('topic'));
-
         $acl->addResource(new Resource('project'));
-
         $acl->addResource(new Resource('user'));
 
         $acl->allow('staff', array('topic', 'project'), array('list', 'read'));
@@ -94,22 +107,13 @@ class AclController extends AbstractActionController {
          * Verifier les droits
          */
         // echo $acl->isAllowed('staff', 'topic', 'create');
-        // echo $acl->isAllowed('staff', 'topic', 'list');
         // echo $acl->isAllowed('staff', 'project', 'list');
 
         $acl->allow('admin');
-        /*
-          $query   = $this->db->query('SELECT p.*, u.username author
-          FROM Bill p
-          LEFT JOIN users u ON p.user_id = u.id
-          WHERE t.project_id=:project
-          ORDER BY p.id ASC'
-          );
-         */
+
         return array(
             'roles' => $roles,
-            'resources' => $resources,
-            // 'entities' => $query->execute(array('project' => $this->user->project_id))
+            'resources' => $resources
         );
     }
 

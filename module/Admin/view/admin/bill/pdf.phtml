@@ -1,0 +1,119 @@
+<table style="width: 100%;">
+    <tr>
+        <td style="width: 50%;">
+            <h1>Breizh a Donf</h1>
+
+            <p style="font-weight: bold;">
+            186, Parc d'activités de la Baumondière<br />
+            44240 Sucé sur Erdre<br />
+            Tél. 02 51 12 98 61
+            </p>
+
+            <p>
+                Date : <b><?php echo date('d-m-Y H:i',$entity['created']); ?></b><br />
+                N° Facture : <b><?php echo date('y-m', $entity['created']); ?>-<?php echo $entity['id']; ?></b><br />
+                N° Client : <b><?php echo $client_user['id']; ?></b><br />
+            </p>
+        </td>
+        <td style="width: 50%;text-align: right;">
+            <h3>Adresse de livraison</h3>
+            <p><?php echo $client_user['username']; ?> <?php echo $client_user['firstname']; ?><br /><?php echo $client_user['address']; ?><br />
+            <?php echo $client_user['postal']; ?> <?php echo $client_user['city']; ?></p>
+            <h3>Adresse de facturation</h3>
+            <p><?php echo $client_user['username']; ?> <?php echo $client_user['firstname']; ?><br />
+                <?php echo $client_user['address']; ?><br />
+            <?php echo $client_user['postal']; ?> <?php echo $client_user['city']; ?></p>
+        </td>
+    </tr>
+</table>
+
+
+
+<table style="font-family: helvetica, arial;font-size: 10pt;border-spacing: 2px;border-collapse: collapse;">
+
+    <tr style="background: #dedede;border:solid 1px #dedede;">
+        <th style="border:solid 1px #dedede;padding: 5px;">Articles</th>
+        <th style="border:solid 1px #dedede;padding: 5px;">Quantité</th>
+        <th style="border:solid 1px #dedede;padding: 5px;">Prix unitaire TTC</th>
+        <th style="border:solid 1px #dedede;padding: 5px;">Total TTC</th>
+    </tr>
+        
+    <?php
+    if (count($this->baskets)>0):
+    foreach($this->baskets as $entity):
+    ?>
+        <tr>
+            <td style="border:solid 1px #dedede;">
+            <img style="border:solid 1px #dedede;border-radius:10px;margin-right: 10px;height: 60px;float: left;" src="http://www.breizhadonf.com/<?php echo $entity['image_path']; ?>thumb/<?php echo $entity['image_name']; ?>" />
+                
+                <?php echo $entity['name']; ?><br />
+                <small>
+                    <?php foreach(json_decode($entity['attributes']) as $key=>$attribute): ?>
+                        <b><?php echo $key; ?></b>
+                        <?php echo $attribute; ?>
+                    <?php endforeach; ?>
+                </small>
+            </td>
+            <td style="border:solid 1px #dedede;text-align:center;"><?php echo $entity['count']; ?></td>
+            <td style="border:solid 1px #dedede;text-align:center;"><?php echo number_format($entity['price'], 2, ',', ''); ?> &euro;</td>
+            <td style="border:solid 1px #dedede;text-align:center;"><?php echo number_format($entity['price']*$entity['count'], 2, ',', ''); ?> &euro;</td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+<table style="font-family: helvetica, arial;font-size: 10pt;width:80%;border-spacing: 2px;border-collapse: collapse;">      
+        
+    <tr>
+        <td><b>Total HT</b></td>
+        <td style="font-weight:bold;"><?php $totalht = $this->totalht; echo $totalht; ?> &euro;</td>
+    </tr>
+    <tr>
+        <td>TVA 19,6%</td>
+        <td style="font-weight:bold;">
+            <?php echo $this->tva; ?> &euro;
+            <?php /*
+            (<?php $kg = $this->weight/1000; echo $kg; ?>kg)
+             */ ?>
+        </td>
+    </tr>
+    <tr>
+        <td><b>Total TTC</b></td>
+        <td style="font-weight:bold;"><?php echo number_format($this->total, 2, ',', ''); ?> &euro;</td>
+    </tr>
+    <tr>
+        <td>Frais de port</td>
+        <td style="font-weight:bold;">
+            <?php echo $this->transport; ?> &euro;
+            <?php /*
+            (<?php $kg = $this->weight/1000; echo $kg; ?>kg)
+             */ ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td><b>Reglé par CB</b></td>
+        <td style="font-weight:bold;"><?php $total = $this->total + $this->transport; echo number_format($total, 2, ',', ''); ?> &euro;</td>
+    </tr>
+    
+    <tr>
+        <td><b>Net à payer</b></td>
+        <td style="font-weight:bold;">0,00 &euro;</td>
+    </tr>
+    
+    <?php endif; ?>
+
+    </table>
+
+<p>
+    <b>Valeur en votre aimable règlement</b><br />
+PENALITES: En cas de défaut de règlement dans les délais stipulés aux présentes conditions générales de ventes, il sera appliqué à l'intégralité des sommes en cause de plein droit et sans aucune mise en demeure préalable, un intérêt de retard équivalent à 1,5 fois le taux d'intérêt légal, sans préjudice de tous frais supplémentaires de recouvrement et de mise en exécution.
+</p>
+
+<p style="text-align:center;">
+    Email: contact@breizhadonf.com - Web : http://www.breizhadonf.com
+</p>
+<p style="text-align:center;">
+R.C.S. NANTES 789 135 415<br />	 	 	 	 
+N° SIRET : 789 135 415 00014 - Code APE : 4791A	 <br />	 	 	 
+N°TVA Intracommunautaire : FR 07 789135415<br />
+S.A.R.L. au capital de 6000 Euros
+</p>

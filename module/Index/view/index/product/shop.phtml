@@ -13,9 +13,15 @@
                 </a>
             </div>
             <p style="font-weight:bold"><a style="text-decoration:none;" href="<?php echo $this->url('product', array('category'=>$product['topic_name'],'name'=>str_replace(array('/','\\'),array('%2F','%5C'),$product['name']),'id'=>$product['id'])); ?>"><?php echo $product['name']; ?></a></p>
+            <?php if(!empty($product['discount'])): ?>
+                <div style="text-align:center;text-decoration:line-through"><?php echo $product['price']; ?> &euro;</div>
+                <div style="text-align:center">Promotion : <?php echo $product['discount']; ?> &euro;</div>
+                <div style="text-align:center;">( jusqu'à épuisement du stock )</div>
+            <?php else: ?>
             <?php if(!empty($product['price'])): ?>
-            <p style="text-align:center"><?php echo $product['price']; ?> &euro;</p>
+                <p style="text-align:center"><?php echo $product['price']; ?> &euro;</p>
             <?php endif; ?>
+        <?php endif; ?>
         </li>
 <?php endforeach;?>
 </ul>

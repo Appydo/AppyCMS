@@ -93,26 +93,14 @@ function checkAll(field)
 
 <div class="pagination">
   <ul>
-    <li><a href="?page=1">Prev</a></li>
+    <li><a href="?page=1">&lt;</a></li>
     <li class="active">
       <a href="?page=1">1</a>
     </li>
     <li><a href="?page=2">2</a></li>
     <li><a href="?page=3">3</a></li>
     <li><a href="?page=4">4</a></li>
-    <li><a href="?page=2">Next</a></li>
+    <li><a href="?page=4">5</a></li>
+    <li><a href="?page=2">&gt;</a></li>
   </ul>
-</div>
-
-<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
-    <form class="form-search" action="" method="post">
-        <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'devis','action'=>'new')); ?>">
-            <i class="icon-plus icon-white"></i>
-            <?php echo $this->translate('New'); ?>
-        </a>
-        <div style="padding-left: 20px;" class="input-append">
-            <input type="text" class="search-query">
-            <button type="submit" class="btn"><i class="icon-search"></i></button>
-        </div>
-    </form>
 </div>

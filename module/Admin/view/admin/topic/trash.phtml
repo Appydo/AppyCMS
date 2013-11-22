@@ -1,7 +1,7 @@
 <div class="well" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
     <form class="form-search" action="" method="post">
         <button class="btn btn-primary" type="submit">Restore</button>
-        <button class="btn btn-danger" type="submit">Empty</button>
+        <button class="btn btn-danger" type="submit" name="delete_all" value="1" onclick="return(confirm('Etes-vous sûr de vouloir supprimer ces pages ?'));">Empty</button>
         <div style="padding-left: 20px;" class="input-append">
             <input type="text" class="search-query">
             <button type="submit" class="btn"><i class="icon-search"></i></button>
@@ -49,24 +49,13 @@
 
 <div class="pagination">
   <ul>
-    <li><a href="{{ path('_topic_trash_list',{page:previous}) }}">Prev</a></li>
+    <li><a href="{{ path('_topic_trash_list',{page:previous}) }}">&lt;</a></li>
     <li class="active">
       <a href="{{ path('_topic_trash_list',{page:1}) }}">1</a>
     </li>
     <li><a href="#">2</a></li>
     <li><a href="#">3</a></li>
     <li><a href="#">4</a></li>
-    <li><a href="{{ path('_topic_trash_list',{page:next}) }}">Next</a></li>
+    <li><a href="{{ path('_topic_trash_list',{page:next}) }}">&gt;</a></li>
   </ul>
-</div>
-
-<div class="well" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
-    <form class="form-search" action="" method="post">
-        <button class="btn btn-primary" type="submit">Restore</button>
-        <button class="btn btn-danger" type="submit">Empty</button>
-        <div style="padding-left: 20px;" class="input-append">
-            <input type="text" class="search-query">
-            <button type="submit" class="btn"><i class="icon-search"></i></button>
-        </div>
-    </form>
 </div>

@@ -8,10 +8,38 @@ class MailController extends AbstractActionController {
     
     public function indexAction()
     {
+        $where_string = '';
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($request->getPost('query') != '') {
+                $where = array();
+                $query = $request->getPost('query');
+                $metadata = new \Zend\Db\Metadata\Metadata($this->db);
+                $columns  = $metadata->getTable('Mail')->getColumns();
+                foreach($columns as $column) {
+                    // echo $column->getDataType();
+                    if ($column->getDataType()=='text' or $column->getDataType()=='varchar') {
+                        $where[] = 'm.'.$column->getName().' LIKE "%'.$query.'%"';
+                    }
+                }
+                $where[] = 'u.username LIKE "%'.$query.'%"';
+                $where[] = 'u.firstname LIKE "%'.$query.'%"';
+                if (!empty($where)) $where_string = 'and '.implode(' or ',$where);
+                $stmt = $this->db->createStatement('SELECT * FROM '.$this->table);
+            } elseif ($request->getPost('action_submit') == '1') {
+                if ($request->getPost('action_select') == 'delete') {
+                    // die(var_dump($request->getPost('action')));
+                    foreach ($request->getPost('action') as $action) {
+                        return $this->deleteAction($action);
+                    }
+                }
+            }
+        }
+
         $query   = $this->db->query('SELECT m.*, u.username as author
             FROM Mail m
             LEFT JOIN users u ON m.user_id=u.id
-            WHERE m.project_id=:project ORDER BY m.id ASC'
+            WHERE m.project_id=:project '.$where_string.' ORDER BY m.id DESC'
             );
         return array(
             'entities' => $query->execute(array('project' => $this->project['id']))

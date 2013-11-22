@@ -31,8 +31,8 @@ class AsController extends AbstractActionController {
 
     public function sendAction() {
         $request = $this->getRequest();
-        $form = new \Index\Form\ContactForm();
-        $name = $this->user->username;
+        $form  = new \Index\Form\ContactForm();
+        $name  = $this->user->username;
         $email = $this->user->email;
         $message = $request->getPost('contact_message');
         if ($request->isPost()) {

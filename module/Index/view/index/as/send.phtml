@@ -1,11 +1,11 @@
 
     <div class="alert alert-success">
-    <h4 class="alert-heading">Thank you!</h4>
-    You successfully send this message.
+    <h4 class="alert-heading">Merci!</h4>
+    Votre message à bien été envoyé.
     </div>
 
     <div class="well">
-        <p>Name : <?php echo $this->name; ?></p>
+        <p>Nom : <?php echo $this->name; ?></p>
         <p>Email : <?php echo $this->email; ?></p>
         <p>Message : <?php echo $this->message; ?></p>
         <?php if(isset($this->copy)): ?><p>A copy is send to <?php echo $this->email; ?></p><?php endif; ?>
@@ -13,6 +13,6 @@
 
     <div class="form-actions">
         <a class="btn" href="<?php echo $this->url('home'); ?>">
-            Back
+            Retour
         </a>
     </div>

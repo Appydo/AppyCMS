@@ -19,7 +19,7 @@ foreach($this->form->getMessages() as $key=>$errors) {
 <script type="text/javascript" src="<?php echo $this->basePath('/js/jquery-ui-1.8.21.custom.min.js'); ?>"></script>
 
 <!-- Load TinyMCE -->
-<script type="text/javascript" src="<?php echo $this->basePath('/js/tiny_mce/jquery.tinymce.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->basePath('/js/tinymce/jquery.tinymce.min.js') ?>"></script>
 <script type="text/javascript">
     $().ready(function() {
             $('.add').click(function() {
@@ -30,12 +30,19 @@ foreach($this->form->getMessages() as $key=>$errors) {
             $('#box').click(function() {$('#dialog').dialog('open')});
             $('textarea').tinymce({
                 // Location of TinyMCE script
-                script_url : '<?php echo $this->basePath('/js/tiny_mce/tiny_mce.js') ?>',
+                script_url : '<?php echo $this->basePath('/js/tinymce/tinymce.min.js') ?>',
                 remove_script_host : false,
                 convert_urls : false,
                 height : "300",
                 width  : "100%",
-
+                menu : {},
+                plugins: [
+                    "advlist autolink lists link image charmap print preview anchor",
+                    "searchreplace visualblocks code fullscreen",
+                    "insertdatetime media table contextmenu paste textcolor emoticons"
+                ],
+                toolbar: "undo redo | styleselect fontselect fontsizeselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | code preview fullscreen | searchreplace insertdatetime table print charmap visualblocks anchor removeformat | forecolor backcolor emoticons",
+                /*
                 // General options
                 theme : "advanced",
                 plugins : "autolink,lists,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,advlist",
@@ -76,21 +83,27 @@ foreach($this->form->getMessages() as $key=>$errors) {
 
 <form method="post" action="<?php echo $this->url('admin', array('controller' => 'EmailData', 'action' => 'update', 'id'=> $entity['ed_id'])); ?>">
     
-        <?php foreach($this->form as $element): ?>
-        <?php if($element->getAttribute('type')!='hidden' and $element->getAttribute('type')!='submit' and $element->getName()!='ed_id'): ?>
-            <div class="control-group<?php if(count($element->getMessages())>0): ?> error<?php endif; ?>">
-                <label class="control-label" for="<?php echo $element->getName(); ?>"><?php echo $this->formLabel($element); ?></label>
-                <div class="controls">
+    <div class="control-group input-prepend input-append">
+        <span class="add-on" style="font-weight: bold;">Title</span>
+        <?php $element = $this->form->get('ed_title'); ?>
+        <?php echo $this->formElement($element); ?>   
+        <a class="btn" href="#" id="box"><i class="icon-picture"></i> Insert images</a>
+    </div>
 
-                    <?php echo $this->formElement($element); ?>   
+    <?php $element = $this->form->get('ed_content'); ?>
+    <?php echo $this->formElement($element); ?>   
 
-                </div>
-            </div>
-        <?php endif; ?>
-    <?php endforeach; ?>
+    <input type="hidden" name="ed_hide" value="0" />
 
     <?php echo $this->formInput($this->form->get('csrf')); ?>
     
+    <div style="margin-top: 1em;margin-bottom: 1em;">
+        <select name="lang_id">
+            <?php foreach($this->langs as $lang): ?>
+                <option value="<?php echo $lang['lang_id']; ?>"><?php echo $lang['lang_value']; ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
     
     <div class="form-actions" style="padding:0;margin:0;padding:10px;margin-bottom:10px;">
         <button class="btn btn-primary" type="submit">

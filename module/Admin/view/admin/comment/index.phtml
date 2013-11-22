@@ -1,4 +1,4 @@
-<style>
+<style type="text/css">
     th {
         -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
         -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
@@ -62,69 +62,15 @@
 
 <div class="pagination">
     <ul>
-        <li><a href="">Prev</a></li>
+        <li><a href="">&lt;</a></li>
         <li class="active">
             <a href="">1</a>
         </li>
         <li><a href="#">2</a></li>
         <li><a href="#">3</a></li>
         <li><a href="#">4</a></li>
-        <li><a href="">Next</a></li>
+        <li><a href="">&gt;</a></li>
     </ul>
 </div>
     
 </form>
-
-
-<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
-    <form class="form-search" action="" method="post">
-        <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'comment','action'=>'new')); ?>">
-            <i class="icon-plus icon-white"></i>
-            <?php echo $this->translate('Comment'); ?>
-        </a>
-        <div style="padding-left: 20px;" class="input-append">
-            <input type="text" class="search-query">
-            <button type="submit" class="btn"><i class="icon-search"></i></button>
-        </div>
-    </form>
-</div>
-
-
-
-<?php /*
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Topic</th>
-            <th>Created</th>
-            <th>Updated</th>
-            <th>Author</th>
-        </tr>
-    </thead>
-    <tbody>
-    <?php foreach($this->topics as $topic): ?>
-        <tr>
-            <td><a href="<?php echo $this->url('admin', array('controller'=>'comment','action'=>'topic', 'id'=>$topic['id'])); ?>"><?php echo $topic['name']; ?></a></td>
-            <td><?php echo date('d-m-Y H:i',$topic['created']); ?></td>
-            <td><?php echo date('d-m-Y H:i',$topic['updated']); ?></td>
-            <td><a href="<?php echo $this->url('admin', array('controller'=>'user', 'action'=>'topic', 'id'=>$topic['id'])); ?>"><?php echo $topic['user_id'] ?></a></td>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
-
-<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
-    <form class="form-search" action="" method="post">
-        <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'comment','action'=>'new')); ?>">
-            <i class="icon-plus icon-white"></i>
-            <?php echo $this->translate('Comment'); ?>
-        </a>
-        <div style="padding-left: 20px;" class="input-append">
-            <input type="text" class="search-query">
-            <button type="submit" class="btn"><i class="icon-search"></i></button>
-        </div>
-    </form>
-</div>
- * 
- */?>

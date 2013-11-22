@@ -38,6 +38,15 @@ class SignupForm extends Form {
             ),
         ));
         $this->add(array(
+            'name' => 'postal',
+            'attributes' => array(
+                'type'  => 'text',
+            ),
+            'options' => array(
+                'label' => 'Code postal',
+            ),
+        ));
+        $this->add(array(
             'name' => 'address',
             'attributes' => array(
                 'type'  => 'text',

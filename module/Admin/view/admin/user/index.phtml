@@ -23,10 +23,10 @@ function checkAll(field)
 <form class="form-search" method="post" action="<?php echo $this->url('admin', array('controller'=>'user','action'=>'index')); ?>">
 
 <div class="form-actions" style="padding:10px;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
-        <a class="btn btn-primary" href="<?php echo $this->url($this->module, array('controller'=>$this->controller,'action'=>'new')); ?>">
+        <a class="btn btn-primary" href="<?php echo $this->url($this->module, array('controller'=>'user','action'=>'new')); ?>">
             <i class="icon-plus icon-white"></i>
-            <?php echo $this->translate('User'); ?>
         </a>
+        
         <div style="padding-left: 20px;" class="input-append">
             <input type="text" name="query" class="search-query" value="<?php echo $this->query; ?>" />
             <button type="submit" class="btn"><i class="icon-search"></i></button>
@@ -38,18 +38,22 @@ function checkAll(field)
 <table class="table table-striped">
     <thead>
         <tr>
-            <th><a href="?order=username&amp;sort=ASC">Nom</a></th>
-            <th><a href="?order=email&amp;sort=ASC">Email</a></th>
-            <th><a href="?order=role&amp;sort=ASC">Profil</a></th>
-            <th><a href="?order=updated&amp;sort=ASC">Dernière connexion</a></th>
-            <th><a href="?order=is_active&amp;sort=ASC">Actif</a></th>
+            <th><a href="?order=id&amp;sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>"><i class="icon-arrow-down"></i> ID</a></th>
+            <th><a href="?order=username&amp;sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>"><i class="icon-arrow-down"></i> Nom</a></th>
+            <th><a href="?order=firstname&amp;sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>"><i class="icon-arrow-down"></i> Prénom</a></th>
+            <th><a href="?order=email&amp;sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>"><i class="icon-arrow-down"></i> Email</a></th>
+            <th><a href="?order=role_name&amp;sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>"><i class="icon-arrow-down"></i> Profil</a></th>
+            <th><a href="?order=updated&amp;sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>"><i class="icon-arrow-down"></i> Dernière connexion</a></th>
+            <th><a href="?order=is_active&amp;sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>"><i class="icon-arrow-down"></i> Actif</a></th>
             <th><input type="checkbox" name="action" onclick="javascript:checkAll('action[]')" /></th>
         </tr>
     </thead>
     <tbody>
     <?php foreach($this->entities as $entity): ?>
         <tr>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'user', 'action'=>'edit', 'id'=>$entity['id']), null, true); ?>"><?php echo $entity['id']; ?></a></td>
             <td><a href="<?php echo $this->url('admin', array('controller'=>'user', 'action'=>'edit', 'id'=>$entity['id']), null, true); ?>"><?php echo $entity['username']; ?></a></td>
+            <td><?php echo $entity['firstname']; ?></td>
             <td><?php echo $entity['email']; ?></td>
             <td><?php echo $entity['role_name']; ?></th>
             <td><?php echo date('d/m/Y H:s', $entity['updated']); ?></td>
@@ -69,7 +73,7 @@ function checkAll(field)
         
     <div class="pagination">
         <ul>
-            <li><a href="?page=<?php echo $this->page; ?>&move=prev&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>">Prev</a></li>
+            <li><a href="?page=<?php echo $this->page; ?>&move=prev&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>">&lt;</a></li>
             <?php if($this->page<4): ?>
                 <?php for($i=1;$i<6;$i++): ?>
                     <li<?php if($i==$this->page): ?> class="active"<?php endif; ?>><a href="?page=<?php echo $i; ?>&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>"><?php echo $i; ?></a></li>
@@ -79,7 +83,7 @@ function checkAll(field)
                     <li<?php if($i==$this->page): ?> class="active"<?php endif; ?>><a href="?page=<?php echo $i; ?>&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>"><?php echo $i; ?></a></li>
                 <?php endfor; ?>
             <?php endif; ?>
-            <li><a href="?page=<?php echo $this->page; ?>&move=next&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>">Next</a></li>
+            <li><a href="?page=<?php echo $this->page; ?>&move=next&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>">&gt;</a></li>
         </ul>
     </div>
 

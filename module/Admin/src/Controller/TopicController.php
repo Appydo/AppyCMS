@@ -64,24 +64,57 @@ function slug($str){
         if (isset($_GET['reindex'])) {
             $this->reIndexNested();
         }
+
+        $where_string = '';
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($request->getPost('query') != '') {
+                $where = array();
+                $query = $request->getPost('query');
+                $metadata = new \Zend\Db\Metadata\Metadata($this->db);
+                $columns  = $metadata->getTable('Topic')->getColumns();
+                foreach($columns as $column) {
+                    // echo $column->getDataType();
+                    if ($column->getDataType()=='text' or $column->getDataType()=='varchar') {
+                        $where[] = $column->getName().' LIKE "%'.$query.'%"';
+                    }
+                }
+                if (!empty($where)) $where_string = 'and t.'.implode(' or t.',$where);
+                $stmt = $this->db->createStatement('SELECT * FROM '.$this->table);
+            } elseif ($request->getPost('action_submit') == '1') {
+                if ($request->getPost('action_select') == 'delete') {
+                    // die(var_dump($request->getPost('action')));
+                    foreach ($request->getPost('action') as $action) {
+                        return $this->deleteAction($action);
+                    }
+                }
+            }
+        }
         
         $parent = '';
         
         $query = $this->db->query('SELECT
             t.*, tu.username as author, (SELECT COUNT(c.id) FROM Comment as c WHERE c.topic_id=t.id) as comments, (COUNT(p.id) - 1) AS depth
             FROM Topic t, Topic p, users tu
-            WHERE t.lft BETWEEN p.lft AND p.rgt AND t.user_id=tu.id
+            WHERE t.lft BETWEEN p.lft AND p.rgt AND t.user_id=tu.id '.$where_string.'
             and t.hide=0 '.$parent.' and t.project_id=:project and p.project_id=:project
             GROUP BY t.id
             ORDER BY t.lft'
         );
         return array(
+            'where' => (!empty($where_string)),
             'parent_id' => $parent_id,
             'topics' => $query->execute(array('project' => $this->project['id']))
         );
     }
 
     public function trashAction() {
+        $request = $this->getRequest();
+        if ($request->getPost('delete_all',0)==1) {
+            $this->db
+                        ->query('DELETE FROM Topic WHERE hide=1')
+                        ->execute();
+        }
         $query = $this->db->query('SELECT
             t.*, u.username as author, (SELECT COUNT(c.id) FROM Comment as c WHERE c.topic_id=t.id) as comments
             FROM Topic t
@@ -220,7 +253,10 @@ function slug($str){
             $form->setData($request->getPost());
             if ($form->isValid()) {
                 $position = $this->addNested($request->getPost('parent'), $this->user->project_id);
-
+                if(get_magic_quotes_gpc())
+                    $content = stripslashes($request->getPost('content'));
+                else
+                    $content = $request->getPost('content');
                 $user   = $this->db->query('SELECT project_id FROM users WHERE id=:user_id')->execute(array('user_id'=>$this->user->id))->current();
                 $insert = $this->db->query('
                     INSERT INTO Topic (name, slug, content, created, updated, user_id, project_id, topic_id, lft, rgt, hide)
@@ -228,7 +264,7 @@ function slug($str){
                     ')->execute(array(
                         'name' => $request->getPost('name'),
                         'slug' => $this->slug($request->getPost('name')),
-                        'content' => $request->getPost('content'),
+                        'content' => $content,
                         'created' => time(),
                         'updated' => time(),
                         'user_id' => $this->user->id,
@@ -345,6 +381,10 @@ function slug($str){
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if ($form->isValid()) {
+                if(get_magic_quotes_gpc())
+                    $content = stripslashes($request->getPost('content'));
+                else
+                    $content = $request->getPost('content');
                 $update = $this->db->query('
                         UPDATE Topic SET
                         name=:name, slug=:slug, content=:content, updated=:updated,
@@ -354,7 +394,7 @@ function slug($str){
                     ')->execute(array(
                         'name' => $request->getPost('name'),
                         'slug' => $this->slug($request->getPost('name')),
-                        'content' => $request->getPost('content'),
+                        'content' => $content,
                         'topic_id' => ($request->getPost('parent') == 0) ? null : $request->getPost('parent'),
                         'updated' => time(),
                         'user_id' => $this->user->id,

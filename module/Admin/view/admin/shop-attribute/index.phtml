@@ -49,7 +49,11 @@ function checkAll(field)
     <tbody>
     <?php foreach($this->entities as $entity): ?>
         <tr>
-            <td><a href="<?php echo $this->url('admin', array('controller'=>'shopattributechoice','action'=>'index', 'id'=>$entity['sa_id'])); ?>"><?php echo $entity['sa_name']; ?></a></td>
+            <td>
+                <a href="<?php echo $this->url('admin', array('controller'=>'shopattributechoice','action'=>'index', 'id'=>$entity['sa_id'])); ?>">
+                    <?php echo $entity['sa_name']; ?>
+                </a>
+            </td>
             <td><?php echo $entity['count']; ?></td>
             <td><input type="checkbox" name="action[]" value="<?php echo $entity['sa_id']; ?>" /></td>
         </tr>
@@ -66,14 +70,14 @@ function checkAll(field)
         
     <div class="pagination">
         <ul>
-            <li><a href="">Prev</a></li>
+            <li><a href="">&lt;</a></li>
             <li class="active">
                 <a href="">1</a>
             </li>
             <li><a href="#">2</a></li>
             <li><a href="#">3</a></li>
             <li><a href="#">4</a></li>
-            <li><a href="">Next</a></li>
+            <li><a href="">&gt;</a></li>
         </ul>
     </div>
 

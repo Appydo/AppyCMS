@@ -11,17 +11,17 @@
     }
 </style>
 
-<div class="well" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
-    <form class="form-search" action="" method="post">
+<form class="form-search" method="post" action="<?php echo $this->url('admin', array('controller'=>'topic','action'=>'index')); ?>">
+
+<div class="form-actions" style="padding:10px;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
         <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'topic','action'=>'new')); ?>">
             <i class="icon-plus icon-white"></i>
             <?php echo $this->translate('Page'); ?>
         </a>
         <div style="padding-left: 20px;" class="input-append">
-            <input type="text" class="search-query">
+            <input type="text" name="query" class="search-query" value="<?php echo $this->query; ?>" />
             <button type="submit" class="btn"><i class="icon-search"></i></button>
         </div>
-    </form>
 </div>
 
 <?php if($parent_id['id']): ?>
@@ -47,7 +47,9 @@
         <tr>
             <td style="padding-left:2px;">
                 <a href="<?php echo $this->url('admin',array('controller'=>'topic','action'=>'edit', 'id'=>$topic['id'])); ?>">
-                    <?php for($i=0;$i<$topic['depth'];$i++): ?> - <?php endfor; ?> <?php echo $topic['name']; ?>
+                    <?php if($this->where=0): ?>
+                        <?php for($i=0;$i<$topic['depth'];$i++): ?> - <?php endfor; ?>
+                    <?php endif; ?><?php echo $topic['name']; ?>
                 </a>
             </td>
             <td><a href="<?php echo $this->url('admin',array('controller'=>'comment','action'=>'index', 'id'=>$topic['id'])); ?>"><?php echo $topic['comments'] ?></a></td>
@@ -68,15 +70,20 @@
     <button class="btn" type="submit"><?php echo $this->translate('Valid'); ?></button>
 </div>
     
-<div class="pagination">
-    <ul>
-        <li><a href="">Prev</a></li>
-        <li class="active">
-            <a href="">1</a>
-        </li>
-        <li><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
-        <li><a href="">Next</a></li>
-    </ul>
-</div>
+    <div class="pagination">
+        <ul>
+            <li><a href="?page=<?php echo $this->page; ?>&move=prev&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>">&lt;</a></li>
+            <?php if($this->page<4): ?>
+                <?php for($i=1;$i<6;$i++): ?>
+                    <li<?php if($i==$this->page): ?> class="active"<?php endif; ?>><a href="?page=<?php echo $i; ?>&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>"><?php echo $i; ?></a></li>
+                <?php endfor; ?>
+            <?php else: ?>
+                <?php for($i=$this->page-2;$i<$this->page+3;$i++): ?>
+                    <li<?php if($i==$this->page): ?> class="active"<?php endif; ?>><a href="?page=<?php echo $i; ?>&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>"><?php echo $i; ?></a></li>
+                <?php endfor; ?>
+            <?php endif; ?>
+            <li><a href="?page=<?php echo $this->page; ?>&move=next&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>">&gt;</a></li>
+        </ul>
+    </div>
+
+</form>
