@@ -13,7 +13,7 @@ Using Git submodules
 --------------------
 Alternatively, you can install using native git submodules:
 
-    git clone git://github.com/appydo/appycms.git --recursive
+    git clone git://github.com/Appydo/AppyCMS.git --recursive
 
 Virtual Host
 ------------
