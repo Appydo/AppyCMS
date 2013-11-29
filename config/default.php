@@ -9,7 +9,7 @@ return array(
         'username' => 'YOUR USERNAME HERE',
         'password' => 'YOUR PASSWORD HERE',
     ),
-    'install' => 1,
+    'install' => 0,
     'version' => 0.3,
     'zone' => 'Europe/Paris',
     'service_manager' => array(
