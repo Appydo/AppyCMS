@@ -115,5 +115,7 @@ PENALITES: En cas de défaut de règlement dans les délais stipulés aux prése
 R.C.S. NANTES 789 135 415<br />	 	 	 	 
 N° SIRET : 789 135 415 00014 - Code APE : 4791A	 <br />	 	 	 
 N°TVA Intracommunautaire : FR 07 789135415<br />
-S.A.R.L. au capital de 6000 Euros
+<?php if(!empty($this->capital)): ?>
+    S.A.R.L. au capital de <?php echo $this->capital; ?> Euros
+<?php endif; ?>
 </p>

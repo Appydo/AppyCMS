@@ -176,6 +176,7 @@ class AuthController extends AbstractActionController {
                         'date'     => time(),
                         'success'  => 0,
                     ));
+                    $this->flashMessenger()->addErrorMessage('Login error : wrong email or password');
                     return $this->redirect()->toRoute('auth');
                 }
             }

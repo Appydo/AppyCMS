@@ -6,6 +6,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Admin\Lib\SimpleImage as SimpleImage;
 use Zend\Barcode\Barcode;
+use Admin\Lib;
 
 class ProductController extends AbstractActionController {
 
@@ -197,6 +198,7 @@ class ProductController extends AbstractActionController {
 			                    ')
                             ->execute(array('id' => $id))
                             ->current();
+                    $slug = new Slug();
                     for ($i = 0; $i < $count_files; $i++) {
                         if (!empty($_FILES['file']['size'][$i])) {
                             move_uploaded_file($_FILES['file']['tmp_name'][$i], $path . $_FILES['file']['name'][$i]);
@@ -214,7 +216,7 @@ class ProductController extends AbstractActionController {
                                     if ($image->getHeight() > $size['pir_height']) {
                                         $image->resizeToHeight($size['pir_height']);
                                     }
-                                    $image->save($path . '/' . $size['pir_name'] . '/' . $_FILES['file']['name'][$i]);
+                                    $image->save($path . '/' . $size['pir_name'] . '/' . $slug->slugify($_FILES['file']['name'][$i]));
                                 }
                             }
                             if ($i < $image_count['count(*)']) {
@@ -452,6 +454,7 @@ class ProductController extends AbstractActionController {
 			                    ')->execute();
 
                             $image = new SimpleImage();
+                            $slug = new Slug();
                             foreach($sizes as $size) {
                                 @mkdir($path . '/' . $size['pir_name'] . '/');
                                 // die(var_dump($_FILES['file']['name'][$i]));
@@ -461,7 +464,7 @@ class ProductController extends AbstractActionController {
                                     if ($image->getHeight() > $size['pir_height']) {
                                         $image->resizeToHeight($size['pir_height']);
                                     }
-                                    $image->save($path . '/' . $size['pir_name'] . '/' . $_FILES['file']['name'][$i]);
+                                    $image->save($path . '/' . $size['pir_name'] . '/' . $slug->slugify($_FILES['file']['name'][$i]));
                                 }
                             }
                             if ($i < $image_count['count(*)']) {
@@ -593,6 +596,7 @@ class ProductController extends AbstractActionController {
         
         if ($request->isPost()) {
             foreach($request->getPost('action') as $action) {
+                $this->flashMessenger()->addSuccessMessage('Product #'.$action.' deleted');
                 $this->db
                         ->query('DELETE FROM Product WHERE id=:id')
                         ->execute(array('id' => $action));

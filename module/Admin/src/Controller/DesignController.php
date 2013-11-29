@@ -23,6 +23,7 @@ class DesignController extends AbstractActionController {
                     ->query('SELECT * FROM Project p WHERE p.id=:id and p.ban=0')
                     ->execute(array('id' => $user['project_id']))
                     ->current();
+            $this->flashMessenger()->addSuccessMessage('Design modified');
         }
 
         $dir = __DIR__ . '/../../../../public/themes';

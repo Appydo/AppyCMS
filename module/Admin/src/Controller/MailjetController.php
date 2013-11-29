@@ -33,13 +33,14 @@ class MailjetController extends AbstractActionController {
     	*/	
         
         // Include Mailjet's API Class
-		include_once(ROOT_PATH . '/module/Admin/src/Vendor/php-mailjet.class-mailjet-0.1.php');
-		 
+		include_once( ROOT_PATH . 'module/Admin/src/Lib/php-mailjet.class-mailjet-0.1.php' );
+
 		// Create a new Object
 		$mj = new \Mailjet(
 			'9dd2d2d3231c124c88271b553a958edf',
 			'41cce68dc59aa9a7e4610ac61b2850eb'
 			);
+
 		$response = $mj->messageList();
 		$messages = $response->result;
 
@@ -60,7 +61,7 @@ class MailjetController extends AbstractActionController {
 		$response = $mj->reportEmailStatistics();
 
         return array(
-        	'$statistics' => $response->stats,
+        	'statistics' => $response->stats,
             'messages' => $messages,
         );
 

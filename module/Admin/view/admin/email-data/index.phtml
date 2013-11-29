@@ -28,7 +28,7 @@ function checkAll(field)
             <?php echo $this->translate('New'); ?>
         </a>
         <div style="padding-left: 20px;" class="input-append">
-            <input type="text" class="search-query">
+            <input type="text" class="search-query" name="query">
             <button type="submit" class="btn"><i class="icon-search"></i></button>
         </div>
     </form>
@@ -41,7 +41,6 @@ function checkAll(field)
     <thead>
         <th><?php echo $this->translate('Title'); ?></th>
         <th><?php echo $this->translate('Active'); ?></th>
-        <th></th>
         <th><input type="checkbox" name="action" onclick="javascript:checkAll('action[]')" /></th>
     </thead>
     

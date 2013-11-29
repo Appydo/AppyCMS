@@ -4,41 +4,9 @@ namespace Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Admin\Lib\Slug;
 
 class TopicController extends AbstractActionController {
-
-function remove_accent($str)
-{
-  $a = array('À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Æ', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ð',
-                'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'ß', 'à', 'á', 'â', 'ã',
-                'ä', 'å', 'æ', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ñ', 'ò', 'ó', 'ô', 'õ',
-                'ö', 'ø', 'ù', 'ú', 'û', 'ü', 'ý', 'ÿ', '.', '.', '.', '.', '.', '.', '.', '.', '.',
-                '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',
-                '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',
-                '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',
-                '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',
-                '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 
-                '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 
-                '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.',
-                '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.');
-
-  $b = array('A', 'A', 'A', 'A', 'A', 'A', 'AE', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'D', 'N', 'O',
-                'O', 'O', 'O', 'O', 'O', 'U', 'U', 'U', 'U', 'Y', 's', 'a', 'a', 'a', 'a', 'a', 'a', 'ae', 'c',
-                'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'n', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u',
-                'y', 'y', 'A', 'a', 'A', 'a', 'A', 'a', 'C', 'c', 'C', 'c', 'C', 'c', 'C', 'c', 'D', 'd', 'D',
-                'd', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'G', 'g', 'G', 'g', 'G', 'g', 'G', 'g',
-                'H', 'h', 'H', 'h', 'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'IJ', 'ij', 'J', 'j', 'K',
-                'k', 'L', 'l', 'L', 'l', 'L', 'l', 'L', 'l', 'L', 'l', 'N', 'n', 'N', 'n', 'N', 'n', 'n', 'O', 'o',
-                'O', 'o', 'O', 'o', 'OE', 'oe', 'R', 'r', 'R', 'r', 'R', 'r', 'S', 's', 'S', 's', 'S', 's', 'S',
-                's', 'T', 't', 'T', 't', 'T', 't', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'W',
-                'w', 'Y', 'y', 'Y', 'Z', 'z', 'Z', 'z', 'Z', 'z', 's', 'f', 'O', 'o', 'U', 'u', 'A', 'a', 'I', 'i',
-                'O', 'o', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'A', 'a', 'AE', 'ae', 'O', 'o');
-  return str_replace($a, $b, $str);
-}
-function slug($str){
-  return mb_strtolower(preg_replace(array('/[^a-zA-Z0-9 \'-]/', '/[ -\']+/', '/^-|-$/'),
-  array('', '-', ''), $this->remove_accent($str)));
-}
 
     public function indexAction() {
         // Sub category
@@ -249,6 +217,7 @@ function slug($str){
         $topics = $this->db->query('SELECT * FROM Topic t WHERE t.project_id=:project')->execute(array('project' => $this->user->project_id));
         $request = $this->getRequest();
         $form = new \Admin\Form\TopicForm();
+        $slug = new Slug();
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if ($form->isValid()) {
@@ -263,7 +232,7 @@ function slug($str){
                     VALUES (:name, :slug, :content, :created, :updated, :user_id, :project_id, :topic_id, :lft, :rgt, :hide)
                     ')->execute(array(
                         'name' => $request->getPost('name'),
-                        'slug' => $this->slug($request->getPost('name')),
+                        'slug' => $slug->slugify($request->getPost('name')),
                         'content' => $content,
                         'created' => time(),
                         'updated' => time(),
@@ -275,12 +244,15 @@ function slug($str){
                         'hide' => ($request->getPost('hide') == 'on') ? 1 : 0
                         ));
                 if ($insert) {
+                    $this->flashMessenger()->addSuccessMessage('Page created');
                     $id = $this->db->getDriver()->getLastGeneratedValue();
                     return $this->redirect()->toRoute('admin', array(
                         'controller' => 'topic',
                         'action' => 'edit',
                         'id' => $id
                     ));
+                } else {
+                    $this->flashMessenger()->addErrorMessage('Error page creation');
                 }
             }
         }
@@ -380,6 +352,7 @@ function slug($str){
         $form = new \Admin\Form\TopicForm();
         if ($request->isPost()) {
             $form->setData($request->getPost());
+            $slug = new Slug();
             if ($form->isValid()) {
                 if(get_magic_quotes_gpc())
                     $content = stripslashes($request->getPost('content'));
@@ -392,16 +365,16 @@ function slug($str){
                         comment=:comment
                         WHERE id=:id
                     ')->execute(array(
-                        'name' => $request->getPost('name'),
-                        'slug' => $this->slug($request->getPost('name')),
+                        'name'    => $request->getPost('name'),
+                        'slug'    => $slug->slugify($request->getPost('name')),
                         'content' => $content,
                         'topic_id' => ($request->getPost('parent') == 0) ? null : $request->getPost('parent'),
                         'updated' => time(),
                         'user_id' => $this->user->id,
                         'project_id' => $user['project_id'],
                         'comment' => ($request->getPost('comment') == 'on') ? 1 : 0,
-                        'hide' => ($request->getPost('hide') == 'on') ? 1 : 0,
-                        'id' => $id
+                        'hide'    => ($request->getPost('hide') == 'on') ? 1 : 0,
+                        'id'      => $id
                     ));
                 if ($update) {
                     $insert = $this->db->query('

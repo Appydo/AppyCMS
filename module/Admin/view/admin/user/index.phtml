@@ -18,7 +18,20 @@ function checkAll(field)
         border: solid 1px #cdcdcd;
         padding: 0;
     }
+    ul {
+        margin: 0;
+    }
+    li {
+        list-style-type:none;
+    }
 </style>
+
+<?php
+    echo $this->flashMessenger()->render('error',   array('alert', 'alert-dismissable', 'alert-danger'));
+    echo $this->flashMessenger()->render('info',    array('alert', 'alert-dismissable', 'alert-info'));
+    echo $this->flashMessenger()->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
+    echo $this->flashMessenger()->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+?>
 
 <form class="form-search" method="post" action="<?php echo $this->url('admin', array('controller'=>'user','action'=>'index')); ?>">
 

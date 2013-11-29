@@ -142,8 +142,7 @@ class UserController extends AbstractActionController {
         );
     }
 
-    public function profilAction() {
-
+    public function profilUpdateAction() {
         $request = $this->getRequest();
         $form = new \Admin\Form\UserForm();
         if ($request->isPost()) {
@@ -185,24 +184,46 @@ class UserController extends AbstractActionController {
             $form->setData($request->getPost());
             if ($form->isValid()) {
                 if ($request->getPost('oldPassword') != '' and $request->getPost('password') == $request->getPost('confirmPassword')) {
+
                     $salt = $this->db->query("SELECT salt FROM users WHERE id=:id")->execute(array('id'=>$this->params('id')))->current();
-                    $update = $this->db->query("UPDATE users SET username=:username, email=:email, password=:password, updated=:updated WHERE id=:id")->execute(array(
+                    $update = $this->db->query("UPDATE users SET username=:username, firstname=:firstname, phone=:phone, city=:city, email=:email, password=:password, updated=:updated WHERE id=:id")->execute(array(
                         'username' => $request->getPost('username'),
+                        'firstname' => $request->getPost('firstname'),
+                        'city' => $request->getPost('city'),
+                        'phone' => $request->getPost('phone'),
                         'email' => $request->getPost('useremail'),
                         'password' => sha1($request->getPost('password') . $salt['salt']),
                         'updated' => time(),
                         'id' => $this->user->id
                         ));
+                    if ($update) {
+                        $this->flashMessenger()->addSuccessMessage('Password modified');
+                    } else {
+                        $this->flashMessenger()->addErrorMessage('Error password');
+                    }
                 } else {
-                    $update = $this->db->query("UPDATE users SET username=:username, email=:email, updated=:updated WHERE id=:id")->execute(array(
+                    $update = $this->db->query("UPDATE users SET username=:username, firstname=:firstname, phone=:phone, city=:city, email=:email, updated=:updated WHERE id=:id")->execute(array(
+                        'firstname' => $request->getPost('firstname'),
+                        'city' => $request->getPost('city'),
+                        'phone' => $request->getPost('phone'),
                         'username' => $request->getPost('username'),
                         'email' => $request->getPost('useremail'),
                         'updated' => time(),
                         'id' => $this->user->id
                         ));
+                    $this->flashMessenger()->addSuccessMessage('Profil updated');
                 }
             }
+        } else {
+            $this->flashMessenger()->addSuccessMessage('No data');
         }
+        return $this->redirect()->toRoute('admin',array('controller'=>'user','action'=>'profil'));
+    }
+
+    public function profilAction() {
+
+        $request = $this->getRequest();
+        $form = new \Admin\Form\UserForm();
 
         $query = $this->db->query('SELECT u.*
             FROM users u
@@ -215,7 +236,8 @@ class UserController extends AbstractActionController {
 
         return array(
             'entity' => $query->execute(array('user' => $this->user->id))->current(),
-            'form' => $form
+            'form' => $form,
+            // 'flashMessages' => $this->flashMessenger()->getMessages()
         );
     }
 
@@ -450,17 +472,20 @@ class UserController extends AbstractActionController {
             if ($form->isValid()) {
 
                 $id = $this->createUser($username, $credential, $email, $role);
-                if ($id > 0)
+                if ($id > 0) {
+                    $this->flashMessenger()->addSuccessMessage('User created');
                     return $this->redirect()->toRoute('admin', array(
                                 'controller' => 'user',
                                 'action' => 'edit',
                                 'id' => $id
                             ));
-                else
+                } else {
+                    $this->flashMessenger()->addSuccessMessage('Error creating user');
                     return $this->redirect()->toRoute('admin', array(
                                 'controller' => 'user',
                                 'action' => 'new'
                             ));
+                }
             }
         }
 
@@ -508,7 +533,6 @@ class UserController extends AbstractActionController {
                     )
                 );
                 
-                
 
                 $role = $this->db
                     ->query('
@@ -539,6 +563,7 @@ class UserController extends AbstractActionController {
                 }
 
                 if ($update) {
+                    $this->flashMessenger()->addSuccessMessage('User modified');
                     return $this->redirect()->toRoute('admin', array(
                                 'controller' => 'user',
                                 'action' => 'edit',
@@ -573,6 +598,7 @@ class UserController extends AbstractActionController {
         
         if ($request->isPost()) {
             foreach($request->getPost('action') as $action) {
+                $this->flashMessenger()->addSuccessMessage('User #'.$action.' deleted');
                 $this->db
                         ->query('DELETE FROM users WHERE id=:id')
                         ->execute(array('id' => $action));

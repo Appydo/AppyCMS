@@ -65,11 +65,13 @@ function checkAll(field)
         </tr>
         <tr>
             <td colspan="6">
+
                 <p><a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'edit','id'=>$entity['user_id'])); ?>"><?php echo $entity['firstname']; ?> <?php echo $entity['username']; ?></a><br /><?php echo $entity['email']; ?></p>
-                <p><?php echo $entity['address']; ?> <?php echo $entity['city']; ?><br /><?php echo $entity['postal']; ?><br /><?php echo $entity['phone']; ?></p>
+                <p><?php echo $entity['address']; ?><br /><?php echo $entity['city']; ?><br /><?php echo $entity['postal']; ?> <?php echo $entity['phone']; ?></p>
                 <?php if($entity['description']!=''): ?>
                     <p><strong>Message client :</strong><br /><?php echo $entity['description']; ?></p>
                 <?php endif; ?>
+
                     <?php
                     if (count($this->baskets)>0):
                     foreach($this->baskets[$i] as $basket):

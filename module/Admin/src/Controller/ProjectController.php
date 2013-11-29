@@ -154,11 +154,14 @@ class ProjectController extends AbstractActionController {
                     'id' => $id
                         ));
                 if ($update) {
+                    $this->flashMessenger()->addSuccessMessage('Project modified');
                     return $this->redirect()->toRoute('admin', array(
                                 'controller' => 'project',
                                 'action' => 'edit',
                                 'id' => $id
                             ));
+                } else {
+                    $this->flashMessenger()->addErrirMessage('Project edit error');
                 }
             }
         }

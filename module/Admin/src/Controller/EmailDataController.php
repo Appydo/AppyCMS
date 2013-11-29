@@ -24,17 +24,31 @@ class EmailDataController extends AbstractActionController {
     }
     
     public function indexAction() {
-        
-        $metadata = new \Zend\Db\Metadata\Metadata($this->db);
-        // $tableNames = $metadata->getTableNames();
-        
-        $columns = $metadata->getTable($this->table)->getColumns();
+
+        $where_string = '';
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($request->getPost('query') != '') {
+                $where = array();
+                $query = $request->getPost('query');
+                $where[] = 'ed_title LIKE "%'.$query.'%"';
+                $where[] = 'ed_content LIKE "%'.$query.'%"';
+                if (!empty($where)) $where_string = 'WHERE '.implode(' or ',$where);
+                $stmt = $this->db->createStatement('SELECT * FROM '.$this->table);
+            } elseif ($request->getPost('action_submit') == '1') {
+                if ($request->getPost('action_select') == 'delete') {
+                    foreach ($request->getPost('action') as $action) {
+                        return $this->deleteAction($action);
+                    }
+                }
+            }
+        }
 
         $stmt = $this->db
                 ->createStatement('
                     SELECT *
                     FROM '.$this->table.'
-                    ');
+                    '.$where_string);
                 $entities = $stmt->execute()
                 ->getResource()
                 ->fetchAll(\PDO::FETCH_ASSOC);

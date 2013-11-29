@@ -74,10 +74,10 @@ class Module {
                     } elseif (isset($config['layout'])) {
                         $controller->layout = $config['layout'];
                         if (empty($controller->layout))
-                            $controller->layout = 'default';
+                            $controller->layout = 'simple';
                     } else {
                         if (empty($controller->layout))
-                            $controller->layout = 'default';
+                            $controller->layout = 'simple';
                     }
 
                     if (isset($controller->user->id) and isset($controller->project) and $controller->project['user_id'] == $controller->user->id and $e->getRouteMatch()->getParam('design') != '') {

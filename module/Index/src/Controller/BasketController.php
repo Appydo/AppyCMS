@@ -279,7 +279,7 @@ class BasketController extends AbstractActionController {
         // $port = new \FraisPort();
         // $fpd  = $port->calcul($poids); 
         
-        $price_amount = ($price + $delivery_price) * 100;
+        $price_amount = ($total + $delivery_price) * 100;
         
         $website = 'http://www.breizhadonf.com';
 
