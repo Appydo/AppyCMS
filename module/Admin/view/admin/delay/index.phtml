@@ -64,26 +64,13 @@
         
     <div class="pagination">
         <ul>
-            <li><a href="">Prev</a></li>
+            <li><a href="">&lt;</a></li>
             <li class="active"><a href="">1</a></li>
             <li><a href="#">2</a></li>
             <li><a href="#">3</a></li>
             <li><a href="#">4</a></li>
-            <li><a href="">Next</a></li>
+            <li><a href="">&gt;</a></li>
         </ul>
     </div>
 
 </form>
-
-<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;clear:both;">
-    <form class="form-search" action="" method="post">
-        <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'delay','action'=>'new')); ?>">
-            <i class="icon-plus icon-white"></i>
-            <?php echo $this->translate('New'); ?>
-        </a>
-        <div style="padding-left: 20px;" class="input-append">
-            <input type="text" class="search-query">
-            <button type="submit" class="btn"><i class="icon-search"></i></button>
-        </div>
-    </form>
-</div>

@@ -36,8 +36,9 @@ class MailController extends AbstractActionController {
             }
         }
 
-        $query   = $this->db->query('SELECT m.*, u.username as author
+        $query   = $this->db->query('SELECT m.*, u.username as author_lastname, u.id as author_id, f.id as from_id, u.firstname as author_firstname, f.username as from_lastname, f.firstname as from_firstname
             FROM Mail m
+            LEFT JOIN users f ON m.from_id=f.id
             LEFT JOIN users u ON m.user_id=u.id
             WHERE m.project_id=:project '.$where_string.' ORDER BY m.id DESC'
             );

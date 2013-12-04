@@ -197,7 +197,7 @@ class UserController extends AbstractActionController {
                         'id' => $this->user->id
                         ));
                     if ($update) {
-                        $this->flashMessenger()->addSuccessMessage('Password modified');
+                        $this->flashMessenger()->addSuccessMessage('The password was updated successfully.');
                     } else {
                         $this->flashMessenger()->addErrorMessage('Error password');
                     }
@@ -563,7 +563,7 @@ class UserController extends AbstractActionController {
                 }
 
                 if ($update) {
-                    $this->flashMessenger()->addSuccessMessage('User modified');
+                    $this->flashMessenger()->addSuccessMessage('The user was created successfully.');
                     return $this->redirect()->toRoute('admin', array(
                                 'controller' => 'user',
                                 'action' => 'edit',

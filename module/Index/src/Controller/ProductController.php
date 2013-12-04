@@ -128,7 +128,7 @@ class ProductController extends AbstractActionController {
 
         $stmt  = $this->db->createStatement('SELECT p.*, t.name as topic_name
                     FROM Product p
-                    LEFT JOIN topic t on t.id=p.topic_id
+                    LEFT JOIN Topic t on t.id=p.topic_id
                     WHERE p.project_id=:project and p.hide=0
                     ORDER BY t.name, p.id DESC');
 
@@ -211,8 +211,8 @@ class ProductController extends AbstractActionController {
                     SELECT p.*, u.username as author, t.id as topic_id, t.name as topic_name, parent.name as parent_name, parent.id as parent_id
                     FROM Product p
                     LEFT JOIN users u on p.user_id=u.id
-                    LEFT JOIN topic t on t.id=p.topic_id
-                    LEFT JOIN topic parent on parent.id=t.topic_id
+                    LEFT JOIN Topic t on t.id=p.topic_id
+                    LEFT JOIN Topic parent on parent.id=t.topic_id
                     WHERE p.project_id=:project and p.hide=0 and p.id=:id');
 
         $entity = $stmt->execute(array('project' => $this->project['id'], 'id' => $id))->current();
@@ -242,7 +242,7 @@ class ProductController extends AbstractActionController {
         $query  = $this->db->query('
             SELECT p.*, u.username as author, t.name as topic_name
             FROM Product p
-            LEFT JOIN topic t on t.id=p.topic_id
+            LEFT JOIN Topic t on t.id=p.topic_id
             LEFT JOIN users u on p.user_id=u.id
             WHERE p.id!=:id and p.project_id=:project and p.topic_id=:topic and p.hide=0
             ORDER BY p.id DESC');

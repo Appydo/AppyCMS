@@ -66,8 +66,8 @@ function checkAll(field)
         <tr>
             <td colspan="6">
 
-                <p><a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'edit','id'=>$entity['user_id'])); ?>"><?php echo $entity['firstname']; ?> <?php echo $entity['username']; ?></a><br /><?php echo $entity['email']; ?></p>
-                <p><?php echo $entity['address']; ?><br /><?php echo $entity['city']; ?><br /><?php echo $entity['postal']; ?> <?php echo $entity['phone']; ?></p>
+                <p><a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'edit','id'=>$entity['user_id'])); ?>"><i class="icon-user"></i> <?php echo $entity['firstname']; ?> <?php echo $entity['username']; ?></a><br /><i class="icon-envelope"></i> <?php echo $entity['email']; ?></p>
+                <p><i class="icon-home"></i> <?php echo $entity['address']; ?><br /><?php echo $entity['city']; ?><br /><?php echo $entity['postal']; ?><br /><?php echo $entity['phone']; ?></p>
                 <?php if($entity['description']!=''): ?>
                     <p><strong>Message client :</strong><br /><?php echo $entity['description']; ?></p>
                 <?php endif; ?>

@@ -9,9 +9,9 @@ class AlbumTable
 {
     protected $table ='album';
 
-    public function __construct(Adapter $adapter)
+    public function __construct($db)
     {
-        $this->adapter = $adapter;
+        $this->db = $db;
 
         $this->initialize();
     }

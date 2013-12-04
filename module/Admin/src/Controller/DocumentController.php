@@ -97,6 +97,24 @@ class DocumentController extends AbstractActionController {
             }
         }
         
+        if ($request->getPost('rotateLeft')) {
+            $degrees = 90;
+            $source = imagecreatefromjpeg($dir . $result['file']);
+            $rotate = imagerotate($source, $degrees, 0);
+            imagejpeg($rotate, $dir . $result['file'], 95);
+            imagedestroy($source);
+            imagedestroy($rotate);
+        }
+
+        if ($request->getPost('rotateRight')) {
+            $degrees = 270;
+            $source = imagecreatefromjpeg($dir . $result['file']);
+            $rotate = imagerotate($source, $degrees, 0);
+            imagejpeg($rotate, $dir . $result['file'], 95);
+            imagedestroy($source);
+            imagedestroy($rotate);
+        }
+
         if ($request->getPost('reverse')) {
             $img = ImageWorkshop::initFromPath($dir . $result['file']);
             $img->applyFilter(IMG_FILTER_NEGATE);

@@ -31,6 +31,7 @@
             <th>Name</th>
             <th>Date</th>
             <th>Author</th>
+            <th>Recipient</th>
         </tr>
     </thead>
     <tbody>
@@ -38,7 +39,8 @@
         <tr>
             <td><a href="<?php echo $this->url('admin', array('controller'=>'mail','action'=>'show', 'id'=>$entity['id'])); ?>"><?php echo $entity['name']; ?></a></td>
             <td><?php echo date('d-m-Y H:i',$entity['created']); ?></td>
-            <td><a href="<?php echo $this->url('admin', array('controller'=>'user', 'action'=>'edit', 'id'=>$entity['id']), null, true); ?>"><?php echo $entity['author'] ?></a></td>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'user', 'action'=>'edit', 'id'=>$entity['from_id']), null, true); ?>"><?php echo $entity['from_firstname'] ?> <?php echo $entity['from_lastname'] ?> <?php echo $entity['email'] ?></a></td>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'user', 'action'=>'edit', 'id'=>$entity['author_id']), null, true); ?>"><?php echo $entity['author_firstname'] ?> <?php echo $entity['author_lastname'] ?></a></td>
         </tr>
     <?php endforeach; ?>
     </tbody>
@@ -46,13 +48,13 @@
 
 <div class="pagination">
   <ul>
-    <li><a href="{{ path('_topic_list',{page:previous}) }}">&lt;</a></li>
+    <li><a href="">&lt;</a></li>
     <li class="active">
-      <a href="{{ path('_topic_list',{page:1}) }}">1</a>
+      <a href="">1</a>
     </li>
     <li><a href="#">2</a></li>
     <li><a href="#">3</a></li>
     <li><a href="#">4</a></li>
-    <li><a href="{{ path('_topic_list',{page:next}) }}">&gt;</a></li>
+    <li><a href="">&gt;</a></li>
   </ul>
 </div>

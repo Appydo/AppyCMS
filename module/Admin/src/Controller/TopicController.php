@@ -76,20 +76,28 @@ class TopicController extends AbstractActionController {
         );
     }
 
-    public function trashAction() {
+    public function deleteAllAction() {
         $request = $this->getRequest();
         if ($request->getPost('delete_all',0)==1) {
+            $this->flashMessenger()->addSuccessMessage('The trash is empty.');
             $this->db
-                        ->query('DELETE FROM Topic WHERE hide=1')
-                        ->execute();
+                ->query('DELETE FROM Topic WHERE hide=1')
+                ->execute();
         }
+        return $this->redirect()->toRoute('admin', array(
+                        'controller' => 'topic',
+                        'action' => 'trash'
+                    ));
+    }
+
+    public function trashAction() {
+        $request = $this->getRequest();
         $query = $this->db->query('SELECT
             t.*, u.username as author, (SELECT COUNT(c.id) FROM Comment as c WHERE c.topic_id=t.id) as comments
             FROM Topic t
             LEFT JOIN users u on t.user_id=u.id
             WHERE t.project_id=u.project_id and t.user_id=:user and t.hide=1 ORDER BY t.id ASC'
         );
-
         return array(
             'topics' => $query->execute(array('user' => $this->user->id))
         );
@@ -244,7 +252,7 @@ class TopicController extends AbstractActionController {
                         'hide' => ($request->getPost('hide') == 'on') ? 1 : 0
                         ));
                 if ($insert) {
-                    $this->flashMessenger()->addSuccessMessage('Page created');
+                    $this->flashMessenger()->addSuccessMessage('The page was created successfully.');
                     $id = $this->db->getDriver()->getLastGeneratedValue();
                     return $this->redirect()->toRoute('admin', array(
                         'controller' => 'topic',
@@ -377,6 +385,7 @@ class TopicController extends AbstractActionController {
                         'id'      => $id
                     ));
                 if ($update) {
+                    $this->flashMessenger()->addSuccessMessage('The page was updated successfully.');
                     $insert = $this->db->query('
                         INSERT INTO Topic_archive
                         SELECT * FROM Topic WHERE id=:id

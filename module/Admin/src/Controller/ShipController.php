@@ -33,7 +33,7 @@ class ShipController extends AbstractActionController {
         $request = $this->getRequest();
         if ($request->isPost() and $request->getPost('action_submit')=='1') {
             if ($request->getPost('action_select')=='delete') {
-                return $this->deleteAction();
+                $this->deleteAction();
             } elseif ($request->getPost('action_select')=='send') {
                 foreach($request->getPost('action') as $action) {
                     $update = $this->db->query('UPDATE '.$this->table.'
@@ -255,18 +255,14 @@ class ShipController extends AbstractActionController {
         $request = $this->getRequest();
         
         if ($request->isPost()) {
-            /*
             foreach($request->getPost('action') as $action) {
-                $this->db
-                        ->query('DELETE FROM BankOrder WHERE id=:id')
-                        ->execute(array('id' => $action));
-            }
-            */
-            $update = $this->db->query('UPDATE '.$this->table.'
+                $update = $this->db->query('UPDATE '.$this->table.'
                         SET hide=:hide WHERE id=:id', array(
                         'hide' => 1,
                         'id' => $action
                         ));
+            }
+            
         }
         
         return $this->redirect()->toRoute('admin', array(

@@ -23,11 +23,13 @@ class ProductImageResizeController extends AbstractActionController {
                     SELECT pir_id, pir_name as name, pir_width as width, pir_height as height, pir_hide as active
                     FROM '.$this->table.'
                     ');
+
         $entities = $stmt->execute()
                 ->getResource()
                 ->fetchAll(\PDO::FETCH_ASSOC);
 
         return array(
+            'thead' => false,
             'entities' => $entities,
             'controller' => $this->controller,
             'id' => $this->id,
@@ -93,6 +95,7 @@ class ProductImageResizeController extends AbstractActionController {
                         );
                 
                 if ($insert) {
+                    $this->flashMessenger()->addSuccessMessage('The item was created successfully.');
                     $id = $this->db->getDriver()->getLastGeneratedValue();
                     return $this->redirect()->toRoute('admin', array(
                                 'controller' => $this->controller,
@@ -167,6 +170,7 @@ class ProductImageResizeController extends AbstractActionController {
                         $update_args
                         );
                 if ($update) {
+                    $this->flashMessenger()->addSuccessMessage('The item was updated successfully.');
                     return $this->redirect()->toRoute('admin', array(
                                 'controller' => $this->controller,
                                 'action' => 'edit',

@@ -127,7 +127,7 @@ class BillController extends AbstractActionController {
 
         $baskets = array();
         foreach ($query as $key => $basket) {
-            $product = $this->db->query('SELECT * FROM product WHERE id=:id')
+            $product = $this->db->query('SELECT * FROM Product WHERE id=:id')
                     ->execute(array('id' => $basket['product_id']))
                     ->current();
             $baskets[$key] = $basket;
@@ -212,7 +212,7 @@ class BillController extends AbstractActionController {
         $baskets = array();
         $weight  = 0;
         foreach ($query as $key => $basket) {
-            $product = $this->db->query('SELECT * FROM product WHERE id=:id')
+            $product = $this->db->query('SELECT * FROM Product WHERE id=:id')
                     ->execute(array('id' => $basket['product_id']))
                     ->current();
             $baskets[$key] = $basket;

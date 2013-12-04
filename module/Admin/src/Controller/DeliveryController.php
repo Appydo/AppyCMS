@@ -12,28 +12,34 @@ use Zend\InputFilter\InputFilterInterface;
 
 class DeliveryController extends AbstractActionController {
 
-    private $table = 'Delivery';
+    private $title      = 'Delivery';
+    private $table      = 'Delivery';
+    private $controller = 'Delivery';
+    private $template   = 'admin/delivery';
+    private $id         = 'delivery_id';
+    private $select     = 'delivery_id';
+    private $module     = 'admin';
+    private $table_row  = 20;
+
+    private function defaultTemplateVars() {
+        $result = array();
+        $result['primary_id'] = $this->id;
+        $result['controller'] = $this->controller;
+        $result['module']     = $this->module;
+        return $result;
+    }
     
     public function indexAction() {
-        
-        $metadata = new \Zend\Db\Metadata\Metadata($this->db);
-        // $tableNames = $metadata->getTableNames();
-        
-        $columns = $metadata->getTable($this->table)->getColumns();
 
-        $stmt = $this->db
-                ->createStatement('
-                    SELECT *
-                    FROM '.$this->table.'
-                    ');
-                $entities = $stmt->execute()
+        $result = array();
+
+        $result['entities'] = $this->db
+                ->createStatement('SELECT * FROM '.$this->table.'')
+                ->execute()
                 ->getResource()
                 ->fetchAll(\PDO::FETCH_ASSOC);
 
-        return array(
-            'entities' => $entities,
-            'columns'  => $columns
-        );
+        return $result;
 
     }
 
@@ -66,10 +72,10 @@ class DeliveryController extends AbstractActionController {
     }
 
     public function newAction() {
-        
-        return array(
-            'form' => new \Admin\Form\DeliveryForm()
-        );
+        $result = $this->defaultTemplateVars();
+        $result['form'] = $this->generateForm();
+        $result['id']   = $this->id;
+        return $result;
     }
 
     public function createAction() {
@@ -77,29 +83,6 @@ class DeliveryController extends AbstractActionController {
         $form = new \Admin\Form\DeliveryForm();
 
         if ($request->isPost()) {
-            /*
-            $inputFilter = new InputFilter();
-            $factory     = new InputFactory();
-            $inputFilter->add($factory->createInput(array(
-                'name'     => 'name',
-                'required' => true,
-                'filters'  => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
-                        'name'    => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min'      => 3,
-                            'max'      => 30,
-                        ),
-                    ),
-                ),
-            )));
-            $form->setInputFilter($inputFilter);
-             */
             $form->setData($request->getPost());
             if ($form->isValid()) {
                 $insert = $this->db->query(
@@ -133,21 +116,15 @@ class DeliveryController extends AbstractActionController {
 
     public function editAction() {
 
-        $id = $this->params('id');
-        $form = new \Admin\Form\DeliveryForm();
-        $entity = $this->db
-                ->query('SELECT * FROM '.$this->table.' WHERE delivery_id=:id')
-                ->execute(array('id'=>$id))
-                ->current();
-        $form->setData($entity);
-        if (empty($entity)) {
-            die($this->table.' not found.');
-        }
+        $result             = $this->defaultTemplateVars();
+        $result['id']       = $this->params('id');
+        $result['entity']   = $model->get($result['id']);
+        $result['table_id'] = $this->id;
+        $result['form']     = $this->generateForm();
+        $result['form']->setData($result['entity']);
 
-        return array(
-            'form' => $form,
-            'entity' => $entity
-        );
+        return $result;
+
     }
 
     public function updateAction() {
@@ -161,7 +138,7 @@ class DeliveryController extends AbstractActionController {
                 ->current();
 
         if (empty($entity)) {
-            die('Delivery not found.');
+            throw new \Exception("Could not find row $id");
         }
 
         $form = new \Admin\Form\DeliveryForm();
@@ -197,18 +174,19 @@ class DeliveryController extends AbstractActionController {
 
     public function deleteAction() {
         $request = $this->getRequest();
-        
         if ($request->isPost()) {
-            foreach($request->getPost('action') as $action) {
-                $this->db
-                        ->query('DELETE FROM Delivery WHERE delivery_id=:id')
-                        ->execute(array('id' => $action));
+            if ($model->delete($request->getPost('action'))==0) {
+                $this->flashMessenger()->addErrorMessage('Error : no row deleted.');
+            } else {
+                $this->flashMessenger()->addSuccessMessage($count.' row(s) deleted.');
             }
+        } else {
+            $this->flashMessenger()->addErrorMessage('Delete error : no data found.');
         }
-
-        return $this->redirect()->toRoute('admin', array(
-                                'controller' => 'delivery'
-                            ));;
+        return $this->redirect()
+            ->toRoute($this->module, array(
+                'controller' => $this->controller,
+            ));;
     }
 
 }

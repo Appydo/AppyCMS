@@ -12,26 +12,10 @@ foreach($this->form->getMessages() as $key=>$errors) {
 }
 ?>
 
-<style>
-    ul {
-        margin: 0;
-    }
-    li {
-        list-style-type:none;
-    }
-</style>
-
-<?php
-    echo $this->flashMessenger()->render('error',   array('alert', 'alert-dismissable', 'alert-danger'));
-    echo $this->flashMessenger()->render('info',    array('alert', 'alert-dismissable', 'alert-info'));
-    echo $this->flashMessenger()->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
-    echo $this->flashMessenger()->render('success', array('alert', 'alert-dismissable', 'alert-success'));
-?>
-
-<form method="post" action="<?php echo $this->url('admin', array('controller' => $this->controller, 'action' => 'update', 'id'=> $entity[$this->id])); ?>">
+<form method="post" action="<?php echo $this->url('admin', array('controller' => 'delivery', 'action' => 'update', 'id'=> $entity['delivery_id'])); ?>">
     
         <?php foreach($this->form as $element): ?>
-        <?php if($element->getAttribute('type')!='hidden' and $element->getAttribute('type')!='submit' and $element->getName()!=$this->id): ?>
+        <?php if($element->getAttribute('type')!='hidden' and $element->getAttribute('type')!='submit' and $element->getName()!='delivery_id'): ?>
             <div class="control-group<?php if(count($element->getMessages())>0): ?> error<?php endif; ?>">
                 <label class="control-label" for="<?php echo $element->getName(); ?>"><?php echo $this->formLabel($element); ?></label>
                 <div class="controls">
@@ -51,7 +35,7 @@ foreach($this->form->getMessages() as $key=>$errors) {
             <i class="icon-plus icon-white"></i>
             <?php echo $this->translate('Edit'); ?>
         </button>
-        <a class="btn" href="<?php echo $this->url('admin', array('controller'=>$this->controller,'action'=>'index')); ?>">
+        <a class="btn" href="<?php echo $this->url('admin', array('controller'=>'delivery','action'=>'index')); ?>">
             <?php echo $this->translate('Back'); ?>
         </a>
     </div>

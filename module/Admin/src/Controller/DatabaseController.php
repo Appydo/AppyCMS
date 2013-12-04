@@ -29,11 +29,23 @@ class DatabaseController extends AbstractActionController {
                 ->execute();
         */
         $entities = array();
-        $stats = $this->db->query('SELECT table_schema "Data Base Name",
-        SUM( data_length + index_length ) / 1024 / 1024 "Data Base Size in MB",
-        SUM( data_free )/ 1024 / 1024 "Free Space in MB"
-        FROM information_schema.TABLES
-        GROUP BY table_schema')->execute()->current();
+
+
+        $config = $this->getServiceLocator()->get('Config');
+        if ($config['db']['driver']=='pdo_mysql') {
+            $stats = $this->db->query('SELECT table_schema "Data Base Name",
+                SUM( data_length + index_length ) / 1024 / 1024 "Data Base Size in MB",
+                SUM( data_free )/ 1024 / 1024 "Free Space in MB"
+                FROM information_schema.TABLES
+                GROUP BY table_schema')->execute()->current();
+        } elseif($config['db']['driver']=='pdo_sqlite') {
+            $stats = array();
+            $stats['driver'] = $config['db']['driver'];
+            $size  = filesize(str_replace('sqlite:', '', $config['db']['dsn']))/1024;
+            $stats['url']  = str_replace(array('sqlite:',ROOT_PATH), '', $config['db']['dsn']);
+            $stats['size'] = $size . ' ko';
+        }
+
         return array(
             'entities' => $entities,
             'stats' => $stats

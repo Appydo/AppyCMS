@@ -32,6 +32,12 @@ function checkAll(field)
     echo $this->flashMessenger()->render('success', array('alert', 'alert-dismissable', 'alert-success'));
 ?>
 
+<?php if ($this->upload_dir_exist == false): ?>
+    <div class="alert alert-error">
+        <strong>Error !</strong> Upload directory (public/upload/products) not exist.
+    </div>
+<?php endif; ?>
+
 <div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
     <form class="form-search" action="" method="post">
         <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'product','action'=>'new')); ?>">

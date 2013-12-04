@@ -7,6 +7,7 @@ use Zend\View\Model\ViewModel;
 use Admin\Lib\SimpleImage as SimpleImage;
 use Zend\Barcode\Barcode;
 use Admin\Lib;
+use Admin\Lib\Slug;
 
 class ProductController extends AbstractActionController {
 
@@ -74,6 +75,8 @@ class ProductController extends AbstractActionController {
 			'.$where_string.' '.$order_string.' LIMIT '.$start.','.$nb
         );
 
+        $upload_dir_exist = (file_exists(__DIR__ . '/../../../../public/uploads/products/'));
+
         return array(
             // 'image_path' => '/uploads/products/' . $this->user->project_id . '/',
             'image_path' => '/uploads/products/1/',
@@ -81,6 +84,7 @@ class ProductController extends AbstractActionController {
 			'order' => $order,
             'sort' => $sort,
             'page' => $page,
+            'upload_dir_exist' => $upload_dir_exist
         );
     }
 
@@ -125,9 +129,9 @@ class ProductController extends AbstractActionController {
                     $path = __DIR__ . '/../../../../public/uploads/products/' . $this->user->project_id . '/';
 
                     $image = new SimpleImage();
-                    
-                    @mkdir($path . '/large/');
-                    @mkdir($path . '/thumb/');
+
+                    if (!file_exists($path))
+                        @mkdir($path);
                     
                     copy($_FILES['file']['tmp_name'], $path . 'large/' . $_FILES['file']['name']);
                     copy($_FILES['file']['tmp_name'], $path . 'medium/' . $_FILES['file']['name']);
@@ -279,7 +283,8 @@ class ProductController extends AbstractActionController {
             WHERE p.user_id=:user and p.id=:id')
                 ->execute(array('id' => $id, 'user' => $this->user->id))
                 ->current();
-        $entity['options'] = json_decode($entity['options'], true);
+        if(isset($entity['options']))
+            $entity['options'] = json_decode($entity['options'], true);
 
         $topics = $this->db->query('SELECT
             t.*, tu.username as author, (SELECT COUNT(c.id) FROM Comment as c WHERE c.topic_id=t.id) as comments, (COUNT(p.id) - 1) AS depth
@@ -342,10 +347,13 @@ class ProductController extends AbstractActionController {
         $request = $this->getRequest();
         $id = $this->params('id');
 
-        $entity = $this->db->query('SELECT p.* FROM Product p WHERE p.user_id=:user and p.id=:id')->execute(array('id' => $id, 'user' => $this->user->id))->current();
+        $entity = $this->db
+                    ->query('SELECT p.* FROM Product p WHERE p.user_id=:user and p.id=:id')
+                    ->execute(array('id' => $id, 'user' => $this->user->id))
+                    ->current();
 
         if (empty($entity)) {
-            die('Product not found.');
+            throw new \Exception("Could not find row $id");
         }
 
         $form = new \Admin\Form\ProductForm();
@@ -436,6 +444,8 @@ class ProductController extends AbstractActionController {
                 if (isset($_FILES['file']) and isset($_FILES['file']['size']) and !empty($_FILES['file']['size'])) {
                     $count_files = count($_FILES['file']['size']);
                     $path = __DIR__ . '/../../../../public/uploads/products/' . $this->user->project_id . '/';
+                    if (!file_exists($path))
+                        @mkdir($path);
                     $image_count = $this->db
                             ->query('
 			                    SELECT count(*)
@@ -444,9 +454,10 @@ class ProductController extends AbstractActionController {
 			                    ')
                             ->execute(array('id' => $id))
                             ->current();
+                    $slug = new Slug();
                     for ($i = 0; $i < $count_files; $i++) {
                         if (!empty($_FILES['file']['size'][$i])) {
-                            move_uploaded_file($_FILES['file']['tmp_name'][$i], $path . $_FILES['file']['name'][$i]);
+                            move_uploaded_file($_FILES['file']['tmp_name'][$i], $path . $slug->slugify($_FILES['file']['name'][$i]));
                             $sizes = $this->db->query('
 			                    SELECT *
 			                    FROM ProductImageResize p
@@ -454,11 +465,12 @@ class ProductController extends AbstractActionController {
 			                    ')->execute();
 
                             $image = new SimpleImage();
-                            $slug = new Slug();
+                            
                             foreach($sizes as $size) {
-                                @mkdir($path . '/' . $size['pir_name'] . '/');
+                                if (!file_exists($path . '/' . $size['pir_name'] . '/'))
+                                    @mkdir($path . '/' . $size['pir_name'] . '/');
                                 // die(var_dump($_FILES['file']['name'][$i]));
-                                $image->load($path . $_FILES['file']['name'][$i]);
+                                $image->load($path . $slug->slugify($_FILES['file']['name'][$i]));
                                 if ($image->getWidth()) {
                                     $image->resizeToWidth($size['pir_width']);
                                     if ($image->getHeight() > $size['pir_height']) {
@@ -470,14 +482,14 @@ class ProductController extends AbstractActionController {
                             if ($i < $image_count['count(*)']) {
                                 $this->db->query(
                                         'UPDATE ProductFile SET productfile_name=:name WHERE product_id=:id and productfile_position=:position', array(
-                                    'name' => $_FILES['file']['name'][$i],
+                                    'name' => $slug->slugify($_FILES['file']['name'][$i]),
                                     'position' => $i,
                                     'id' => $id
                                 ));
                             } else {
                                 $this->db->query(
                                         'INSERT INTO ProductFile (productfile_name, product_id, productfile_position) VALUES (:name, :id, :position)', array(
-                                    'name' => $_FILES['file']['name'][$i],
+                                    'name' => $slug->slugify($_FILES['file']['name'][$i]),
                                     'position' => $i,
                                     'id' => $id
                                 ));
@@ -485,7 +497,7 @@ class ProductController extends AbstractActionController {
                             if ($i == 0) {
                                 $update = $this->db->query(
                                         'UPDATE Product SET image_name=:image_name WHERE id=:id', array(
-                                    'image_name' => $_FILES['file']['name'][0],
+                                    'image_name' => $slug->slugify($_FILES['file']['name'][0]),
                                     'id' => $id
                                         ));
                             }

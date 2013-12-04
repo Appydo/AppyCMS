@@ -67,6 +67,23 @@
 </script>
 <!-- /TinyMCE -->
 
+<style>
+    ul {
+        margin: 0;
+        margin-top : 1em;
+    }
+    li {
+        list-style-type:none;
+    }
+</style>
+
+<?php
+    echo $this->flashMessenger()->render('error',   array('alert', 'alert-dismissable', 'alert-danger'));
+    echo $this->flashMessenger()->render('info',    array('alert', 'alert-dismissable', 'alert-info'));
+    echo $this->flashMessenger()->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
+    echo $this->flashMessenger()->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+?>
+
 <div id="dialog">
     <?php if ($this->dir_exists==false): ?>
         <p>Erreur : le dossier image n'existe pas.</p>

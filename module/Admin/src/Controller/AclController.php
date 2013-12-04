@@ -159,17 +159,18 @@ class AclController extends AbstractActionController {
                 ->query('SELECT * FROM Role WHERE role_id=:id')
                 ->execute(array('id'=>$id))
                 ->current();
-        $form->setData($entity);
+
         if (empty($entity)) {
-            die($this->table.' not found.');
+            throw new \Exception("Could not find row $id");
         }
+
+        $form->setData($entity);
         
-        $query = $this->db->createStatement('
-            SELECT *
-            FROM Resource r
-            '
-        );
-        $resources = $query->execute()->getResource()->fetchAll();
+        $query = $this->db
+            ->createStatement('SELECT * FROM Resource r')
+            ->execute(array())
+            ->getResource()
+            ->fetchAll();
 
         return array(
             'form' => $form,
@@ -181,12 +182,14 @@ class AclController extends AbstractActionController {
     public function updateAction() {
 
         $request = $this->getRequest();
-        $id = $this->params('id');
-
-        $entity = $this->db->query('SELECT * FROM Role WHERE role_id=:id')->execute(array('id' => $id))->current();
+        $id      = $this->params('id');
+        $entity  = $this->db
+            ->query('SELECT * FROM Role WHERE role_id=:id')
+            ->execute(array('id' => $id))
+            ->current();
 
         if (empty($entity)) {
-            die('Product not found.');
+            throw new \Exception("Could not find row $id");
         }
 
         $form = new \Admin\Form\AclForm();
@@ -212,19 +215,21 @@ class AclController extends AbstractActionController {
             'form' => $form
         );
     }
+
     public function deleteAction() {
         $request = $this->getRequest();
-        
+
         if ($request->isPost()) {
             foreach($request->getPost('action') as $action) {
                 $this->db
-                        ->query('DELETE FROM Role WHERE role_id=:id')
-                        ->execute(array('id' => $action));
+                    ->query('DELETE FROM Role WHERE role_id=:id')
+                    ->execute(array('id' => $action));
             }
         }
 
-        return $this->redirect()->toRoute('admin', array(
-                                'controller' => 'acl'
-                            ));;
+        return $this->redirect()
+            ->toRoute('admin', array(
+                    'controller' => 'acl'
+                ));
     }
 }

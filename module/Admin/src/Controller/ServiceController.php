@@ -12,7 +12,8 @@ use Zend\InputFilter\InputFilterInterface;
 class ServiceController extends AbstractActionController {
 
     public function indexAction() {
-        return array();
+        $result = array();
+        return $result;
     }
 
     public function newAction() {
@@ -44,8 +45,6 @@ class ServiceController extends AbstractActionController {
         
         $ModelService = '\\Admin\\Model\\' . SGBD . '\\' . 'Service';
         $service = new $ModelService($this->db);
-        
-        // $entity = $this->db->query('SELECT * FROM Service s WHERE s.id=:id')->execute(array('id' => $id))->current();
         
         return array(
             'form' => new \Admin\Form\ServiceForm(),
@@ -127,14 +126,16 @@ class ServiceController extends AbstractActionController {
     }
 
     public function showAction($id) {
-        $query = $this->db->query('SELECT s.*
-            FROM service s
-            WHERE l.project_id=:project ORDER BY l.id DESC'
-        );
 
-        return array(
-            'entities' => $query->execute(array('project' => $this->user->project_id, 'id' => $id))->current()
-        );
+        $row = $this->db
+            ->query('SELECT s.* FROM service s WHERE l.project_id=:project ORDER BY l.id DESC')
+            ->execute(array('project' => $this->user->project_id, 'id' => $id))
+            ->current();
+        if (!$row) {
+            throw new \Exception("Could not find row $id");
+        }
+        return $row;
+
     }
     
     public function delete() {

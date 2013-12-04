@@ -19,7 +19,20 @@ function checkAll(field)
         border: solid 1px #cdcdcd;
         padding: 0;
     }
+    ul {
+        margin: 0;
+    }
+    li {
+        list-style-type:none;
+    }
 </style>
+
+<?php
+    echo $this->flashMessenger()->render('error',   array('alert', 'alert-dismissable', 'alert-danger'));
+    echo $this->flashMessenger()->render('info',    array('alert', 'alert-dismissable', 'alert-info'));
+    echo $this->flashMessenger()->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
+    echo $this->flashMessenger()->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+?>
 
 <div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
     <form class="form-search" action="" method="post">
@@ -40,7 +53,7 @@ function checkAll(field)
 <table class="table table-striped">
 
         <?php foreach($this->entities as $entity): ?>
-        <?php if($thead==false): ?>
+        <?php if($this->thead==false): ?>
             <thead>
                 <tr>
                 <?php foreach($entity as $title=>$value): ?>
@@ -52,7 +65,7 @@ function checkAll(field)
                 </tr>
             </thead>
             <tbody>
-        <?php $thead=true; ?>
+        <?php $this->thead=true; ?>
         <?php endif; ?>
         <tr>
             <?php foreach($entity as $title=>$value): ?>
@@ -86,28 +99,15 @@ function checkAll(field)
         
     <div class="pagination">
         <ul>
-            <li><a href="">Prev</a></li>
+            <li><a href="">&lt;</a></li>
             <li class="active">
                 <a href="">1</a>
             </li>
             <li><a href="#">2</a></li>
             <li><a href="#">3</a></li>
             <li><a href="#">4</a></li>
-            <li><a href="">Next</a></li>
+            <li><a href="">&gt;</a></li>
         </ul>
     </div>
 
 </form>
-
-<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;clear:both;">
-    <form class="form-search" action="" method="post">
-        <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>$this->controller,'action'=>'new')); ?>">
-            <i class="icon-plus icon-white"></i>
-            <?php echo $this->translate('New'); ?>
-        </a>
-        <div style="padding-left: 20px;" class="input-append">
-            <input type="text" class="search-query">
-            <button type="submit" class="btn"><i class="icon-search"></i></button>
-        </div>
-    </form>
-</div>
