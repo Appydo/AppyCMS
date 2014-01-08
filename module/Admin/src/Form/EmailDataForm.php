@@ -33,9 +33,11 @@ class EmailDataForm extends Form {
             'name' => 'ed_content',
             'attributes' => array(
                 'type'  => 'textarea',
+                'class' => 'editor'
             ),
             'options' => array(
                 'label' => 'Content',
+
             ),
         ));
         $this->add(array(

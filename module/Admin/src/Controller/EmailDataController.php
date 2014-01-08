@@ -136,6 +136,8 @@ class EmailDataController extends AbstractActionController {
                      ));
                 if ($insert) {
                     $id = $this->db->getDriver()->getLastGeneratedValue();
+                    $this->log->info('The email '.$id.' was updated successfully.');
+                    $this->flashMessenger()->addSuccessMessage('The email was created successfully.');
                     return $this->redirect()->toRoute('admin', array(
                                 'controller' => 'EmailData',
                                 'action' => 'edit',
@@ -207,6 +209,8 @@ class EmailDataController extends AbstractActionController {
                         'id'         => $id
                     ));
                 if ($update) {
+                    $this->log->info('The email '.$id.' was updated successfully.');
+                    $this->flashMessenger()->addSuccessMessage('The email was updated successfully.');
                     return $this->redirect()->toRoute('admin', array(
                             'controller' => 'EmailData',
                             'action' => 'edit',
@@ -233,7 +237,7 @@ class EmailDataController extends AbstractActionController {
                         ->execute(array('id' => $action));
             }
         }
-
+        
         return $this->redirect()->toRoute('admin', array(
                                 'controller' => 'EmailData'
                             ));;

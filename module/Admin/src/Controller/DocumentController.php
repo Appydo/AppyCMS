@@ -39,7 +39,7 @@ class DocumentController extends AbstractActionController {
                     mkdir($dir . $subdir . '/');
                 $path = $dir . $subdir . '/';     
                 move_uploaded_file($_FILES['document']['tmp_name'], $path.$_FILES['document']['name']);   
-                // $log = new Log("Upload file", "File", $user);
+                $log = $this->log(__METHOD__, "File", $user);
             }
         }
 

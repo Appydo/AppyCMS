@@ -53,7 +53,7 @@ class DevisController extends AbstractActionController {
 
         $stmt = $this->db
                 ->createStatement('
-                    SELECT bo.id, u.username, count, bo.price, bo.created, bo.payment, bo.hide
+                    SELECT bo.id, u.firstname, u.username, u.id as user_id, count, bo.price, bo.created, bo.payment, bo.hide
                     FROM '.$this->table.' bo
                     LEFT JOIN users u ON u.id=user_id
                     ORDER BY bo.updated '.$sort.'
@@ -66,6 +66,8 @@ class DevisController extends AbstractActionController {
 
         return array(
             'entities' => $entities,
+            'sort'     => $sort,
+            'page'     => $page,
             // 'columns'  => $columns
         );
 

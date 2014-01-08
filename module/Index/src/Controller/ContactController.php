@@ -1,5 +1,4 @@
 <?php
-
 namespace Index\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
@@ -20,15 +19,6 @@ class ContactController extends AbstractActionController {
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if ($form->isValid()) {
-                /*
-                  $mail = new Zend_Mail();
-                  $mail->setBodyText($request->getParam('contact_message'))
-                  ->setBodyHtml($request->getParam('contact_message'))
-                  ->setFrom('test@example.com', $request->getParam('contact_name'))
-                  ->addTo('mystheme@free.fr', 'Jérémie Robert')
-                  ->setSubject($request->getParam('contact_subject'))
-                  ->send();
-                 */
 
                 if (!empty($_SERVER['HTTP_CLIENT_IP'])) {   //check ip from share internet
                     $ip = $_SERVER['HTTP_CLIENT_IP'];

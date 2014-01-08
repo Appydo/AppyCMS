@@ -1,5 +1,4 @@
 <?php
-
 namespace Index\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;

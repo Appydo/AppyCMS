@@ -42,10 +42,6 @@ class NewsletterController extends AbstractActionController {
     }
     
     public function indexAction() {
-        $this->layout('immobilier-en-reseau.fr/admin');
-        // $metadata = new \Zend\Db\Metadata\Metadata($this->db);
-        // $tableNames = $metadata->getTableNames();
-        // $columns = $metadata->getTable($this->table)->getColumns();
         if (isset($_GET['page']))
             $page = $_GET['page'];
         else
@@ -160,7 +156,6 @@ class NewsletterController extends AbstractActionController {
     
     private function generateForm() {
         $metadata = new \Zend\Db\Metadata\Metadata($this->db);
-        // $tableNames = $metadata->getTableNames();
         $columns = $metadata->getTable($this->table)->getColumns();
         
         $form = new Form($this->controller);
@@ -176,6 +171,20 @@ class NewsletterController extends AbstractActionController {
                 $element = new Element($column->getName());
                 $element->setLabel('Titre');
                 $element->setValue('Newsletter '.date('d/m/Y H:i'));
+                $element->setAttributes(array(
+                    'type'  => 'text'
+                ));
+                $form->add($element);
+            } elseif($column->getName()=='newsletter_role') {
+                $element = new Element($column->getName());
+                $element->setLabel('Role');
+                $element->setAttributes(array(
+                    'type'  => 'text'
+                ));
+                $form->add($element);
+            } elseif($column->getName()=='newsletter_date_signin') {
+                $element = new Element($column->getName());
+                $element->setLabel('Utilisateurs inscris après le');
                 $element->setAttributes(array(
                     'type'  => 'text'
                 ));
@@ -271,12 +280,21 @@ class NewsletterController extends AbstractActionController {
             die($this->table.' not found.');
         }
 
+        $query = $this->db->createStatement('
+            SELECT role_name, role_parent, role_id
+            FROM Role r
+            LEFT JOIN users u ON u.project_id = r.project_id
+            WHERE u.id=:user_id'
+        );
+        $roles = $query->execute(array('user_id' => $this->user->id))->getResource()->fetchAll();
+
         return array(
-            'form' => $form,
+            'form'   => $form,
             'module' => $this->module,
             'entity' => $entity,
             'controller' => $this->controller,
-            'id' => $this->id,
+            'id'    => $this->id,
+            'roles' => $roles
         );
     }
 

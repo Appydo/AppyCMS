@@ -109,6 +109,12 @@ class BillController extends AbstractActionController {
                 'id' => $id
             ))->current();
         
+        $project = $this->db->query('SELECT p.*, u.email
+            FROM Project p
+            LEFT JOIN users u ON u.id=p.user_id
+            WHERE p.id=:id', array(
+                'id' => $this->user->project_id
+            ))->current();
         
         if (!$entity) die('Empty bill');
         
@@ -170,13 +176,13 @@ class BillController extends AbstractActionController {
         $this->transport = $delivery_price;
         $this->baskets = $baskets;
         $this->total   = $total;
-        $this->totalht = round(($total/1.196),2,PHP_ROUND_HALF_UP);
+        $this->totalht = round(($total/1.20),2,PHP_ROUND_HALF_UP);
         $this->tva = $this->total - $this->totalht;
         // $this->tva     = round(($total*0.196),2,PHP_ROUND_HALF_UP);
         
 
         ob_start();
-        include(dirname(__FILE__) . '/../../view/admin/bill/pdf.phtml');
+        include( ROOT_PATH . '/public/themes/default/admin/bill/pdf.phtml');
         $content = ob_get_clean();
 
         $content = '<page>' . $content . '</page>';

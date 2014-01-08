@@ -4,10 +4,46 @@ namespace Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
+use Zend\Form\Form;
+use Zend\Form\Element;
+
 class MailController extends AbstractActionController {
+
+    private $title      = 'Message';
+    private $table      = 'Mail';
+    private $controller = 'Mail';
+    private $template   = 'admin/mail';
+    private $id         = '';
+    private $select     = '';
+    private $module     = 'admin';
+    private $table_row  = 20;
+
+    private function defaultTemplateVars() {
+        $result = array();
+        $result['primary_id'] = $this->id;
+        $result['controller'] = $this->controller;
+        $result['module']     = $this->module;
+        return $result;
+    }
     
     public function indexAction()
     {
+
+        if (isset($_GET['page']))
+            $page = $_GET['page'];
+        else
+            $page  = 1;
+        if (isset($_GET['move'])) {
+            if ($_GET['move']=='next') {
+                $page++;
+            } elseif ($_GET['move']=='prev' and $page!=1) {
+                $page--;
+            }
+        }
+        if (empty($page)) $page = 0;
+        $nb    = $this->table_row;
+        $start = ($page * $nb) - $nb;
+
         $where_string = '';
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -40,10 +76,13 @@ class MailController extends AbstractActionController {
             FROM Mail m
             LEFT JOIN users f ON m.from_id=f.id
             LEFT JOIN users u ON m.user_id=u.id
-            WHERE m.project_id=:project '.$where_string.' ORDER BY m.id DESC'
-            );
+            WHERE m.project_id=:project '.$where_string.' ORDER BY m.id DESC LIMIT '.$start.','.$nb);
+
         return array(
-            'entities' => $query->execute(array('project' => $this->project['id']))
+            'entities' => $query->execute(array('project' => $this->project['id'])),
+            'page' => $page,
+            'sort' => $sort,
+            'order' => $order
         );
     }
 
@@ -61,38 +100,123 @@ class MailController extends AbstractActionController {
         );
     }
 
-    public function newAction()
-    {
-        // $this->view->form = new \Admin\Form\MailForm();
-        return array();
+    private function generateForm() {
+        $metadata = new \Zend\Db\Metadata\Metadata($this->db);
+        $columns = $metadata->getTable($this->table)->getColumns();
+
+        $form = new Form($this->controller);
+        foreach ($columns as $column) {
+            if ($column->getName() == 'message') {
+                $element = new Element($column->getName());
+                $element->setLabel('Message');
+                $element->setAttributes(array(
+                    'type' => 'textarea',
+                    'style' => 'width:400px;height: 100px;'
+                ));
+                $form->add($element);
+            } elseif (!in_array($column->getName(), array('created', 'updated', 'from_id', 'user_id', 'hide', 'project_id', 'ip', 'name'))) {
+                $element = new Element($column->getName());
+                $element->setLabel($column->getName());
+                $element->setAttributes(array(
+                    'type' => 'text'
+                ));
+                $form->add($element);
+            }
+        }
+        $csrf = new Element\Csrf('csrf');
+        $form->add($csrf);
+
+        $send = new Element('submit');
+        $send->setValue('Submit');
+        $send->setAttributes(array(
+            'type' => 'submit'
+        ));
+        $form->add($send);
+        return $form;
     }
 
-    public function createAction()
-    {
-        $request   = $this->getRequest();
-        $form = new \Admin\Form\MailForm();
+    public function newAction() {
+        // $this->initAcl('create');
+        $result = $this->defaultTemplateVars();
+        $result['form'] = $this->generateForm();
+        $result['id']   = $this->id;
+        return $result;
+    }
+
+    public function createAction() {
+        $id = $this->params('id');
+        $request = $this->getRequest();
+        $form = $this->generateForm();
+
         if ($request->isPost()) {
+
             $form->setData($request->getPost());
             if ($form->isValid()) {
-                $insert = $this->db->query("INSERT INTO Mail (name, content, created, updated, user_id, project_id, topic_id, hide)
-                    VALUES (:name, :content, :created, :updated, :user_id, :project_id, :topic_id, :hide)", array(
-                    'name'    => $request->getParam('name'),
-                    'content' => $request->getParam('content'),
-                    'created' => time(),
-                    'updated' => time(),
-                    'user_id' => $this->user->id,
-                    'project_id' => $this->user->project_id,
-                    'topic_id'   => ($request->getParam('parent')==0)?null:$request->getParam('parent'),
-                    'hide'    => ($request->getParam('hide')=='on') ? 1 : 0
-                ));
-                if($insert) {
-                    $id = $this->db->getDriver()->getLastGeneratedValue();
-                    $this->_helper->redirector('edit', 'topic', 'admin', array('id'=>$id));
+                $insert_args = array();
+                foreach ($form as $element) {
+                    if (!in_array($element->getName(), array($this->id, 'csrf', 'submit')))
+                        $insert_args[$element->getName()] = $request->getPost($element->getName());
+                }
+
+                if (!empty($_SERVER['HTTP_CLIENT_IP'])) {   //check ip from share internet
+                    $ip = $_SERVER['HTTP_CLIENT_IP'];
+                } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {   //to check ip is pass from proxy
+                    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                } else {
+                    $ip = $_SERVER['REMOTE_ADDR'];
+                }
+
+                $insert_args['name']    = $this->user->username . ' ' . $this->user->firstname;
+                $insert_args['from_id'] = $this->user->id;
+                $insert_args['project_id'] = $this->user->project_id;
+                $insert_args['created'] = time();
+                $insert_args['updated'] = time();
+                $insert_args['ip']      = $ip;
+                $insert_args['hide']    = 0;
+                $insert_args['view']    = 0;
+                $insert_args['user_id'] = $id;
+
+                $insert = $this->db->query(
+                        "INSERT INTO " . $this->table . " (" . implode(",", array_keys($insert_args)) . ")
+                    VALUES (:" . implode(",:", array_keys($insert_args)) . ")", $insert_args
+                );
+
+                if ($insert) {
+                    /*
+                    $message_id = $this->db->getDriver()->getLastGeneratedValue();
+                    $entity = $this->db
+                        ->query('SELECT * FROM users WHERE id=:id')
+                        ->execute(array('id' => $id))
+                        ->current();
+                    $mail = new \Admin\Services\Sendmail($this->db);
+                    $vars = array();
+                    $vars['firstname'] = $entity['firstname'];
+                    $vars['lastname'] = $entity['username'];
+                    $vars['user_id'] = $this->user->id;
+                    $vars['from_firstname'] = $this->user->firstname;
+                    $vars['from_lastname'] = $this->user->username;
+                    $vars['message'] = $request->getPost('message');
+                    $mail->sendEmailId($id, $this->user->id, 24, $vars);
+                    $vars['firstname'] = $this->user->firstname;
+                    $vars['lastname'] = $this->user->username;
+                    $mail->sendEmailId($this->user->id, 1, 25, $vars);
+                    */
+                    $this->flashMessenger()->addSuccessMessage('The message was sent successfully.');
+                    return $this->redirect()->toRoute($this->module, array(
+                                'controller' => $this->controller,
+                                'action' => 'index',
+                                // 'id' => $message_id
+                    ));
                 }
             }
         }
-        $this->view->form = $form;
-        $this->render('new', null, true);
+
+        // Display form with error(s)
+        $result = $this->newAction();
+        $result['form'] = $form;
+        $vm = new ViewModel($result);
+        $vm->setTemplate($this->template.'/new');
+        return $vm;
     }
 
     public function editAction()
@@ -136,11 +260,10 @@ class MailController extends AbstractActionController {
     {
         $request = $this->getRequest();
         $id = $this->params('id');
-
-        $entity = $this->db->query('SELECT * FROM Mail m WHERE m.id=:id and m.project_id=:project')->execute(array('id' => $id, 'project' => $this->user->project_id))->current();
-        return array(
-            'entity' => $entity
-        );
+        $result = $this->defaultTemplateVars();
+        $result['form'] = $this->generateForm();
+        $result['entity'] = $this->db->query('SELECT * FROM Mail m WHERE m.id=:id and m.project_id=:project')->execute(array('id' => $id, 'project' => $this->user->project_id))->current();
+        return $result;
     }
 
     public function updateAction()

@@ -85,26 +85,11 @@ return array(
                     ),
                     'defaults' => array(
                         '__NAMESPACE__' => 'Index\Controller',
-                        'controller' => 'Index\Controller\Index',
-                        'action'     => 'topicbyname',
+                        'controller'    => 'Index\Controller\Index',
+                        'action'        => 'topicbyname',
                     ),
                 ),
             ),
-            /*
-            'topic' => array(
-                'type'    => 'segment',
-                'options' => array(
-                    'route'    => '/topic[/:name]',
-                    'constraints' => array(
-                        'name' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                    ),
-                    'defaults' => array(
-                        'controller' => 'Index\Controller\Index',
-                        'action'     => 'topic',
-                    ),
-                ),
-            ),
-             */
             'login' => array(
                 'type'    => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
@@ -121,8 +106,8 @@ return array(
                     'route'    => '/action/auth/signup',
                     'defaults' => array(
                         '__NAMESPACE__' => 'Index\Controller',
-                        'controller' => 'Index\Controller\Auth',
-                        'action'     => 'signup',
+                        'controller'    => 'Index\Controller\Auth',
+                        'action'        => 'signup',
                     ),
                 ),
             ),
@@ -132,19 +117,20 @@ return array(
                 'options' => array(
                     'route'    => '/action/auth[/:action[/:id]]',
                     'constraints' => array(
-                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'id'     => '[0-9]+',
+                        'action'  => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'      => '[0-9]+',
                     ),
                     'defaults' => array(
                         '__NAMESPACE__' => 'Index\Controller',
-                        'controller' => 'Index\Controller\Auth',
-                        'action'     => 'login',
+                        'controller'    => 'Index\Controller\Auth',
+                        'action'        => 'login',
                     ),
                 ),
             ),
             
         ),
     ),
+    /*
     'service_manager' => array(
         'factories' => array(
             'translator' => 'Zend\I18n\Translator\TranslatorServiceFactory',
@@ -154,13 +140,14 @@ return array(
         'locale' => 'fr_FR',
         'translation_file_patterns' => array(
             array(
-                'type'     => 'gettext',
-                'base_dir' => __DIR__ . '/../language',
-                'pattern'  => '%s.mo',
+                'type'        => 'gettext',
+                'base_dir'    => __DIR__ . '/../language',
+                'pattern'     => '%s.mo',
                 'text_domain' => __NAMESPACE__,
             ),
         ),
     ),
+    */
     'view_manager' => array(
         'strategies' => array(
             'ViewFeedStrategy',
@@ -171,14 +158,13 @@ return array(
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
         'template_map' => array(
-            'layout/layout'        => __DIR__ . '/../../../public/themes/simple/layout.phtml',
-            'index/index/index'    => __DIR__ . '/../view/index/index/index.phtml',
-            'error/404'            => __DIR__ . '/../view/error/404.phtml',
-            'error/index'          => __DIR__ . '/../view/error/index.phtml',
+            'layout/layout'        => ROOT_PATH . '/public/themes/default/simple.phtml',
+            'index/index/index'    => ROOT_PATH . '/public/themes/default/index/index/index.phtml',
+            'error/404'            => ROOT_PATH . '/public/themes/default/error/404.phtml',
+            'error/index'          => ROOT_PATH . '/public/themes/default/error/index.phtml',
         ),
         'template_path_stack' => array(
-            __DIR__ . '/../view',
-            __DIR__ . '/../../../public/themes/',
+            ROOT_PATH . '/public/themes/default',
         ),
     ),
 );

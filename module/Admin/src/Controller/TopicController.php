@@ -9,6 +9,33 @@ use Admin\Lib\Slug;
 class TopicController extends AbstractActionController {
 
     public function indexAction() {
+
+        if (isset($_GET['page']))
+            $page = $_GET['page'];
+        else
+            $page  = 1;
+        if (isset($_GET['move'])) {
+            if ($_GET['move']=='next') {
+                $page++;
+            } elseif ($_GET['move']=='prev' and $page!=1) {
+                $page--;
+            }
+        }
+        if (empty($page)) $page = 0;
+        $nb    = 20;
+        $start = ($page * $nb) - $nb;
+        if (isset($_GET['order']))
+            $order = $_GET['order'];
+        else
+            $order = '';
+        if(isset($_GET['sort']) and $_GET['sort']=='ASC')
+            $sort  = 'ASC';
+        else
+            $sort  = 'DESC';
+        
+        if (!empty($order)) $order_string = 'ORDER BY u.'.$order.' '.$sort;
+        else $order_string = '';
+
         // Sub category
         if($this->params('id')!='' and is_numeric($this->params('id'))) {
             $parent = 'and t.topic_id='.$this->params('id');
@@ -42,7 +69,6 @@ class TopicController extends AbstractActionController {
                 $metadata = new \Zend\Db\Metadata\Metadata($this->db);
                 $columns  = $metadata->getTable('Topic')->getColumns();
                 foreach($columns as $column) {
-                    // echo $column->getDataType();
                     if ($column->getDataType()=='text' or $column->getDataType()=='varchar') {
                         $where[] = $column->getName().' LIKE "%'.$query.'%"';
                     }
@@ -64,15 +90,18 @@ class TopicController extends AbstractActionController {
         $query = $this->db->query('SELECT
             t.*, tu.username as author, (SELECT COUNT(c.id) FROM Comment as c WHERE c.topic_id=t.id) as comments, (COUNT(p.id) - 1) AS depth
             FROM Topic t, Topic p, users tu
-            WHERE t.lft BETWEEN p.lft AND p.rgt AND t.user_id=tu.id '.$where_string.'
+            WHERE t.lft BETWEEN p.lft AND p.rgt AND t.user_id=tu.id '.$where_string.' 
             and t.hide=0 '.$parent.' and t.project_id=:project and p.project_id=:project
-            GROUP BY t.id
-            ORDER BY t.lft'
+            GROUP BY t.id ORDER BY t.lft LIMIT '.$start.','.$nb
         );
+
         return array(
             'where' => (!empty($where_string)),
             'parent_id' => $parent_id,
-            'topics' => $query->execute(array('project' => $this->project['id']))
+            'topics' => $query->execute(array('project' => $this->project['id'])),
+            'order' => $order,
+            'sort' => $sort,
+            'page' => $page,
         );
     }
 
@@ -252,14 +281,16 @@ class TopicController extends AbstractActionController {
                         'hide' => ($request->getPost('hide') == 'on') ? 1 : 0
                         ));
                 if ($insert) {
-                    $this->flashMessenger()->addSuccessMessage('The page was created successfully.');
                     $id = $this->db->getDriver()->getLastGeneratedValue();
+                    $this->log->info('The page '.$id.' was created successfully.');
+                    $this->flashMessenger()->addSuccessMessage('The page was created successfully.');
                     return $this->redirect()->toRoute('admin', array(
                         'controller' => 'topic',
                         'action' => 'edit',
                         'id' => $id
                     ));
                 } else {
+                    $this->log->info('Error page creation.');
                     $this->flashMessenger()->addErrorMessage('Error page creation');
                 }
             }
@@ -385,10 +416,11 @@ class TopicController extends AbstractActionController {
                         'id'      => $id
                     ));
                 if ($update) {
+                    $this->log->info('The page '.$id.' was updated successfully.');
                     $this->flashMessenger()->addSuccessMessage('The page was updated successfully.');
                     $insert = $this->db->query('
-                        INSERT INTO Topic_archive
-                        SELECT * FROM Topic WHERE id=:id
+                        INSERT INTO TopicArchive
+                        SELECT null, * FROM Topic WHERE id=:id
                     ')->execute(array(
                         'id' => $id
                     ));
@@ -397,6 +429,8 @@ class TopicController extends AbstractActionController {
                         'action' => 'edit',
                         'id' => $id
                     ));
+                } else {
+                    $this->log->alert('The page '.$id.' was not updated successfully.');
                 }
             }
         }
@@ -437,6 +471,101 @@ class TopicController extends AbstractActionController {
         return $vm;
     }
 
+    public function archiveAction() {
+        $result  = array();
+        $id      = $this->params('id');
+
+        if (isset($_GET['page']))
+            $page = $_GET['page'];
+        else
+            $page  = 1;
+
+        if (isset($_GET['move'])) {
+            if ($_GET['move']=='next') {
+                $page++;
+            } elseif ($_GET['move']=='prev' and $page!=1) {
+                $page--;
+            }
+        }
+
+        if (empty($page)) $page = 0;
+        $nb    = 20;
+        $start = ($page * $nb) - $nb;
+        if (isset($_GET['order']))
+            $order = $_GET['order'];
+        else
+            $order = '';
+        if(isset($_GET['sort']) and $_GET['sort']=='ASC')
+            $sort  = 'ASC';
+        else
+            $sort  = 'DESC';
+
+        if (!empty($order)) $order_string = 'ORDER BY u.'.$order.' '.$sort;
+        else $order_string = '';
+
+        $result['topics'] = $this->db->query('SELECT
+            t.*, tu.username as author
+            FROM TopicArchive t
+            LEFT JOIN users tu ON t.user_id=tu.id
+            WHERE t.project_id=:project ORDER BY t.updated DESC
+            LIMIT '.$start.','.$nb
+        )->execute(array('project'=>$this->user->project_id));
+
+        $result['page'] = $page;
+        return $result;
+    }
+
+    public function archiveShowAction() {
+        $request = $this->getRequest();
+        $id = (int) $this->params()->fromRoute('id', 0);
+        
+        $entity = $this->db->query('SELECT t.* FROM TopicArchive t, users u WHERE t.topicarchive_id=:id and u.id=:user and t.project_id=u.project_id')->execute(array('id' => $id, 'user' => $this->user->id))->current();
+        $topics = $this->db->query('SELECT
+            t.*, tu.username as author, (SELECT COUNT(c.id) FROM Comment as c WHERE c.topic_id=t.id) as comments, (COUNT(p.id) - 1) AS depth
+            FROM Topic t, Topic p, users tu
+            WHERE t.lft BETWEEN p.lft AND p.rgt AND t.user_id=tu.id
+            and t.hide=0 and t.project_id=:project and p.project_id=:project
+            GROUP BY t.id
+            ORDER BY t.lft'
+        )->execute(array('project' => $this->project['id']));
+
+        $dir = realpath(__DIR__ . '/../../../../public/uploads/' . $this->user->project_id);
+
+        if (!is_dir($dir)) {
+            @mkdir($dir);
+            $dir_exists = is_dir($dir);
+        } else {
+            $dir_exists = true;
+        }
+
+        $tab = array();
+        $sizes = array();
+        if ($dir_exists) {
+
+            if ($handle = opendir($dir)) {
+
+                while (false !== ($entry = readdir($handle))) {
+                    if (!in_array($entry, array(".", ".."))) {
+                        array_push($tab, $entry);
+                        array_push($sizes, round(filesize($dir . '/' . $entry) / 1024));
+                    }
+                }
+
+                closedir($handle);
+            }
+        }
+        $vm = new ViewModel(array(
+                    'form' => new \Admin\Form\TopicForm(),
+                    'listFiles' => $tab,
+                    'sizes' => $sizes,
+                    'dir_exists' => $dir_exists,
+                    'entity' => $entity,
+                    'topics' => $topics
+                ));
+        // $vm->setTemplate('admin/topic/tinymce/edit');
+        return $vm;
+    }
+
     public function deleteAction() {
         $request = $this->getRequest();
         $id = $request->getParam('id');
@@ -452,6 +581,7 @@ class TopicController extends AbstractActionController {
                 }
 
                 $this->db->delete('bugs', 'id=' . $id);
+                $this->log->notice('The page '.$id.' was deleted successfully.');
                 // $log = new Log("Delete topic", "Topic ".$entity->getId()." (".$entity->getName().")", $user);
             }
         }

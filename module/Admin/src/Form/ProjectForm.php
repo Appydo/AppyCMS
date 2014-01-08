@@ -47,6 +47,15 @@ class ProjectForm extends Form {
             ),
         ));
         $this->add(array(
+            'name' => 'analytics',
+            'attributes' => array(
+                'type'  => 'text',
+            ),
+            'options' => array(
+                'label' => 'Script analytics',
+            ),
+        ));
+        $this->add(array(
             'name' => 'banner',
             'attributes' => array(
                 'type'  => 'text',

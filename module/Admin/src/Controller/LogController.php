@@ -32,38 +32,16 @@ class LogController extends AbstractActionController {
     }
 
     private function initAcl($method) {
-    	$acl = new Acl();
-    	$roles = $this->db
-            ->query('SELECT * FROM Role')
-            ->execute();
-
         $allows = $this->db
-            ->query('SELECT * FROM Allow WHERE controller=:controller and privilege=:privilege')
+            ->query('SELECT allow_id FROM Allow WHERE controller=:controller and privilege=:privilege and role_id=:role LIMIT 1')
             ->execute(array(
                 'controller' => $this->controller,
-                'privilege'  => $method
-                ));
-        $denies = $this->db
-            ->query('SELECT * FROM Deny WHERE controller=:controller and privilege=:privilege')
-            ->execute(array(
-                'controller' => $this->controller,
-                'privilege'  => $method
-                ));
-		foreach ($roles as $role) {
-			if (!empty($role['role_parent_id'])) {
-	            $acl->addRole(new Role($role['role_id']), $role['role_parent_id']);
-	        } else {
-	        	$acl->addRole(new Role($role['role_id']));
-	        }
-        }
-        $acl->addResource(new Resource($this->controller));
-        foreach ($allows as $allow) {
-            $acl->allow($allow['role_id'], $deny['controller'], $deny['privilege']);
-        }
-        foreach ($denies as $deny) {
-            $acl->deny($deny['role_id'], $deny['controller'], $deny['privilege']);
-        }
-        if (!$acl->isAllowed($this->user->role_id, $this->controller, $method)) {
+                'privilege'  => $method,
+                'role'       => $this->user->role,
+                ))
+            ->current();
+
+        if (empty($allows)) {
             throw new \Exception("Access denied");
         }
     }
@@ -74,8 +52,8 @@ class LogController extends AbstractActionController {
     	$result = array();
 
         $result['entities'] = $this->db
-        	->query('SELECT l.* FROM Log l WHERE l.project_id=:project ORDER BY l.id DESC')
-        	->execute(array('project' => $this->user->project_id));
+        	->query('SELECT l.* FROM Log l ORDER BY l.id DESC')
+        	->execute();
 
         return $result;
     }
@@ -134,5 +112,15 @@ class LogController extends AbstractActionController {
 
         return $result;
 
+    }
+
+    public function emptyAction() {
+        $this->db
+            ->query('DELETE FROM Log')
+            ->execute();
+        $this->flashMessenger()->addSuccessMessage('Empty Log.');
+        return $this->redirect()->toRoute('admin', array(
+                'controller' => 'log'
+            ));
     }
 }

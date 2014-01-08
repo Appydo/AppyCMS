@@ -11,8 +11,9 @@ use Zend\Permissions\Acl\Resource\GenericResource as Resource;
 /*
  *
  * example :
- * role : admin, staff, editor...
- * ressource : topic, list, create...
+ * role : admin, staff, editor... / GROUP
+ * ressource : topic, list, create... / PERMISSION
+ * 
  * allow : ressource
  */
 
@@ -21,11 +22,37 @@ class AclController extends AbstractActionController {
     public function indexAction() {
         $acl = new Acl();
 
+        if (isset($_GET['page']))
+            $page = $_GET['page'];
+        else
+            $page  = 1;
+        if (isset($_GET['move'])) {
+            if ($_GET['move']=='next') {
+                $page++;
+            } elseif ($_GET['move']=='prev' and $page!=1) {
+                $page--;
+            }
+        }
+        if (empty($page)) $page = 0;
+        $nb    = 20;
+        $start = ($page * $nb) - $nb;
+        if (isset($_GET['order']))
+            $order = $_GET['order'];
+        else
+            $order = '';
+        if(isset($_GET['sort']) and $_GET['sort']=='ASC')
+            $sort  = 'ASC';
+        else
+            $sort  = 'DESC';
+        
+        if (!empty($order)) $order_string = 'ORDER BY u.'.$order.' '.$sort;
+        else $order_string = '';
+
         $query = $this->db->createStatement('
             SELECT *
             FROM Role r
             LEFT JOIN users u ON u.project_id = r.project_id
-            WHERE u.id=:user_id'
+            WHERE u.id=:user_id  LIMIT '.$start.','.$nb
         );
         $roles = $query->execute(array('user_id' => $this->user->id))->getResource()->fetchAll();
         
@@ -42,18 +69,18 @@ class AclController extends AbstractActionController {
 
         $query = $this->db->query('
             SELECT *
-            FROM Allow a
-            '
+            FROM Allow a'
         );
         $allows = $query->execute()->getResource()->fetchAll();
-        foreach ($allows as $allow) {
-            $acl->allow($allow['role_name'], null, $role['privileges']);
+        if(!empty($allows)) {
+            foreach ($allows as $allow) {
+                $acl->allow($allow['role_name'], null, $role['privileges']);
+            }
         }
 
         $query = $this->db->query('
             SELECT *
-            FROM Deny d
-            '
+            FROM Deny d'
         );
         $denys = $query->execute()->getResource()->fetchAll();
         foreach ($denys as $deny) {
@@ -67,23 +94,23 @@ class AclController extends AbstractActionController {
          */
 
         // Guest may only view content
-        $acl->allow('guest', null, 'view');
+        // $acl->allow('guest', null, 'view');
 
         // Staff inherits view privilege from guest, but also needs additional
         // privileges
-        $acl->allow('staff', null, array('edit', 'submit', 'revise'));
+        // $acl->allow('staff', null, array('edit', 'submit', 'revise'));
 
         // Editor inherits view, edit, submit, and revise privileges from
         // staff, but also needs additional privileges
-        $acl->allow('editor', null, array('publish', 'archive', 'delete'));
+        // $acl->allow('editor', null, array('publish', 'archive', 'delete'));
 
-        $acl->allow('admin');
+        // $acl->allow('admin');
 
-        $parents = array('guest', 'staff', 'admin');
-        $acl->addRole(new Role('someUser'), $parents);
+        // $parents = array('guest', 'staff', 'admin');
+        // $acl->addRole(new Role('someUser'), $parents);
 
-        $acl->allow('staff', null, array('edit', 'archive'));
-        $acl->allow('admin', null, array('publish', 'archive', 'delete'));
+        // $acl->allow('staff', null, array('edit', 'archive'));
+        // $acl->allow('admin', null, array('publish', 'archive', 'delete'));
 
         $acl->addResource('someResource');
 
@@ -100,8 +127,8 @@ class AclController extends AbstractActionController {
         $acl->addResource(new Resource('project'));
         $acl->addResource(new Resource('user'));
 
-        $acl->allow('staff', array('topic', 'project'), array('list', 'read'));
-        $acl->allow('editor', array('topic', 'project'), array('publish', 'archive'));
+        // $acl->allow('staff', array('topic', 'project'), array('list', 'read'));
+        // $acl->allow('editor', array('topic', 'project'), array('publish', 'archive'));
 
         /*
          * Verifier les droits
@@ -109,17 +136,21 @@ class AclController extends AbstractActionController {
         // echo $acl->isAllowed('staff', 'topic', 'create');
         // echo $acl->isAllowed('staff', 'project', 'list');
 
-        $acl->allow('admin');
+        // $acl->allow('admin');
 
         return array(
             'roles' => $roles,
-            'resources' => $resources
+            'resources' => $resources,
+            'order' => $order,
+            'sort' => $sort,
+            'page' => $page,
         );
     }
 
     public function newAction() {
+
         return array(
-            'form' => new \Admin\Form\AclForm()
+            'form' => new \Admin\Form\AclForm(),
         );
     }
 
@@ -130,9 +161,9 @@ class AclController extends AbstractActionController {
             $form->setData($request->getPost());
             if ($form->isValid($request->getPost())) {
                 $insert = $this->db->query("INSERT INTO Role (role_name, project_id)
-                    VALUES (:name, :project)", array(
-                    'name' => $request->getPost('role_name'),
-                    'project' => $this->project['id']
+                        VALUES (:name, :project)", array(
+                        'name' => $request->getPost('role_name'),
+                        'project' => $this->project['id']
                      ));
 
                 if ($insert) {
@@ -153,6 +184,32 @@ class AclController extends AbstractActionController {
 
     public function editAction() {
 
+        if (isset($_GET['page']))
+            $page = $_GET['page'];
+        else
+            $page  = 1;
+        if (isset($_GET['move'])) {
+            if ($_GET['move']=='next') {
+                $page++;
+            } elseif ($_GET['move']=='prev' and $page!=1) {
+                $page--;
+            }
+        }
+        if (empty($page)) $page = 0;
+        $nb    = 20;
+        $start = ($page * $nb) - $nb;
+        if (isset($_GET['order']))
+            $order = $_GET['order'];
+        else
+            $order = '';
+        if(isset($_GET['sort']) and $_GET['sort']=='ASC')
+            $sort  = 'ASC';
+        else
+            $sort  = 'DESC';
+        
+        if (!empty($order)) $order_string = 'ORDER BY u.'.$order.' '.$sort;
+        else $order_string = '';
+
         $id = $this->params('id');
         $form = new \Admin\Form\AclForm();
         $entity = $this->db
@@ -165,9 +222,26 @@ class AclController extends AbstractActionController {
         }
 
         $form->setData($entity);
+
+        $allows = $this->db
+            ->createStatement('SELECT * FROM Allow a')
+            ->execute()
+            ->getResource()
+            ->fetchAll();
+
+        $acl = array();
+        foreach($allows as $allow) {
+            $acl[$allow['controller']][$allow['privilege']] = 1;
+        }
         
-        $query = $this->db
-            ->createStatement('SELECT * FROM Resource r')
+        $resources = $this->db
+            ->createStatement('SELECT * FROM Resource r LIMIT '.$start.','.$nb)
+            ->execute(array())
+            ->getResource()
+            ->fetchAll();
+
+        $privileges = $this->db
+            ->createStatement('SELECT * FROM Privilege p LIMIT '.$start.','.$nb)
             ->execute(array())
             ->getResource()
             ->fetchAll();
@@ -175,7 +249,12 @@ class AclController extends AbstractActionController {
         return array(
             'form' => $form,
             'entity' => $entity,
-            'resources' => $resources
+            'resources' => $resources,
+            'privileges' => $privileges,
+            'acl'   => $acl,
+            'order' => $order,
+            'sort'  => $sort,
+            'page'  => $page,
         );
     }
 
@@ -197,22 +276,40 @@ class AclController extends AbstractActionController {
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if ($form->isValid()) {
+
                 $update = $this->db->query(
                     'UPDATE Role SET role_name=:name WHERE role_id=:id', array(
                     'name' => $request->getPost('role_name'),
                     'id' => $id
                      ));
+
+                $this->db
+                    ->query('DELETE FROM Allow WHERE role_id=:id and project_id=:project_id')
+                    ->execute(array('id' => $id,'project_id'=>$this->user->project_id));
+
+                foreach($request->getPost('acl') as $ressource=>$value) {
+                    foreach($value as $privilege) {
+                        $insert = $this->db->query("INSERT INTO Allow (role_id, project_id, controller, privilege)
+                            VALUES (:role_id, :project_id, :controller, :privilege)", array(
+                            'role_id'    => $id,
+                            'project_id' => $this->user->project_id,
+                            'controller' => $ressource,
+                            'privilege'  => $privilege,
+                         ));
+                    }
+                }
+
                 if ($update) {
                     return $this->redirect()->toRoute('admin', array(
                                 'controller' => 'acl',
-                                'action' => 'edit',
-                                'id' => $id
+                                'action' => 'index',
+                                // 'id' => $id
                             ));
                 }
             }
         }
         return array(
-            'form' => $form
+            'form' => $form,
         );
     }
 

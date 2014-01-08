@@ -93,11 +93,15 @@ class ProjectController extends AbstractActionController {
                      ));
                 if ($insert) {
                     $id = $this->db->getDriver()->getLastGeneratedValue();
+                    $this->log->info('The project '.$id.' was created successfully.');
+                    $this->flashMessenger()->addSuccessMessage('The project was created successfully.');
                     return $this->redirect()->toRoute('admin', array(
                                 'controller' => 'project',
                                 'action' => 'edit',
                                 'id' => $id
                             ));
+                } else {
+                    $this->log->error('Error created project.');
                 }
             }
         }
@@ -154,13 +158,15 @@ class ProjectController extends AbstractActionController {
                     'id' => $id
                         ));
                 if ($update) {
-                    $this->flashMessenger()->addSuccessMessage('Project modified');
+                    $this->log->info('The project '.$id.' was updated successfully.');
+                    $this->flashMessenger()->addSuccessMessage('The project was updated successfully.');
                     return $this->redirect()->toRoute('admin', array(
                                 'controller' => 'project',
                                 'action' => 'edit',
                                 'id' => $id
                             ));
                 } else {
+                    $this->log->error('The project '.$id.' was not updated successfully.');
                     $this->flashMessenger()->addErrirMessage('Project edit error');
                 }
             }

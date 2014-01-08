@@ -18,15 +18,32 @@ class ProductImageResizeController extends AbstractActionController {
     
     public function indexAction() {
 
-        $stmt = $this->db
+        $request = $this->getRequest();
+        $like  = '';
+
+        if ($request->isPost()) {
+            if ($request->getPost('query')!='') {
+                $like = $request->getPost('query');
+            }
+        }
+
+        if (empty($like)) {
+            $entities = $this->db
                 ->createStatement('
                     SELECT pir_id, pir_name as name, pir_width as width, pir_height as height, pir_hide as active
-                    FROM '.$this->table.'
-                    ');
-
-        $entities = $stmt->execute()
+                    FROM '.$this->table)
+                ->execute()
                 ->getResource()
                 ->fetchAll(\PDO::FETCH_ASSOC);
+        } else {
+            $entities = $this->db
+                ->createStatement('
+                    SELECT pir_id, pir_name as name, pir_width as width, pir_height as height, pir_hide as active
+                    FROM '.$this->table.' WHERE pir_name LIKE :like')
+                ->execute(array('like'=>'%'.$like.'%'))
+                ->getResource()
+                ->fetchAll(\PDO::FETCH_ASSOC);
+        }
 
         return array(
             'thead' => false,

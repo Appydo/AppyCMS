@@ -29,12 +29,37 @@ class ShopAttributeController extends AbstractActionController {
             }
         }
 
+        $where_string = '';
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($request->getPost('query') != '') {
+                $where   = array();
+                $query   = $request->getPost('query');
+                $where[] = 'u.firstname LIKE "%'.$query.'%"';
+                $where[] = 'u.username LIKE "%'.$query.'%"';
+                $where[] = 'u.email LIKE "%'.$query.'%"';
+                if (is_numeric($query)) {
+                    $where[] = 'u.id='.$query;
+                }
+                if (!empty($where)) $where_string .= ' and ('.implode(' or ',$where).')';
+                $stmt = $this->db->createStatement('SELECT * FROM '.$this->table);
+            }
+            if ($request->getPost('action_submit') == '1') {
+                if ($request->getPost('action_select') == 'delete') {
+                    foreach ($request->getPost('action') as $action) {
+                        return $this->deleteAction($action);
+                    }
+                }
+            }
+        }
+
         $entities   = $this->db
                 ->query('
                     SELECT sa.*, (SELECT count(sac.sac_id)
                     FROM ShopAttributeChoice sac
                     WHERE sac.sa_id=sa.sa_id) as count
                     FROM '.$this->table.' sa
+                    '.$where_string.'
                     ')
                 ->execute();
 

@@ -37,17 +37,35 @@ class ShipController extends AbstractActionController {
             } elseif ($request->getPost('action_select')=='send') {
                 foreach($request->getPost('action') as $action) {
                     $update = $this->db->query('UPDATE '.$this->table.'
-                        SET shipment=:shipment WHERE id=:id', array(
+                        SET shipment=:shipment, shipment_date=:date WHERE id=:id', array(
                         'shipment' => 1,
+                        'date' => time(),
                         'id' => $action
                         ));
                 }
             }
         }
+
+        if (isset($_GET['page']))
+            $page = $_GET['page'];
+        else
+            $page  = 1;
+        if (isset($_GET['move'])) {
+            if ($_GET['move']=='next') {
+                $page++;
+            } elseif ($_GET['move']=='prev' and $page!=1) {
+                $page--;
+            }
+        }
+        if (empty($page)) $page = 0;
+        $nb    = $this->table_row;
+        $start = ($page * $nb) - $nb;
+
+        $result['order'] = (isset($_GET['order'])) ? stripslashes($_GET['order']) : '';
+        $result['sort']  = (isset($_GET['sort']) and $_GET['sort']=='ASC') ? 'ASC' : 'DESC';
+        $order_string    = (!empty($result['order'])) ? 'ORDER BY '.$result['order'].' '.$result['sort'] : '';
         
-        $metadata = new \Zend\Db\Metadata\Metadata($this->db);
-        // $tableNames = $metadata->getTableNames();
-        
+        $metadata = new \Zend\Db\Metadata\Metadata($this->db);        
         $columns = $metadata->getTable($this->table)->getColumns();
 
         $stmt = $this->db
@@ -97,8 +115,10 @@ class ShipController extends AbstractActionController {
         return array(
             'entities' => $entities,
             'columns'  => $columns,
-            'baskets' => $baskets,
-            'total' => $total,
+            'baskets'  => $baskets,
+            'total'    => $total,
+            'sort'     => $sort,
+            'order'    => $order,
         );
 
     }

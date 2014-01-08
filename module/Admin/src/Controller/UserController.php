@@ -211,11 +211,13 @@ class UserController extends AbstractActionController {
                         'updated' => time(),
                         'id' => $this->user->id
                         ));
-                    $this->flashMessenger()->addSuccessMessage('Profil updated');
+                    $this->log->info('The profil '.$this->user->id.' was updated successfully.');
+                    $this->flashMessenger()->addSuccessMessage('The profil was updated successfully.');
                 }
             }
         } else {
-            $this->flashMessenger()->addSuccessMessage('No data');
+            $this->log->error('The profil '.$this->user->id.' was not updated successfully.');
+            $this->flashMessenger()->addErrorMessage('No data');
         }
         return $this->redirect()->toRoute('admin',array('controller'=>'user','action'=>'profil'));
     }
@@ -302,7 +304,7 @@ class UserController extends AbstractActionController {
             "updated" => time(),
             "password" => sha1($password . $salt),
             "is_active" => 1,
-                ));
+            ));
         if ($user) {
             $user_id = $this->db->getDriver()->getLastGeneratedValue();
             $project = $this->db->query("INSERT INTO Project (user_id, name, created, updated, hide, ban) VALUES (:user_id, :name, :created, :updated, :hide, :ban)", array(
@@ -316,16 +318,17 @@ class UserController extends AbstractActionController {
             $project_id = $this->db->getDriver()->getLastGeneratedValue();
             $this->db->query('UPDATE users SET project_id=:project WHERE id=:id', array('project' => $project_id, 'id' => $user_id));
             $this->db->getDriver()->getConnection()->commit();
-            
+
             $project = $this->db->query("INSERT INTO Acl (user_id, project_id, role_id) VALUES (:user_id, :project_id, :role_id)", array(
                 'user_id' => $user_id,
                 'project_id' => $this->project['id'],
                 'role_id' => $role_id
                 ));
-            
+            $this->log->info('The user '.$user_id.' was created successfully.');
             return $user_id;
         } else {
             $this->db->getDriver()->getConnection()->rollback();
+            $this->log->error('Error during creating an user.');
             return 0;
         }
     }
@@ -473,7 +476,7 @@ class UserController extends AbstractActionController {
 
                 $id = $this->createUser($username, $credential, $email, $role);
                 if ($id > 0) {
-                    $this->flashMessenger()->addSuccessMessage('User created');
+                    $this->flashMessenger()->addSuccessMessage('The user was created successfully.');
                     return $this->redirect()->toRoute('admin', array(
                                 'controller' => 'user',
                                 'action' => 'edit',
@@ -563,7 +566,8 @@ class UserController extends AbstractActionController {
                 }
 
                 if ($update) {
-                    $this->flashMessenger()->addSuccessMessage('The user was created successfully.');
+                    $this->log->info('The user '.$id.' was updated successfully.');
+                    $this->flashMessenger()->addSuccessMessage('The user was updated successfully.');
                     return $this->redirect()->toRoute('admin', array(
                                 'controller' => 'user',
                                 'action' => 'edit',
@@ -607,7 +611,7 @@ class UserController extends AbstractActionController {
 
         return $this->redirect()->toRoute('admin', array(
                                 'controller' => 'user'
-                            ));;
+                            ));
     }
 
 }

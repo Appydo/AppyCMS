@@ -51,7 +51,6 @@ class ProductController extends AbstractActionController {
     }
     
     public function indexAction() {
-        // $this->layout('breizhadonf/twocolumn1');
         $topic = $this->params('id');
         $stmt  = $this->db->createStatement('
             SELECT p.*, u.username as author, t.name as topic_name
@@ -62,14 +61,6 @@ class ProductController extends AbstractActionController {
 
         // Trick for rewind
         $products = $stmt->execute(array('project' => $this->project['id'], 'topic' => $topic))->getResource()->fetchAll();
-
-        /*
-          $topics = $this->db->query('SELECT t.*, u.username as author
-          FROM Topic t
-          LEFT JOIN users u on t.user_id=u.id
-          WHERE t.project_id=:project and t.topic_id is NULL and t.hide=0 ORDER BY t.id DESC'
-          )->execute(array('project' => 1));
-         */
         
         $this->basket();
         

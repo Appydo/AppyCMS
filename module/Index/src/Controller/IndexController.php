@@ -25,8 +25,8 @@ class IndexController extends AbstractActionController {
 
     public function topicAction() {
         
-        $this->topic = $this->getServiceLocator()->get('topic');
-        $topics = $this->topic->fetch($this->project['id']);
+        // $this->topic = $this->getServiceLocator()->get('topic');
+        // $topics = $this->topic->fetch($this->project['id']);
         
         $id = $this->params('id');
         if (empty($id)) {
@@ -112,7 +112,6 @@ class IndexController extends AbstractActionController {
             return $this->indexAction();
         }
 
-        // echo $project['id'];exit();
         // Select all the topics for the default website
         $this->view->topics = $this->db->query('SELECT t.* FROM Topic t WHERE t.project_id=:project and t.hide=0 and t.topic_id is null ORDER BY t.id DESC', array('project' => $project['id'])
                 )->fetchAll();

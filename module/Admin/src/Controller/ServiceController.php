@@ -11,45 +11,60 @@ use Zend\InputFilter\InputFilterInterface;
 
 class ServiceController extends AbstractActionController {
 
+    private $title      = 'Service';
+    private $table      = 'Service';
+    private $controller = 'Service';
+    private $template   = 'admin/service';
+    private $id         = 'id';
+    private $select     = 'id, name, url';
+    private $module     = 'admin';
+    private $table_row  = 20;
+
+    private function initAcl($method) {
+        $allows = $this->db
+            ->query('SELECT allow_id FROM Allow WHERE controller=:controller and privilege=:privilege and role_id=:role LIMIT 1')
+            ->execute(array(
+                'controller' => $this->controller,
+                'privilege'  => $method,
+                'role'       => $this->user->role,
+                ))
+            ->current();
+
+        if (empty($allows)) {
+            throw new \Exception("Access denied");
+        }
+    }
+
+    private function defaultTemplateVars() {
+        $result = array();
+        $result['primary_id'] = $this->id;
+        $result['controller'] = $this->controller;
+        $result['module']     = $this->module;
+        return $result;
+    }
+
     public function indexAction() {
         $result = array();
         return $result;
     }
 
     public function newAction() {
-        $request = $this->getRequest();
-        if ($request->getPost()->get('ids')!='') {
-            $this->delete();
-        }
-
-        $ModelService = '\\Admin\\Model\\' . SGBD . '\\' . 'Service';
-        $service = new $ModelService($this->db);
-
-        $form = new \Admin\Form\ServiceForm();
-        
-        return array(
-            'services' => $service->getAll(),
-            'form' => $form
-        );
+        $this->initAcl('create');
+        $result         = $this->defaultTemplateVars();
+        $result['form'] = new \Admin\Form\ServiceForm();
+        $result['id']   = $this->id;
+        return $result;
     }
     
     public function editAction() {
-        $request = $this->getRequest();
-        $id = (int) $this->params()->fromRoute('id', 0);
-        if (!$id) {
-            return $this->redirect()->toRoute('default', array(
-                'controller' => 'service',
-                'action' => 'new'
-            ));
-        }
-        
-        $ModelService = '\\Admin\\Model\\' . SGBD . '\\' . 'Service';
-        $service = new $ModelService($this->db);
-        
-        return array(
-            'form' => new \Admin\Form\ServiceForm(),
-            'entity' => $entity->get($id)
-        );
+        $this->initAcl('update');
+        $result             = $this->defaultTemplateVars();
+        $result['id']       = $this->params('id');
+        $result['entity']   = $model->get($result['id']);
+        $result['table_id'] = $this->id;
+        $result['form']     = new \Admin\Form\ServiceForm();
+        $result['form']->setData($result['entity']);
+        return $result;
     }
 
     public function createAction() {
@@ -97,11 +112,10 @@ class ServiceController extends AbstractActionController {
             $form->setInputFilter($inputFilter);
             $form->setData($request->getPost());
             if ($form->isValid()) {
-                $insert = $this->db->query('INSERT INTO Service (name, url, type, created, updated, hide) VALUES (:name, :url, :type, :created, :updated, 0)')
+                $insert = $this->db->query('INSERT INTO Service (name, url, created, updated, hide) VALUES (:name, :url, :created, :updated, 0)')
                         ->execute(array(
                             'name' => $request->getPost('name'),
                             'url' => $request->getPost('link'),
-                            'type' => $request->getPost('type'),
                             'created' => time(),
                             'updated' => time()
                             ));

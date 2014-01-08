@@ -1,5 +1,4 @@
 <?php
-
 namespace Index\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
@@ -130,9 +129,136 @@ class AuthController extends AbstractActionController {
         );
     }
 
+    public function confirmAction() {
+
+        $auth = new AuthenticationService();
+
+        if ($auth->hasIdentity()) {
+            return $this->redirect()->toRoute('ier', array('controller'=>'index', 'action' => 'profil'));
+        }
+
+        $secret = $_GET['secret'];
+        if (empty($secret)) die();
+        $select = $this->db->query('
+            SELECT id, email, password
+            FROM users
+            WHERE secret=:secret and is_active=0')
+        ->execute(array(
+            'secret' => $secret
+            ))->current();
+        if (isset($select['id'])) {
+            $result['confirm'] = 1;
+            $this->db->query('
+                UPDATE users SET is_active=1
+                WHERE secret=:secret')
+            ->execute(array('secret' => $secret));
+            $authAdapter = new AuthAdapter($this->db,
+                'users',
+                'email',
+                'password'
+                );
+            $authAdapter
+                ->setIdentity($select['email'])
+                ->setCredential($select['password']);
+
+            // Auto authenticate
+            $result = $authAdapter->authenticate($this->db);
+
+            if ($result->isValid()) {
+                $this->db->query("INSERT INTO Auth (identity, date, success) VALUES (:identity, :date, :success)", array(
+                    'identity' => $select['email'],
+                    'date' => time(),
+                    'success' => 1,
+                    ));
+
+                $storage = $auth->getStorage();
+                $storage->write($authAdapter->getResultRowObject(null, 'password'));
+            }
+            $this->flashMessenger()->addSuccessMessage('Votre compte est maintenant activé. Merci');
+            return $this->redirect()->toRoute('breizhadonf', array('controller'=>'annonces', 'action' => 'index'));
+        } else {
+            $select = $this->db->query('
+                SELECT id, email, password
+                FROM users
+                WHERE secret=:secret and is_active=1')
+                ->execute(array(
+                'secret' => $secret
+                ))->current();
+            if (isset($select['id'])) {
+                $result['error'] = "Le code de confirmation à déjà été activé.";
+            } else {
+                $result['error'] = "Le code de confirmation est incorrecte.";
+            }
+            $result['confirm'] = 0;
+        }
+        return $result;
+    }
+
+    private function getEmailData($db, $email, $title, $context) {
+        $email_data = $db->query('
+            SELECT ed_title, ed_content
+            FROM EmailData
+            WHERE ed_hide!=1 and ed_title=:title')
+                ->execute(array(
+                    'title' => $title
+                ))->current();
+        if ($email_data) {
+            foreach($context as $key=>$var) {
+                $email_data['ed_content'] = str_replace('{{'.$key.'}}', $var, $email_data['ed_content']);
+            }
+            mail($email, '['.$website.'] '.$email_data['ed_title'] , $email_data['ed_content']);
+        }
+    }
+    
+    public function sendMailRecoveryAction() {
+        $result = array();
+        $website = 'http://www.breizhadonf.com';
+        $layout = $this->layout();
+        $layout->title = 'Changer mon mot de passe';
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $profil = $this->db->query('
+                SELECT u.id
+                FROM users u
+                WHERE u.email=:email')
+                    ->execute(array(
+                        'email' => $request->getPost('email')
+                    ))->current();
+            if ($profil) {
+                $newpassword = $this->db->query('
+                SELECT pr_id
+                FROM passwordRecovery
+                WHERE user_id=:user and created>:time')
+                    ->execute(array(
+                        'user' => $profil['id'],
+                        'time' => (time() - 3600) // 1 hour
+                    ))->current();
+                if (!$newpassword) {
+                    $password = $this->generateSalt(8);
+                    $salt = $this->generateSalt();
+                    $this->db->query('
+                        INSERT INTO passwordRecovery (user_id, pr_password, pr_salt, created)
+                        VALUES (:user_id, :password, :salt, :created)', array(
+                                'user_id'  => $profil['id'],
+                                'password' => sha1($password . $salt),
+                                'salt'     => $salt,
+                                'created'  => time(),
+                            ));
+
+                    $context = array();
+                    $context['password'] = $password;
+
+                    $this->getEmailData($this->db, $request->getPost('email'), 'Your new credentials', $context);
+                    
+                }
+            }
+        }
+        return $result;
+    }
+
     public function loginAction() {
-        
-        $this->layout('simple/layout');
+
+        $this->layout('simple');
         $auth = new AuthenticationService();
 
         if ($auth->hasIdentity()) {
@@ -155,9 +281,8 @@ class AuthController extends AbstractActionController {
                 );
                 $user = $this->db->query("SELECT id, salt FROM users WHERE email=:email")->execute(array('email'=>$identity))->current();
                 $authAdapter
-                        ->setIdentity($identity)
-                        ->setCredential(sha1($credential . $user['salt']))
-                ;
+                    ->setIdentity($identity)
+                    ->setCredential(sha1($credential . $user['salt']));
 
                 $result = $authAdapter->authenticate($this->db);
 

@@ -17,14 +17,14 @@ use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Role\GenericRole as Role;
 use Zend\Permissions\Acl\Resource\GenericResource as Resource;
 
-class ResourceController extends AbstractActionController {
+class PrivilegeController extends AbstractActionController {
 
-    private $title      = 'Resource';
-    private $table      = 'Resource';
-    private $controller = 'Resource';
-    private $template   = 'admin/resource';
-    private $id         = 'resource_id';
-    private $select     = 'resource_id';
+    private $title      = 'Privilege';
+    private $table      = 'Privilege';
+    private $controller = 'Privilege';
+    private $template   = 'admin/privilege';
+    private $id         = 'privilege_id';
+    private $select     = 'privilege_id';
     private $module     = 'admin';
     private $table_row  = 20;
     
@@ -54,53 +54,39 @@ class ResourceController extends AbstractActionController {
     public function newAction() {
         
         return array(
-            'form' => new \Admin\Form\ResourceForm()
+            'form' => new \Admin\Form\PrivilegeForm()
         );
     }
 
     public function createAction() {
         $request = $this->getRequest();
-        $form = new \Admin\Form\ResourceForm();
+        $form = new \Admin\Form\PrivilegeForm();
 
         if ($request->isPost()) {
-            /*
-            $inputFilter = new InputFilter();
-            $factory     = new InputFactory();
-            $inputFilter->add($factory->createInput(array(
-                'name'     => 'name',
-                'required' => true,
-                'filters'  => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim'),
-                ),
-                'validators' => array(
-                    array(
-                        'name'    => 'StringLength',
-                        'options' => array(
-                            'encoding' => 'UTF-8',
-                            'min'      => 3,
-                            'max'      => 30,
-                        ),
-                    ),
-                ),
-            )));
-            $form->setInputFilter($inputFilter);
-             */
             $form->setData($request->getPost());
             if ($form->isValid()) {
+                
+                $insert_args = array();
+                foreach($form as $element) {
+                    if(!in_array($element->getName(),array($this->id, 'csrf', 'submit')))
+                        $insert_args[$element->getName()] = $request->getPost($element->getName());
+                }
+
+                $insert_args['created'] = time();
+                $insert_args['updated'] = time();
+                $insert_args['hide']    = 0;
+
                 $insert = $this->db->query(
-                    "INSERT INTO Resource (resource_name, created, updated, project_id, hide)
-                     VALUES (:resource_name, :created, :updated, :project, :hide)", array(
-                    'resource_name' => $request->getPost('resource_name'),
-                    'project' => $this->project['id'],
-                    'created' => time(),
-                    'updated' => time(),
-                    'hide' => ($request->getPost('hide') == 'on') ? 1 : 0
-                     ));
+                    "INSERT INTO ".$this->table." (".implode(",", array_keys($insert_args)).")
+                    VALUES (:".implode(",:", array_keys($insert_args)).")",
+                        $insert_args
+                        );
+                
                 if ($insert) {
                     $id = $this->db->getDriver()->getLastGeneratedValue();
-                    return $this->redirect()->toRoute('admin', array(
-                                'controller' => 'resource',
+                    $this->log->info('The privilege '.$id.' was created successfully.');
+                    return $this->redirect()->toRoute($this->module, array(
+                                'controller' => $this->controller,
                                 'action' => 'edit',
                                 'id' => $id
                             ));
@@ -118,9 +104,9 @@ class ResourceController extends AbstractActionController {
     public function editAction() {
 
         $id = $this->params('id');
-        $form = new \Admin\Form\ResourceForm();
+        $form = new \Admin\Form\PrivilegeForm();
         $entity = $this->db
-                ->query('SELECT * FROM '.$this->table.' WHERE resource_id=:id')
+                ->query('SELECT * FROM '.$this->table.' WHERE privilege_id=:id')
                 ->execute(array('id'=>$id))
                 ->current();
         $form->setData($entity);
@@ -162,7 +148,7 @@ class ResourceController extends AbstractActionController {
         $id = $this->params('id');
 
         $entity = $this->db
-                ->query('SELECT * FROM '.$this->table.' WHERE resource_id=:id')
+                ->query('SELECT * FROM '.$this->table.' WHERE privilege_id=:id')
                 ->execute(array('id'=>$id))
                 ->current();
 
@@ -182,7 +168,6 @@ class ResourceController extends AbstractActionController {
                         $update_args[$element->getName()] = $request->getPost($element->getName());
                 }
                 $update_set = substr($update_set, 0, -1);
-                $update_args['project_id'] = $this->user->project_id;
                 $update_args['updated'] = time();
                 $update_args[$this->id] = $id;
                 $update_set = array();
@@ -197,6 +182,7 @@ class ResourceController extends AbstractActionController {
                         );
 
                 if (!empty($id)) {
+                    $this->log->info('The privilege '.$id.' was updated successfully.');
                     $this->flashMessenger()->addSuccessMessage('The item was updated successfully.');
                     return $this->redirect()->toRoute($this->module, array(
                             'controller' => $this->controller,
@@ -229,5 +215,4 @@ class ResourceController extends AbstractActionController {
                                 'controller' => 'resource'
                             ));;
     }
-
 }

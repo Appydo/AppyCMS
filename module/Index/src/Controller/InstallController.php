@@ -8,11 +8,9 @@ use Zend\View\Model\ViewModel;
 class InstallController extends AbstractActionController {
 
     public function indexAction() {
-        $this->layout('simple/layout');
-        // $this->layout('default/admin');
+        $this->layout('simple');
         $request = $this->getRequest();
-        $layout = 'default';
-        // $this->_helper->layout->setLayout($layout . '/layout');
+
         date_default_timezone_set('GMT');
         
         return array();
@@ -46,9 +44,10 @@ class InstallController extends AbstractActionController {
             // $user_id = $this->db->lastInsertId();
             $user_id = $this->db->query("SELECT max(id) FROM users")->execute()->current();
             $user_id = $user_id['max(id)'];
-            $this->db->query("INSERT INTO Project (user_id, name, created, updated, hide, ban) VALUES (:user_id, :name, :created, :updated, :hide, :ban)", array(
+            $this->db->query("INSERT INTO Project (user_id, name, theme, created, updated, hide, ban) VALUES (:user_id, :name, :theme, :created, :updated, :hide, :ban)", array(
                 'user_id' => $user_id,
                 'name' => $username,
+                'theme' => 'default',
                 'created' => time(),
                 'updated' => time(),
                 'hide' => 0,
@@ -57,6 +56,17 @@ class InstallController extends AbstractActionController {
             $project_id = $this->db->query("SELECT max(id) FROM Project")->execute()->current();
             $project_id = $project_id['max(id)'];
             $this->db->query('UPDATE users SET project_id=:project WHERE id=:id', array('project' => $project_id, 'id' => $user_id));
+            /*
+            $this->db->query("INSERT INTO Acl (user_id, project_id, role_id) VALUES (:user_id, :project_id, :role_id)", array(
+                'user_id'    => $user_id,
+                'project_id' => $project_id,
+                'role_id'    => 1
+            ));
+            $this->db->query("INSERT INTO Role (project_id, role_name) VALUES (:project_id, :role_name)", array(
+                'project_id' => $project_id,
+                'role_name'  => 'admin'
+            ));
+            */
             $this->db->getDriver()->getConnection()->commit();
         } else {
             $this->db->getDriver()->getConnection()->rollback();
@@ -64,7 +74,7 @@ class InstallController extends AbstractActionController {
     }
 
     public function createAction() {
-        $this->layout('simple/layout');
+        $this->layout('simple');
         $dir = __DIR__ . '/../../..';
 
         switch ($_POST['database']) {
@@ -78,6 +88,8 @@ class InstallController extends AbstractActionController {
                 break;
             case 'postgresql':
                 $pdo = 'pdo_pgsql';
+                $dbname = $_POST['dbname'];
+                $dsn = "'pgsql:dbname=$dbname;host={$_POST['host']}'";
                 break;
             default:
                 $pdo = 'pdo_mysql';
@@ -142,40 +154,7 @@ return array(
         ),
     ),
 );";
-        /*
-        $config = "[production]
-install = 1
-version = 0.2
-layout  = \"default\"
-phpSettings.display_startup_errors = 0
-phpSettings.display_errors = 0
-includePaths.library = APPLICATION_PATH \"/../library\"
-bootstrap.path       = APPLICATION_PATH \"/Bootstrap.php\"
-bootstrap.class      = \"Bootstrap\"
-appnamespace         = \"Application\"
-; resources.frontController.controllerDirectory = APPLICATION_PATH \"/controllers\"
-resources.frontController.moduleDirectory = APPLICATION_PATH
-resources.frontController.prefixDefaultModule = true
-resources.frontController.defaultModule = \"default\"
-resources.modules[] = \"\"
-resources.frontController.params.displayExceptions = 0
-resources.layout.layoutPath  = APPLICATION_PATH \"/../public/themes/\"
-resources.db.adapter         = \"$pdo\"
-resources.db.params.host     = \"{$_POST['host']}\"
-resources.db.params.username = \"{$_POST['username']}\"
-resources.db.params.password = \"{$_POST['password']}\"
-resources.db.params.dbname   = {$dbname}
-zone = \"{$_POST['zone']}\"
-salt = \"9YYwGqQjNSrAiGa\"
-resources.view.encoding = \"UTF-8\"
-;resources.view[] =
-;resources.view.scriptPath = \"/your/path/\"
 
-[development : production]
-phpSettings.display_startup_errors = 1
-phpSettings.display_errors = 1
-resources.frontController.params.displayExceptions = 1";
-*/
         return array(
             'config' => $config,
             'path'   => ROOT_PATH . 'config/localhost.php',

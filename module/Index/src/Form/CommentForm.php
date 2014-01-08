@@ -9,7 +9,7 @@ use Zend\Form\Form,
 
 class CommentForm extends Form {
 
-     public function __construct($name = null)
+    public function __construct($name = null)
     {
         parent::__construct('comment');
         $this->setAttribute('method', 'post');
@@ -94,5 +94,4 @@ class CommentForm extends Form {
             ),
         ));
     }
-
 }

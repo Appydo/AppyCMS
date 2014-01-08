@@ -109,7 +109,5 @@ class SignupForm extends Form {
                 )
             )
         ));
-
     }
-
 }

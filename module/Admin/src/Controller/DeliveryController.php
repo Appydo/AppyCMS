@@ -73,7 +73,7 @@ class DeliveryController extends AbstractActionController {
 
     public function newAction() {
         $result = $this->defaultTemplateVars();
-        $result['form'] = $this->generateForm();
+        $result['form'] = new \Admin\Form\DeliveryForm();
         $result['id']   = $this->id;
         return $result;
     }
@@ -116,15 +116,19 @@ class DeliveryController extends AbstractActionController {
 
     public function editAction() {
 
-        $result             = $this->defaultTemplateVars();
-        $result['id']       = $this->params('id');
-        $result['entity']   = $model->get($result['id']);
-        $result['table_id'] = $this->id;
-        $result['form']     = $this->generateForm();
+        $result = $this->defaultTemplateVars();
+        $result['form']   = new \Admin\Form\DeliveryForm();
+        $result['id']     = $this->params('id');
+        $result['entity'] = $this->db
+                ->query('SELECT * FROM '.$this->table.' WHERE '.$this->id.'=:id')
+                ->execute(array('id'=>$result['id']))
+                ->current();
         $result['form']->setData($result['entity']);
+        if (empty($result['entity'])) {
+            die($this->table.' not found.');
+        }
 
         return $result;
-
     }
 
     public function updateAction() {

@@ -10,23 +10,7 @@ class DesignController extends AbstractActionController {
     public function indexAction() {
         $request = $this->getRequest();
 
-        if ($request->isPost()) {
-            $design = $request->getPost('design');
-            $user   = $this->db
-                    ->query('SELECT project_id FROM users WHERE id=:user_id')
-                    ->execute(array('user_id'=>$this->user->id))
-                    ->current();
-            $entity = $this->db
-                    ->query('UPDATE Project SET theme=:design WHERE id=:id')
-                    ->execute(array('design' => $design, 'id' => $user['project_id']));
-            $this->project = $this->db
-                    ->query('SELECT * FROM Project p WHERE p.id=:id and p.ban=0')
-                    ->execute(array('id' => $user['project_id']))
-                    ->current();
-            $this->flashMessenger()->addSuccessMessage('Design modified');
-        }
-
-        $dir = __DIR__ . '/../../../../public/themes';
+        $dir = ROOT_PATH . '/public/themes';
 
         $tab = array();
         $descriptions = array();
@@ -49,6 +33,32 @@ class DesignController extends AbstractActionController {
         );
     }
 
+    public function modifyAction() {
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $design = $request->getPost('design');
+            $user   = $this->db
+                    ->query('SELECT project_id FROM users WHERE id=:user_id')
+                    ->execute(array('user_id'=>$this->user->id))
+                    ->current();
+            $entity = $this->db
+                    ->query('UPDATE Project SET theme=:design WHERE id=:id')
+                    ->execute(array('design' => $design, 'id' => $user['project_id']));
+            $this->project = $this->db
+                    ->query('SELECT * FROM Project p WHERE p.id=:id and p.ban=0')
+                    ->execute(array('id' => $user['project_id']))
+                    ->current();
+
+            $this->log->info('Design '.$design.' modified successfully.');
+            $this->flashMessenger()->addSuccessMessage('Design modified successfully.');
+        }
+        return $this->redirect()->toRoute($this->module, array(
+                    'controller' => 'design',
+                    'action' => 'index'
+                ));
+    }
+
     public function importAction() {
         $request = $this->getRequest();
         $form = new \Admin\Form\ImportThemeForm();
@@ -68,6 +78,7 @@ class DesignController extends AbstractActionController {
                 $path = __DIR__ . '/../../../../public/themes/' . $this->project['id'] . '/';
                 move_uploaded_file($_FILES['document']['tmp_name'], $path.$_FILES['document']['name']);   
                 // $log = new Log("Upload file", "File", $user);
+                // $this->log('Upload File '.$_FILES['document']['name'], 'success');
                 $zip = new \ZipArchive;
                 $res = $zip->open($path.$_FILES['document']['name']);
                 if ($res === TRUE) {
@@ -79,9 +90,7 @@ class DesignController extends AbstractActionController {
                 }
             }
         }
-        
-        
-        
+
         // List dir for repertory and image
         $tab = array();
         $sizes = array();

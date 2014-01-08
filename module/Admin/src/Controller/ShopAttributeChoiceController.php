@@ -30,14 +30,14 @@ class ShopAttributeChoiceController extends AbstractActionController {
                 return $this->deleteAction($id);
             }
             if ($request->getPost('choice')!='') {
-            $insert = $this->db->query("INSERT INTO {$this->table} (sac_name, sa_id, created, updated, user_id)
-                VALUES (:name, :sa_id, :created, :updated, :user_id)", array(
-                'name'    => $request->getPost('choice'),
-                'sa_id'   => $id,
-                'created' => time(),
-                'updated' => time(),
-                'user_id' => $this->user->id,
-                 ));
+                $insert = $this->db->query("INSERT INTO {$this->table} (sac_name, sa_id, created, updated, user_id)
+                    VALUES (:name, :sa_id, :created, :updated, :user_id)", array(
+                    'name'    => $request->getPost('choice'),
+                    'sa_id'   => $id,
+                    'created' => time(),
+                    'updated' => time(),
+                    'user_id' => $this->user->id,
+                     ));
             }
             if ($request->getPost('sac_default')!='') {
                 $update = $this->db->query(
@@ -49,27 +49,34 @@ class ShopAttributeChoiceController extends AbstractActionController {
                     'id' => $request->getPost('sac_default')
                     ));
             }
-            foreach($request->getPost('price') as $sac_id=>$price) {
-                $update = $this->db->query(
-                    "UPDATE {$this->table} SET sac_price=:price WHERE sac_id=:id", array(
-                        'price' => $price,
-                        'id' => $sac_id
-                    ));
+            // die(var_dump($request->getPost('price','')));
+            if (is_array($request->getPost('price',''))) {
+                foreach($request->getPost('price') as $sac_id=>$price) {
+                    $update = $this->db->query(
+                        "UPDATE {$this->table} SET sac_price=:price WHERE sac_id=:id", array(
+                            'price' => $price,
+                            'id' => $sac_id
+                        ));
+                }
             }
-            foreach($request->getPost('name') as $sac_id=>$name) {
-                $update = $this->db->query(
-                    "UPDATE {$this->table} SET sac_name=:name WHERE sac_id=:id", array(
-                        'name' => $name,
-                        'id' => $sac_id
-                    ));
+            if (is_array($request->getPost('name',''))) {
+                foreach($request->getPost('name') as $sac_id=>$name) {
+                    $update = $this->db->query(
+                        "UPDATE {$this->table} SET sac_name=:name WHERE sac_id=:id", array(
+                            'name' => $name,
+                            'id' => $sac_id
+                        ));
+                }
             }
-            foreach($request->getPost('position') as $sac_id=>$position) {
-                $update = $this->db->query(
-                    "UPDATE {$this->table} SET sac_position=:position WHERE sac_id=:id", array(
-                        'position' => $position,
-                        'id' => $sac_id
-                    ));
-            }
+            if (is_array($request->getPost('position',''))) {
+                foreach($request->getPost('position') as $sac_id=>$position) {
+                    $update = $this->db->query(
+                        "UPDATE {$this->table} SET sac_position=:position WHERE sac_id=:id", array(
+                            'position' => $position,
+                            'id' => $sac_id
+                        ));
+                }
+            } 
         }
 
         $option = $this->db
