@@ -1,0 +1,15 @@
+<?php if($this->put): ?>
+<div class="alert alert-success">
+    File <?php echo $this->path; ?>
+</div>
+<?php else: ?>
+<div class="alert alert-error">
+    Can't create file <?php echo $this->path; ?>
+</div>    
+<?php endif; ?>
+
+<textarea class="input" style="width:100%;height:500px">
+<?php echo $this->config; ?>
+</textarea>
+    
+<p><a class="btn" href="<?php echo $this->url('index', array('controller'=>'index','action'=>'index')); ?>">Home</a></p>

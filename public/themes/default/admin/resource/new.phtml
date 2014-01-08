@@ -1,0 +1,43 @@
+<?php
+foreach($this->form->getMessages() as $key=>$errors) {
+    echo '<div class="alert alert-error">';
+    echo '<h4 class="alert-heading">';
+    echo $key;
+    echo '</h4>';
+    foreach($errors as $error) {
+        echo $error;
+        echo '.<br />';
+    }
+    echo '</div>';
+}
+?>
+
+<form method="post" action="<?php echo $this->url('admin', array('controller' => 'resource', 'action' => 'create')); ?>">
+    
+    <?php foreach($this->form as $element): ?>
+        <?php if($element->getAttribute('type')!='hidden' and $element->getAttribute('type')!='submit' and $element->getName()!='delivery_id'): ?>
+            <div class="control-group<?php if(count($element->getMessages())>0): ?> error<?php endif; ?>">
+                <label class="control-label" for="<?php echo $element->getName(); ?>"><?php echo $this->formLabel($element); ?></label>
+                <div class="controls">
+
+                    <?php echo $this->formElement($element); ?>   
+
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
+    
+    <?php echo $this->formInput($this->form->get('csrf')); ?>
+    
+    <div class="form-actions" style="padding:0;margin:0;padding:10px;margin-bottom:10px;">
+        <button class="btn btn-primary" type="submit">
+            <i class="icon-plus icon-white"></i>
+            <?php echo $this->translate('New'); ?>
+        </button>
+        <a class="btn" href="<?php echo $this->url('admin', array('controller'=>'resource','action'=>'index')); ?>">
+            <?php echo $this->translate('Back'); ?>
+        </a>
+    </div>
+
+    
+</form>

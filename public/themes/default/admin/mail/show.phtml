@@ -1,0 +1,43 @@
+<table class="table table-striped">
+    <tr>
+        <th>Sender</th>
+        <td><?php echo $this->entity['name']; ?> ( <?php echo $this->entity['email']; ?> )</td>
+    </tr>
+    <tr>
+        <th>Date</th>
+        <td><?php echo date('d-m-Y H:i',$this->entity['updated']); ?></td>
+    </tr>
+</table>
+
+<div class="well">
+    <?php echo $this->entity['message']; ?>
+</div>
+
+<div class="form-actions">
+    <a class="btn" href="<?php echo $this->url('admin', array('controller'=>'mail','action'=>'index')); ?>">
+        List
+    </a>
+</div>
+    
+<form action="<?php echo $this->url('admin', array('controller'=>'mail','action'=>'create', 'id' => $this->entity['from_id'])); ?>" method="post">
+    <fieldset>
+
+        <legend>Response</legend>
+
+        <div class="control-group" style="text-align:center;">
+            <div class="controls"><textarea name="message" style="width:400px;height: 100px;"></textarea></div>
+        </div>
+
+        <?php echo $this->formInput($this->form->get('csrf')); ?>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">
+                Send
+            </button>
+            <a class="btn" href="">
+                Clear
+            </a>
+        </div>
+
+    </fieldset>
+</form>

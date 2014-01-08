@@ -1,0 +1,41 @@
+<div class="page-header">
+    <h1>Log</h1>
+</div>
+
+<div class="form-actions">
+    <a class="btn btn-danger" href="<?php echo $this->url('admin', array('controller'=>'log','action'=>'empty')); ?>">
+        Empty
+    </a>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Description</th>
+            <th>Severity</th>
+            <th>User</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach($this->entities as $entity): ?>
+        <tr>
+            <td><?php echo $entity['line']; ?></td>
+            <td>
+                <?php
+                    if ($entity['severity']==0) echo 'EMERGENCY';
+                    if ($entity['severity']==1) echo 'ALERT';
+                    if ($entity['severity']==2) echo 'CRITIQUE';
+                    if ($entity['severity']==3) echo 'ERROR';
+                    if ($entity['severity']==4) echo 'WARNING';
+                    if ($entity['severity']==5) echo 'NOTICE';
+                    if ($entity['severity']==6) echo 'INFO';
+                    if ($entity['severity']==7) echo 'DEBUG';
+                ?>
+            </td>
+            <td><?php if(isset($entity['user_id'])): ?> <a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'edit','id'=>$entity['user_id'])); ?>"><?php echo $entity['user_id']; ?></a><?php endif; ?></td>
+            <td><?php echo date('Y-m-d H:i:s',$entity['created']); ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

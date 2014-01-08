@@ -24,6 +24,12 @@
             padding-top: 60px;
             padding-bottom: 40px;
         }
+        body, input, textarea, p {
+            color: #373737 !important;
+            font: 15px "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+            font-weight: 300 !important;
+            line-height: 1.625 !important;
+        }
         .btn {
             font-size: 13px;
         }
@@ -65,7 +71,7 @@
                     <span class="icon-bar"></span>
                 </a>
 
-                <a class="brand" href="<?php echo $this->url('admin', array('action'=>'index')); ?>">Admin</a>
+                
                 <div class="nav-collapse">
                     <ul class="nav">
                         <li class="dropdown">
@@ -81,7 +87,7 @@
                       </ul>
                     </li>
                         <li class="active"><a href="<?php echo $this->url('admin', array('action'=>'index')); ?>"><i class="icon-home"></i> <?php echo $this->translate('Dashboard'); ?></a></li>
-                            <li><a href="<?php echo $this->url('preview',array('project'=>$this->layout()->project['name'])); ?>"><i class="icon-search"></i> <?php echo $this->translate('Preview'); ?></a></li>
+                            <li><a href="<?php echo $this->url('preview',array('project'=>$this->layout()->project['name'])); ?>"><i class="icon-search"></i> <?php echo $this->translate('Voir le site'); ?></a></li>
                         <?php if($this->user!=null): ?>
                             <li><a href="<?php echo $this->url('auth', array('action'=>'logout')); ?>"><i class="icon-off"></i> <?php echo $this->translate('Logout'); ?></a></li>
                         <?php else: ?>
@@ -99,7 +105,7 @@
                     
                     <?php if($this->user!=null): ?>
                     <p class="navbar-text pull-right">
-                        Logged in as <a href=""><?php echo $user->username; ?></a>
+                        <i class="icon-user"></i> <a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'profil')); ?>"><?php echo $user->firstname; ?> <?php echo $user->username; ?></a>
                     </p>
                     <?php endif;?>
                 </div><!--/.nav-collapse -->
@@ -107,13 +113,7 @@
             </div>
         </div>
 
-        <?php if (isset($notice)): ?>
-            <div class="flash-message">
-                <em>Notice</em>: {{ app.session.flash('notice') }}
-            </div>
-        <?php endif; ?>
-
-    <div class="container-fluid">
+    <div class="container-fluid" style="padding:0;margin:0;">
       <div class="row-fluid">
         <div class="span2">
           <div class="sidebar-nav  well">
@@ -140,52 +140,73 @@
               
               <li class="nav-header"><?php echo $this->translate('Shop'); ?></li>
               <li<?php if($this->controller=='Admin\Controller\Product'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'product','action'=>'index')); ?>"><i class="icon-th"></i> <?php echo $this->translate('Products'); ?></a></li>
-              <li<?php if($this->controller=='Admin\Controller\Shopattribute'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'shopattribute','action'=>'index')); ?>"><i class="icon-tags"></i>  <?php echo $this->translate('Options'); ?></a></li>
+              <li<?php if($this->controller=='Admin\Controller\Shopattribute'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'shopattribute','action'=>'index')); ?>"><i class="icon-tags"></i>  <?php echo $this->translate('Attributs'); ?></a></li>
               <li<?php if($this->controller=='Admin\Controller\Bill'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'bill','action'=>'index')); ?>"><i class="icon-shopping-cart"></i> <?php echo $this->translate('Bills'); ?></a></li>
               <li<?php if($this->controller=='Admin\Controller\Ship'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'ship','action'=>'index')); ?>"><i class="icon-shopping-cart"></i> <?php echo $this->translate('Commande'); ?></a></li>
               <li<?php if($this->controller=='Admin\Controller\Devis'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'devis','action'=>'index')); ?>"><i class="icon-barcode"></i> <?php echo $this->translate('Devis'); ?></a></li>
               <li<?php if($this->controller=='Admin\Controller\Delivery'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'delivery','action'=>'index')); ?>"><i class="icon-plane"></i> <?php echo $this->translate('Delivery'); ?></a></li>
               <li<?php if($this->controller=='Admin\Controller\Delay'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'delay','action'=>'index')); ?>"><i class="icon-time"></i> <?php echo $this->translate('Delay'); ?></a></li>
-              <li<?php if($this->controller=='Admin\Controller\Tax'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'tax','action'=>'index')); ?>"><i class="icon-time"></i> <?php echo $this->translate('Tax'); ?></a></li>
-              <li<?php if($this->controller=='Admin\Controller\ProductImageResize'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'ProductImageResize','action'=>'index')); ?>"><i class="icon-th"></i> <?php echo $this->translate('Image product'); ?></a></li>
+              
+              <li<?php if($this->controller=='Admin\Controller\ProductImageResize'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'ProductImageResize','action'=>'index')); ?>"><i class="icon-th"></i> <?php echo $this->translate('Image size'); ?></a></li>
 
               <li class="nav-header">Options</li>
               <?php /*
               <li><a href="<?php echo $this->url('admin', array('controller'=>'index','action'=>'info')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/comments.png'); ?>" alt="Information" /> Information</a></li>
               */ ?>
               <li<?php if($this->controller=='Admin\Controller\Project' and $this->action=='edit'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'project','action'=>'edit', 'id'=>$this->layout()->project['id'])); ?>"><i class="icon-cog"></i> Parameter</a></li>
+              <li<?php if($this->controller=='Admin\Controller\Contact'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'contact','action'=>'index')); ?>"><i class="icon-cog"></i> Contact</a></li>
               <?php if($this->layout()->role['role_name']=='admin'): ?>
                 <li<?php if($this->controller=='Admin\Controller\Database'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'database','action'=>'index')); ?>"><i class="icon-hdd"></i> Database</a></li>
+                
+                <li<?php if($this->controller=='Admin\Controller\Translate'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'translate','action'=>'index')); ?>"><i class="icon-hdd"></i> Translate</a></li>
                 <li<?php if($this->controller=='Admin\Controller\Design'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'design','action'=>'index')); ?>"><i class="icon-picture"></i> Design</a></li>
                 <li<?php if($this->controller=='Admin\Controller\Log'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'log','action'=>'index')); ?>"><i class="icon-list"></i> Log</a></li>
                 <li<?php if($this->controller=='Admin\Controller\EmailData'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'EmailData','action'=>'index')); ?>"><i class="icon-list"></i> Email</a></li>
+                <li<?php if($this->controller=='Admin\Controller\Newsletter'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'Newsletter','action'=>'index')); ?>"><i class="icon-list"></i> Newsletter</a></li>
               <?php endif; ?>
+
+              <li class="nav-header">Localisation</li>
+              <li<?php if($this->controller=='Admin\Controller\Lang'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'lang','action'=>'index')); ?>"><i class="icon-picture"></i> Localisation</a></li>
+              <li<?php if($this->controller=='Admin\Controller\Lang'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'lang','action'=>'index')); ?>"><i class="icon-picture"></i> Langue</a></li>
+              <li<?php if($this->controller=='Admin\Controller\Lang'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'lang','action'=>'index')); ?>"><i class="icon-picture"></i> Zone</a></li>
+              <li<?php if($this->controller=='Admin\Controller\Lang'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'lang','action'=>'index')); ?>"><i class="icon-picture"></i> Devise</a></li>
+              <li<?php if($this->controller=='Admin\Controller\Tax'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'tax','action'=>'index')); ?>"><i class="icon-time"></i> <?php echo $this->translate('Tax'); ?></a></li>
+              <li<?php if($this->controller=='Admin\Controller\Tax'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'tax','action'=>'index')); ?>"><i class="icon-time"></i> Traduction</a></li>
               
               <li class="nav-header">Utilisateur</li>
-              <li><a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'profil')); ?>"><i class="icon-user"></i> Profil</a></li>
+              <li<?php if($this->controller=='Admin\Controller\User' and $this->action=='profil'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'profil')); ?>"><i class="icon-user"></i> Profil</a></li>
               <?php if($this->layout()->role['role_name']=='admin'): ?>
-                <li><a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'index')); ?>"><i class="icon-certificate"></i> Membres</a></li>
-                <li<?php if($this->controller=='Admin\Controller\Acl'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'acl','action'=>'index')); ?>"><i class="icon-lock"></i> Acl</a></li>
+                <li<?php if($this->controller=='Admin\Controller\User'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'index')); ?>"><i class="icon-certificate"></i> Membres</a></li>
+                <li<?php if($this->controller=='Admin\Controller\Acl'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'acl','action'=>'index')); ?>"><i class="icon-lock"></i> Group</a></li>
+                <li<?php if($this->controller=='Admin\Controller\Resource'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'resource','action'=>'index')); ?>"><i class="icon-lock"></i> Resource</a></li>
+                <li<?php if($this->controller=='Admin\Controller\Privilege'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'privilege','action'=>'index')); ?>"><i class="icon-lock"></i> Privilege</a></li>
               <?php endif; ?>
               <?php /* <li><a href="<?php echo $this->url('auth', array('action'=>'logout')); ?>"><img src="<?php echo $this->basePath('/themes/default/img/admin/logout.png'); ?>" alt="logout" /> Déconnection</a></li> */ ?>
               <?php endif;?>
               
               <li class="nav-header">Modules</li>
-              <li><a href="<?php echo $this->url('admin', array('controller'=>'newsletter','action'=>'index')); ?>"><i class="icon-star"></i> Mailchimp</a></li>
+              <li><a href="<?php echo $this->url('admin', array('controller'=>'mailjet','action'=>'index')); ?>"><i class="icon-star"></i> Mailjet</a></li>
               
               <li class="nav-header">Shortcuts</li>
-              <?php foreach($this->services as $service): ?>
-                <li><a href="<?php echo $service['url']; ?>"><i class="icon-star"></i> <?php echo $service['name']; ?></a></li>
-              <?php endforeach; ?>
+              <?php
+            		if(isset($this->services)):
+            		foreach($this->services as $service):
+              ?>
+              <li><a href="<?php echo $service['url']; ?>"><i class="icon-star"></i> <?php echo $service['name']; ?></a></li>
+              <?php endforeach;endif; ?>
               <li<?php if($this->controller=='Admin\Controller\Service'):?> class="active"<?php endif; ?>><a href="<?php echo $this->url('admin', array('controller'=>'service','action'=>'new')); ?>"><i class="icon-plus-sign"></i> Ajouter</a></li>
               
             </ul>
           </div><!--/.well -->
         </div><!--/span-->
 
-        <div class="span9">
+        <div class="span10" style="padding:12px;margin:0;">
             <?php echo $this->layout()->content; ?>
         </div>
         </div>
+        </div>
+        <div style="font-size:90%;text-align:center;color:#707070;">
+         2012/<?php echo date('Y'); ?> Copyright &copy; <a href="http://www.appydo.com">Appydo</a> - Tous droits réservés - <a href="https://github.com/Appydo/AppyCMS/issues">Bug Tracker</a>
+         - <a href="http://www.appydo.com">Studio Appydo</a>
         </div>
 </html>

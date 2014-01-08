@@ -1,0 +1,18 @@
+
+<form method="post" action="<?php echo $this->url('admin', array('controller' => 'EmailData', 'action' => 'update', 'id'=> $this->id)); ?>">
+    
+    <?php foreach($this->emails as $element): ?>
+        <p><?php echo $element['email']; ?></p>
+    <?php endforeach; ?>
+    
+    
+    <div class="form-actions" style="padding:0;margin:0;padding:10px;margin-bottom:10px;">
+        <button class="btn btn-primary" type="submit">
+            <i class="icon-plus icon-white"></i>
+            <?php echo $this->translate('Send'); ?>
+        </button>
+        <a class="btn" href="<?php echo $this->url('admin', array('controller'=>'EmailData','action'=>'index')); ?>">
+            <?php echo $this->translate('Back'); ?>
+        </a>
+    </div>
+</form>

@@ -1,0 +1,122 @@
+<script type="text/javascript">
+function checkAll(field)
+{
+    var elements = document.getElementsByName(field);
+    for (i = 0; i < elements.length; i++)
+	elements[i].checked = !elements[i].checked ;
+}
+</script>
+
+<style>
+    th {
+        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -ms-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -o-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        line-height: 12px;text-shadow: white 0px 1px 0px;font-size: 12px;background-color:#dedede;
+        color:#5E6469;
+        border: solid 1px #cdcdcd;
+        padding: 0;
+    }
+</style>
+
+<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
+    <form class="form-search" action="" method="post">
+        <div style="padding-left: 20px;" class="input-append">
+            <input type="text" class="search-query">
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+    </form>
+</div>
+
+<form name="ship_form" method="post" action="<?php echo $this->url('admin', array('controller'=>'ship','action'=>'index')); ?>">
+
+
+<table class="table table-striped">
+    
+    <?php $thead=false; ?>
+    <?php foreach($this->entities as $i=>$entity): ?>
+    <?php if($thead==false): ?>
+        <thead>
+            <tr>
+                <th><a href="?order=<?php echo $title; ?>&sort=ASC">Code Facture<a></th>
+                <th><a href="?order=<?php echo $title; ?>&sort=ASC"><?php echo $this->translate('Price'); ?><a></th>
+                <th><a href="?order=<?php echo $title; ?>&sort=ASC">Paiement<a></th>
+                <th><a href="?order=<?php echo $title; ?>&sort=ASC">Date livraison<a></th>
+                <th><a href="?order=<?php echo $title; ?>&sort=ASC">Retour banque<a></th>
+                <th><input type="checkbox" name="action" onclick="javascript:checkAll('action[]')" /></th>
+            </tr>
+        </thead>
+        <tbody>
+    <?php $thead=true; ?>
+    <?php endif; ?>
+        <tr <?php if($entity['code']=='00'): ?>class="success"<?php else: ?>class="error"<?php endif; ?>>
+            <td><?php echo "<a href='" . $this->url('admin', array('controller'=>'bill','action'=>'show', 'id'=>$entity['id'])) . "'>".date('y-m-', $entity['created']).$entity['id']."</a>"; ?></td>
+            <td><?php echo $entity['price']; ?> &euro;</td>
+            <td><?php echo date('d/m/Y h:i', $entity['created']); ?></td>
+            <td><?php echo date('d/m/Y', $entity['created']+(15*3600*24));; ?></td>
+            <td>
+                <a href="<?php echo $this->url('admin', array('controller'=>'ship','action'=>'data','id'=>$entity['id'])); ?>">
+                    <?php echo (empty($entity['code'])) ? 'error' : $entity['code']; ?>
+                </a>
+            </td>
+            <td><input type="checkbox" name="action[]" value="<?php echo $entity['id']; ?>" /></td>
+        </tr>
+        <tr>
+            <td colspan="6">
+
+                <p><a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'edit','id'=>$entity['user_id'])); ?>"><i class="icon-user"></i> <?php echo $entity['firstname']; ?> <?php echo $entity['username']; ?></a><br /><i class="icon-envelope"></i> <?php echo $entity['email']; ?></p>
+                <p><i class="icon-home"></i> <?php echo $entity['address']; ?><br /><?php echo $entity['city']; ?><br /><?php echo $entity['postal']; ?><br /><?php echo $entity['phone']; ?></p>
+                <?php if($entity['description']!=''): ?>
+                    <p><strong>Message client :</strong><br /><?php echo $entity['description']; ?></p>
+                <?php endif; ?>
+
+                    <?php
+                    if (count($this->baskets)>0):
+                    foreach($this->baskets[$i] as $basket):
+                    ?>
+                        <?php if($basket['count']>0): ?>
+                            <div style="clear:both">
+                            <img
+                                style="border:solid 1px #dedede;border-radius:10px;margin-right: 10px;max-height: 6em;float: left;"
+                                src="<?php echo $this->basePath($basket['image_path'] . 'thumb/' . $basket['image_name']); ?>"
+                                />
+                            <a href="<?php echo $this->url('index', array('controller'=>'product','action'=>'show','id'=>$basket['product_id'])); ?>"><?php echo $basket['count']; ?> <?php echo $basket['name']; ?></a><br />
+                                <?php foreach(json_decode($basket['attributes']) as $key=>$attribute): ?>
+                                    <b><?php echo $key; ?></b>
+                                    <?php echo $attribute; ?>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+            </td>
+        </tr>
+        <?php $first = false; ?>
+        <?php endif; ?>
+        <?php endforeach; ?>
+        </tbody>
+</table>
+
+    <div class="input-append" style="float:right">
+        <select name="action_select">
+            <option value="send"><?php echo $this->translate('Envoyer'); ?></option>
+            <option value="delete"><?php echo $this->translate('Suppression'); ?></option>
+        </select>
+        <button name="action_submit" class="btn" type="submit" value="1"><?php echo $this->translate('Confirmer'); ?></button>
+    </div>
+    
+    <div class="pagination">
+  <ul>
+    <li><a href="">&lt;</a></li>
+    <li class="active">
+      <a href="">1</a>
+    </li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="">&gt;</a></li>
+  </ul>
+</div>
+
+</form>

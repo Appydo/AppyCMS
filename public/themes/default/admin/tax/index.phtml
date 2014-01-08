@@ -1,0 +1,78 @@
+<script type="text/javascript">
+function checkAll(field)
+{
+    var elements = document.getElementsByName(field);
+    for (i = 0; i < elements.length; i++)
+	elements[i].checked = !elements[i].checked ;
+}
+</script>
+
+<style>
+    th {
+        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -ms-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -o-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        line-height: 12px;text-shadow: white 0px 1px 0px;font-size: 12px;background-color:#dedede;
+        color:#5E6469;
+        border: solid 1px #cdcdcd;
+        padding: 0;
+    }
+</style>
+
+<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
+    <form class="form-search" action="" method="post">
+        <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'tax','action'=>'new')); ?>">
+            <i class="icon-plus icon-white"></i>
+            <?php echo $this->translate('New'); ?>
+        </a>
+        <div style="padding-left: 20px;" class="input-append">
+            <input type="text" class="search-query">
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+    </form>
+</div>
+
+<form name="tax_form" method="post" action="<?php echo $this->url('admin', array('controller'=>'tax','action'=>'delete')); ?>">
+
+
+<table class="table table-striped">
+    <thead>
+        <th><?php echo $this->translate('Name'); ?></th>
+        <th><?php echo $this->translate('Value'); ?></th>
+        <th><input type="checkbox" name="action" onclick="javascript:checkAll('action[]')" /></th>
+    </thead>
+    
+    <tbody>
+        <?php foreach($this->entities as $entity): ?>
+        <tr>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'tax','action'=>'edit', 'id'=>$entity['tax_id'])); ?>"><?php echo $entity['tax_name']; ?></a></td>
+            <td><?php echo $entity['tax_value']; ?></td>
+            <td><input type="checkbox" name="action[]" value="<?php echo $entity['tax_id']; ?>" /></td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+    
+    <div class="input-append" style="float:right">
+        <select>
+            <option>Delete</option>
+        </select>
+        <button class="btn" type="submit">Valider</button>
+    </div>
+        
+    <div class="pagination">
+        <ul>
+            <li><a href="">&lt;</a></li>
+            <li class="active">
+                <a href="">1</a>
+            </li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#">4</a></li>
+            <li><a href="">&gt;</a></li>
+        </ul>
+    </div>
+
+</form>

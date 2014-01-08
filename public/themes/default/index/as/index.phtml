@@ -1,0 +1,31 @@
+<form class="form-horizontal" action="<?php echo $this->url('index', array('controller'=>'as','action'=>'send')); ?>" method="post">
+    <fieldset>
+    
+        <div class="control-group">
+            <label class="control-label" for="bill">Facture</label>
+            <div class="controls">
+                <select name="bill">
+                    <?php foreach($this->bills as $bill): ?>
+                        <option><?php echo date('d/m/Y H:i', $bill['created']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="contact_message">Message</label>
+            <div class="controls">
+                <textarea type="text" name="contact_message" id="contact_message" value="<?php echo $this->message; ?>"></textarea>
+            </div>
+        </div>
+
+        <?php echo $this->formInput($this->form->get('csrf')); ?>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Envoyer</button>
+            <a class="btn" href="<?php echo $this->url('breizhadonf', array('controller'=>'index', 'action'=>'dashboard' )); ?>">
+                Retour
+            </a>
+        </div>
+    </fieldset>
+</form>

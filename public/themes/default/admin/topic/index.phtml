@@ -1,0 +1,89 @@
+<style>
+    th {
+        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -ms-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -o-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        line-height: 12px;text-shadow: white 0px 1px 0px;font-size: 12px;background-color:#dedede;color:#5E6469;
+        border: solid 1px #cdcdcd;
+        padding: 0;
+    }
+</style>
+
+<form class="form-search" method="post" action="<?php echo $this->url('admin', array('controller'=>'topic','action'=>'index')); ?>">
+
+<div class="form-actions" style="padding:10px;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
+        <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'topic','action'=>'new')); ?>">
+            <i class="icon-plus icon-white"></i>
+            <?php echo $this->translate('Page'); ?>
+        </a>
+        <div style="padding-left: 20px;" class="input-append">
+            <input type="text" name="query" class="search-query" value="<?php echo $this->query; ?>" />
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+</div>
+
+<?php if($parent_id['id']): ?>
+            <a class="btn" href="<?php echo $this->url('admin',array('controller'=>'topic','action'=>'index', 'id'=>$parent_id['topic_id'])); ?>"><i class="icon-chevron-down"></i></a>
+            <a class="btn" href="<?php echo $this->url('admin',array('controller'=>'topic','action'=>'edit', 'id'=>$parent_id['id'])); ?>"><?php echo $parent_id['name']; ?></a>
+<?php endif; ?>
+
+<table class="table table-striped" <?php if($parent_id['id']): ?>style="margin-left:40px;"<?php endif;?>>
+    <thead>
+        <tr>
+            <th><?php echo $this->translate('Name'); ?></th>
+            <th><?php echo $this->translate('Comment'); ?></th>
+            <th><?php echo $this->translate('Last update'); ?></th>
+            <th><?php echo $this->translate('Language'); ?></th>
+            <th><?php echo $this->translate('Author'); ?></th>
+            <th><?php echo $this->translate('Size'); ?></th>
+            <th><input type="checkbox" name="action" onclick="javascript:checkAll('action[]')" /></th>
+        </tr>
+    </thead>
+    <tbody>
+
+    <?php foreach($this->topics as $topic): ?>
+        <tr>
+            <td style="padding-left:2px;">
+                <a href="<?php echo $this->url('admin',array('controller'=>'topic','action'=>'edit', 'id'=>$topic['id'])); ?>">
+                    <?php if($this->where=0): ?>
+                        <?php for($i=0;$i<$topic['depth'];$i++): ?> - <?php endfor; ?>
+                    <?php endif; ?><?php echo $topic['name']; ?>
+                </a>
+            </td>
+            <td><a href="<?php echo $this->url('admin',array('controller'=>'comment','action'=>'index', 'id'=>$topic['id'])); ?>"><?php echo $topic['comments'] ?></a></td>
+            <td><?php echo date('d-m-Y H:i',$topic['updated']); ?></td>
+            <td><?php echo $topic['language']; ?></td>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'edit', 'id'=>$topic['user_id'])); ?>"><?php echo $topic['author'] ?></a></td>
+            <td><?php echo strlen($topic['content']); ?></td>
+            <td><input type="checkbox" name="action[]" value="<?php echo $entity['delivery_id']; ?>" /></td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+    
+<div class="input-append" style="float:right">
+    <select>
+        <option>Delete</option>
+    </select>
+    <button class="btn" type="submit"><?php echo $this->translate('Valid'); ?></button>
+</div>
+    
+    <div class="pagination">
+        <ul>
+            <li><a href="?page=<?php echo $this->page; ?>&move=prev&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>">&lt;</a></li>
+            <?php if($this->page<4): ?>
+                <?php for($i=1;$i<6;$i++): ?>
+                    <li<?php if($i==$this->page): ?> class="active"<?php endif; ?>><a href="?page=<?php echo $i; ?>&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>"><?php echo $i; ?></a></li>
+                <?php endfor; ?>
+            <?php else: ?>
+                <?php for($i=$this->page-2;$i<$this->page+3;$i++): ?>
+                    <li<?php if($i==$this->page): ?> class="active"<?php endif; ?>><a href="?page=<?php echo $i; ?>&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>"><?php echo $i; ?></a></li>
+                <?php endfor; ?>
+            <?php endif; ?>
+            <li><a href="?page=<?php echo $this->page; ?>&move=next&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>">&gt;</a></li>
+        </ul>
+    </div>
+
+</form>

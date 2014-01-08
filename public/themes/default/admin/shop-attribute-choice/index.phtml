@@ -1,0 +1,84 @@
+<script type="text/javascript">
+function checkAll(field)
+{
+    var elements = document.getElementsByName(field);
+    for (i = 0; i < elements.length; i++)
+    elements[i].checked = !elements[i].checked ;
+}
+</script>
+
+<style>
+    th {
+        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -ms-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -o-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        line-height: 12px;text-shadow: white 0px 1px 0px;font-size: 12px;background-color:#dedede;
+        color:#5E6469;
+        border: solid 1px #cdcdcd;
+        padding: 0;
+    }
+</style>
+
+<form method="post" action="<?php echo $this->url('admin', array('controller'=>'shopattributechoice','action'=>'index', 'id'=>$this->option['sa_id'])); ?>">
+    <div class="input-append">
+        <input type="text" name="sa_name" value="<?php echo $this->option['sa_name']; ?>"  />
+        <button class="btn" type="submit" name="sa_edit" value="1">Editer</button>
+    </div>
+</form>
+
+<form method="post" action="<?php echo $this->url('admin', array('controller'=>'shopattributechoice','action'=>'index', 'id'=>$this->option['sa_id'])); ?>">
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Valeur par défaut</th>
+            <th>Position</th>
+            <th><?php echo $this->option['sa_name']; ?></th>
+            <th><?php echo $this->translate('Price'); ?></th>
+            <th><input type="checkbox" name="action" onclick="javascript:checkAll('action[]')" /></th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach($this->entities as $entity): ?>
+        <tr>
+            <td><input <?php if($entity['sac_default']==1): ?>checked="checked"<?php endif; ?> type="radio" name="sac_default" value="<?php echo $entity['sac_id']; ?>" /></td>
+            <td><a href=""><i class="icon-arrow-up"></i></a><a href=""><i class="icon-arrow-down"></i></a> <input class="input-mini" type="text" name="position[<?php echo $entity['sac_id']; ?>]" value="<?php echo $entity['sac_position']; ?>" /></td>
+            <td><input type="text" name="name[<?php echo $entity['sac_id']; ?>]" value="<?php echo $entity['sac_name']; ?>" /></td>
+            <td><input type="text" name="price[<?php echo $entity['sac_id']; ?>]" value="<?php echo $entity['sac_price']; ?>" /></td>
+            <td><input type="checkbox" name="action[]" value="<?php echo $entity['sac_id']; ?>" /></td>
+        </tr>
+    <?php endforeach; ?>
+        <tr>
+            <td colspan="2"></td>
+            <td colspan="3">
+                
+                    <div class="input-append">
+                        <input type="text" name="choice" />
+                        <button type="submit" class="btn btn-primary">
+                            <i class="icon-plus icon-white"></i>
+                            Add
+                        </button>
+                    </div>
+                
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+    <div class="input-append" style="float:right">
+        <select>
+            <option><?php echo $this->translate('Delete'); ?></option>
+        </select>
+        <button class="btn" name="action_submit" value="1" type="submit">Valider</button>
+    </div>
+
+    <div class="form-actions" style="clear:both;">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <a class="btn" href="<?php echo $this->url('admin', array('controller'=>'ShopAttribute','action'=>'index')); ?>">
+            Back
+        </a>
+    </div>
+
+</form>

@@ -1,0 +1,21 @@
+<ul style="list-style: none;display:block;vertical-align: top;">
+<?php foreach($this->products as $product): ?>
+<li style="list-style: none;border:solid 2px #dedede;width:160px;min-height:150px;padding:10px;margin:5px;border-radius:10px;display: inline-block;vertical-align: top;">
+    <div style="text-align:center;">
+        <a href="<?php echo $this->url('product', array('category'=>$product['topic_name'],'name'=>str_replace(array('/','\\'),array('%2F','%5C'),$product['name']),'id'=>$product['id'])); ?>">
+        <img src="<?php echo $this->basePath($this->image_path . 'thumb/' . $product['image_name']); ?>" />
+        </a>
+    </div>
+    <p style="font-weight:bold"><a style="text-decoration:none;" href="<?php echo $this->url('product', array('category'=>$product['topic_name'],'name'=>str_replace(array('/','\\'),array('%2F','%5C'),$product['name']),'id'=>$product['id'])); ?>"><?php echo $product['name']; ?></a></p>
+        <?php if(!empty($product['discount'])): ?>
+            <div style="text-align:center;text-decoration:line-through"><?php echo $product['price']; ?> &euro;</div>
+            <div style="text-align:center">Promotion : <?php echo $product['discount']; ?> &euro;</div>
+            <div style="text-align:center;">( jusqu'à épuisement du stock )</div>
+        <?php else: ?>
+            <?php if(!empty($product['price'])): ?>
+                <p style="text-align:center"><?php echo $product['price']; ?> &euro;</p>
+            <?php endif; ?>
+        <?php endif; ?>
+</li>
+<?php endforeach;?>
+</ul>

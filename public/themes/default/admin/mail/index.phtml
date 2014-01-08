@@ -1,0 +1,69 @@
+<style>
+    th {
+        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -ms-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -o-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        line-height: 12px;text-shadow: white 0px 1px 0px;font-size: 12px;background-color:#dedede;color:#5E6469;
+        border: solid 1px #cdcdcd;
+        padding: 0;
+    }
+    ul {
+        margin: 0;
+        margin-top : 1em;
+    }
+    li {
+        list-style-type:none;
+    }
+</style>
+<form class="form-search" method="post" action="<?php echo $this->url('admin', array('controller'=>'mail','action'=>'index')); ?>">
+
+<div class="form-actions" style="padding:10px;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
+        <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'mail','action'=>'new')); ?>">
+            <i class="icon-plus icon-white"></i>
+            <?php echo $this->translate('Nouveau message'); ?>
+        </a>
+        <div style="padding-left: 20px;" class="input-append">
+            <input type="text" class="search-query" name="query">
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+    </form>
+</div>
+
+<?php
+    echo $this->flashMessenger()->render('error',   array('alert', 'alert-dismissable', 'alert-danger'));
+    echo $this->flashMessenger()->render('info',    array('alert', 'alert-dismissable', 'alert-info'));
+    echo $this->flashMessenger()->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
+    echo $this->flashMessenger()->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+?>
+
+    <?php foreach($this->entities as $entity): ?>
+        <div style="border-bottom:solid 1px #dedede;">
+            <a href="<?php echo $this->url('admin', array('controller'=>'mail', 'action'=>'show', 'id'=>$entity['id'])); ?>"><?php echo $entity['from_firstname'] ?> <?php echo $entity['from_lastname'] ?></a><br /><?php echo $entity['message'] ?><br /><small><?php echo date('d-m-Y H:i',$entity['created']); ?></small>
+        </div>
+    <?php /*
+        <tr>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'mail','action'=>'show', 'id'=>$entity['id'])); ?>"><?php echo $entity['name']; ?></a></td>
+            <td><?php echo date('d-m-Y H:i',$entity['created']); ?></td>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'user', 'action'=>'edit', 'id'=>$entity['from_id'])); ?>"><?php echo $entity['from_firstname'] ?> <?php echo $entity['from_lastname'] ?> <?php echo $entity['email'] ?></a></td>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'user', 'action'=>'edit', 'id'=>$entity['author_id'])); ?>"><?php echo $entity['author_firstname'] ?> <?php echo $entity['author_lastname'] ?></a></td>
+        </tr>
+    */ ?>
+    <?php endforeach; ?>
+
+    <div class="pagination">
+        <ul>
+            <li><a href="?page=<?php echo $this->page; ?>&move=prev&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>">&lt;</a></li>
+            <?php if($this->page<4): ?>
+                <?php for($i=1;$i<6;$i++): ?>
+                    <li<?php if($i==$this->page): ?> class="active"<?php endif; ?>><a href="?page=<?php echo $i; ?>&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>"><?php echo $i; ?></a></li>
+                <?php endfor; ?>
+            <?php else: ?>
+                <?php for($i=$this->page-2;$i<$this->page+3;$i++): ?>
+                    <li<?php if($i==$this->page): ?> class="active"<?php endif; ?>><a href="?page=<?php echo $i; ?>&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>"><?php echo $i; ?></a></li>
+                <?php endfor; ?>
+            <?php endif; ?>
+            <li><a href="?page=<?php echo $this->page; ?>&move=next&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>">&gt;</a></li>
+        </ul>
+    </div>

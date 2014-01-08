@@ -1,0 +1,75 @@
+<style type="text/css">
+    th {
+        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -ms-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -o-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        line-height: 12px;text-shadow: white 0px 1px 0px;font-size: 12px;background-color:#dedede;color:#5E6469;
+        border: solid 1px #cdcdcd;
+        padding: 0;
+    }
+</style>
+
+<div class="form-actions" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
+    <form class="form-search" action="" method="post">
+        <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'comment','action'=>'new')); ?>">
+            <i class="icon-plus icon-white"></i>
+            <?php echo $this->translate('Comment'); ?>
+        </a>
+        <div style="padding-left: 20px;" class="input-append">
+            <input type="text" class="search-query">
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+        <div style="padding-left: 20px;" class="input-append">
+            <select name="parent" id="parent">
+        <option value="0" <?php if($this->entity['topic_id']==0): ?>selected="selected"<?php endif; ?> />
+        <?php foreach($this->topics as $topic): ?>
+            <option value="<?php echo $topic['id']; ?>" <?php if($this->entity['topic_id']==$topic['id']): ?>selected="selected"<?php endif; ?>> <?php for($i=0;$i<$topic['depth'];$i++): ?> - <?php endfor; ?> <?php echo $topic['name']; ?></option>
+        <?php endforeach; ?>
+    </select>
+    <button class="btn">Filtre</button>
+    </div>
+    </form>
+</div>
+
+<form name="comment_form" method="post" action="<?php echo $this->url('admin', array('controller'=>'comment','action'=>'delete')); ?>">
+
+<table class="table table-striped">
+    <tbody>
+    <?php foreach($this->entities as $entity): ?>
+        <tr>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'comment','action'=>'edit', 'id'=>$entity['id'])); ?>">#<?php echo $entity['id']; ?></a></td>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'topic','action'=>'edit', 'id'=>$entity['topic_id'])); ?>"><?php echo $entity['topic_name']; ?></a></td>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'user', 'action'=>'edit', 'id'=>$entity['id'])); ?>"><?php echo $entity['author'] ?></a></td>
+            <td><?php echo date('d-m-Y H:i',$entity['updated']); ?></td>
+            <td><input type="checkbox" name="action[]" value="<?php echo $entity['id']; ?>" /></td>
+        </tr>
+        <tr>
+            <td style="column-span: 5" colspan="5"><?php if(!empty($entity['name'])): ?><strong><?php echo $entity['name']; ?></strong> : <?php endif; ?><?php echo $entity['content']; ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<div class="input-append" style="float:right">
+    <select>
+        <option>Delete</option>
+    </select>
+    <button class="btn" type="submit">Valider</button>
+</div>
+
+<div class="pagination">
+    <ul>
+        <li><a href="">&lt;</a></li>
+        <li class="active">
+            <a href="">1</a>
+        </li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li><a href="#">4</a></li>
+        <li><a href="">&gt;</a></li>
+    </ul>
+</div>
+    
+</form>

@@ -1,0 +1,78 @@
+<style>
+    ul {
+        margin: 0;
+        margin-top : 1em;
+    }
+    li {
+        list-style-type:none;
+    }
+</style>
+
+<?php
+    echo $this->flashMessenger()->render('error',   array('alert', 'alert-dismissable', 'alert-danger'));
+    echo $this->flashMessenger()->render('info',    array('alert', 'alert-dismissable', 'alert-info'));
+    echo $this->flashMessenger()->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
+    echo $this->flashMessenger()->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+?>
+
+<div class="well" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
+    <form class="form-search" action="<?php echo $this->url('admin', array('controller'=>'topic','action'=>'deleteAll')); ?>" method="post">
+        <button class="btn btn-primary" type="submit">Restore</button>
+        <button class="btn btn-danger" type="submit" name="delete_all" value="1" onclick="return(confirm('Etes-vous sûr de vouloir supprimer ces pages ?'));">Empty</button>
+        <div style="padding-left: 20px;" class="input-append">
+            <input type="text" class="search-query">
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+    </form>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Rss</th>
+            <th>Comment</th>
+            <th>Created</th>
+            <th>Updated</th>
+            <th>Language</th>
+            <th>Author</th>
+            <th><input type="checkbox" name="action" onclick="javascript:checkAll('action[]')" /></th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach($this->topics as $topic): ?>
+        <tr>
+            <td><input type="checkbox" /></td>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'topic','action'=>'edit', 'id'=>$topic['id'])); ?>"><?php echo $topic['name']; ?></a></td>
+            <td><?php echo $topic['rss'] ?></td>
+            <td><?php echo $topic['comments'] ?></td>
+            <td><?php echo date('d-m-Y H:i',$topic['created']); ?></td>
+            <td><?php echo date('d-m-Y H:i',$topic['updated']); ?></td>
+            <td><?php echo $topic['language'] ?></td>
+            <td><a href="{{ path('user_show', { 'id': entity.author.id }) }}"><?php echo $topic['author'] ?></a></td>
+            <td><input type="checkbox" name="action[]" value="<?php echo $topic['id']; ?>" /></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<div class="input-append" style="float:right">
+    <select>
+        <option>Delete</option>
+    </select>
+    <button class="btn" type="submit"><?php echo $this->translate('Valid'); ?></button>
+</div>
+
+<div class="pagination">
+  <ul>
+    <li><a href="{{ path('_topic_trash_list',{page:previous}) }}">&lt;</a></li>
+    <li class="active">
+      <a href="{{ path('_topic_trash_list',{page:1}) }}">1</a>
+    </li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="{{ path('_topic_trash_list',{page:next}) }}">&gt;</a></li>
+  </ul>
+</div>

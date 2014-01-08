@@ -1,0 +1,83 @@
+<?php
+foreach($this->form->getMessages() as $key=>$errors) {
+    echo '<div class="alert alert-error">';
+    echo '<h4 class="alert-heading">';
+    echo $key;
+    echo '</h4>';
+    foreach($errors as $error) {
+        echo $error;
+        echo '.<br />';
+    }
+    echo '</div>';
+}
+?>
+
+<form method="post" action="<?php echo $this->url('admin', array('controller' => 'acl', 'action' => 'update', 'id'=> $entity['role_id'])); ?>">
+    
+    <?php foreach($this->form as $element): ?>
+        <?php if($element->getAttribute('type')!='hidden' and $element->getAttribute('type')!='submit' and $element->getName()!='role_id'): ?>
+            <div class="control-group input-prepend input-append<?php if(count($element->getMessages())>0): ?> error<?php endif; ?>">
+                <label class="control-label add-on" style="font-weight: bold;" for="<?php echo $element->getName(); ?>"><?php echo $this->formLabel($element); ?></label>
+
+                    <?php echo $this->formElement($element); ?>   
+
+            </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
+
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th><?php echo $this->translate('Permission'); ?></th>
+                <?php foreach($this->privileges as $privilege): ?>
+                    <th><?php echo $privilege['privilege_name'];?></th>
+                <?php endforeach; ?>
+                <th>All</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php if(!empty($this->resources)): ?>
+            <?php foreach($this->resources as $resource): ?>
+                <tr>
+                    <td><a href="<?php echo $this->url('admin', array('controller'=>'resource','action'=>'edit', 'id'=>$resource['resource_id'])); ?>"><?php echo $resource['resource_name']; ?></a></td>
+                    <?php foreach($this->privileges as $privilege): ?>
+                        <td><input type="checkbox" name="acl[<?php echo $resource['resource_name']; ?>][]" value="<?php echo $privilege['privilege_name']; ?>" <?php if(isset($acl[$resource['resource_name']][$privilege['privilege_name']])): ?>checked="checked"<?php endif; ?> /></td>
+                    <?php endforeach; ?>
+                    <td><input type="checkbox" name="action[]" value="<?php echo $resource['role_id']; ?>" /></td>
+                </tr>
+            <?php endforeach; ?>
+        <?php endif; ?>
+        </tbody>
+    </table>
+    
+    <div class="input-append" style="float:right">
+        <select>
+            <option>Allow</option>
+        </select>
+        <button class="btn" type="submit">Valider</button>
+    </div>
+        
+    <div class="pagination">
+        <ul>
+            <li><a href="?page=<?php echo $this->page; ?>&move=prev&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>">&lt;</a></li>
+            <?php if($this->page<4): ?>
+                <?php for($i=1;$i<6;$i++): ?>
+                    <li<?php if($i==$this->page): ?> class="active"<?php endif; ?>><a href="?page=<?php echo $i; ?>&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>"><?php echo $i; ?></a></li>
+                <?php endfor; ?>
+            <?php else: ?>
+                <?php for($i=$this->page-2;$i<$this->page+3;$i++): ?>
+                    <li<?php if($i==$this->page): ?> class="active"<?php endif; ?>><a href="?page=<?php echo $i; ?>&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>"><?php echo $i; ?></a></li>
+                <?php endfor; ?>
+            <?php endif; ?>
+            <li><a href="?page=<?php echo $this->page; ?>&move=next&order=<?php echo $this->order; ?>&sort=<?php echo $this->sort; ?>">&gt;</a></li>
+        </ul>
+    </div>
+
+
+    <?php echo $this->formInput($this->form->get('csrf')); ?>
+    <button type="submit" class="btn btn-primary">
+        <?php echo $this->translate('Save'); ?>
+    </button>
+    <a class="btn" href="<?php echo $this->url('admin', array('controller' => 'acl', 'action' => 'index')); ?>">Cancel</a>
+</form>

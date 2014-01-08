@@ -1,0 +1,57 @@
+<div class="page-header">
+	<h1>Signup</h1>
+</div>
+
+<?php
+if (!empty($this->messages)):
+?>
+    <div id="flashMessengers">
+        <?php
+        foreach ($this->messages as $msg) {
+            echo '<div class="flashMessenger">';
+            if (is_array($msg))
+                echo implode('<br />', $msg);
+            else
+                echo $msg;
+            echo '</div>';
+        }
+        ?>
+    </div>
+<?php
+endif; // fin flashmessage
+?>
+<div class="well">
+    
+<form enctype="application/x-www-form-urlencoded" method="post" action="<?php echo $this->url('index', array('controller'=>'auth','action'=>'signup')); ?>">
+	
+	<fieldset>
+	
+    <div class="control-group">
+        <label for="name">Name</label>
+        <div class="controls"><input type="text" name="username" id="username" value="<?php echo $this->entity['name']; ?>" /></div>
+    </div>
+    
+    <div class="control-group">
+        <label for="password">Password</label>
+        <div class="controls"><input type="password" name="password" id="password" value="<?php echo $this->entity['password']; ?>" /></div>
+    </div>
+            
+    <div class="control-group">
+        <label for="email">Email</label>
+        <div class="controls"><input type="text" name="email" id="email" value="<?php echo $this->entity['email']; ?>" /></div>
+    </div>
+    
+    <?php echo $this->formInput($this->form->get('csrf')); ?>
+
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Signup</button>
+        <a class="btn" href="<?php echo $this->url('admin', array('controller'=>'service','action'=>'index')); ?>">
+            Back
+        </a>
+    </div>
+	
+    </fieldset>
+
+</form>
+
+</div>

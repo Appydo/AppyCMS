@@ -1,0 +1,68 @@
+<p style="font-weight: bold;">
+        <?php echo date('d-m-Y H:i',$this->entity['created']); ?>
+</p>
+
+<table style="width:100%" class="table table-striped">
+
+    <tr>
+        <th style="width: 50%;">Articles</th>
+        <th style="text-align:center;">Quantité</th>
+        <th>Prix unitaire</th>
+        <th>Total</th>
+    </tr>
+        
+    <?php
+    if (count($this->baskets)>0):
+    foreach($this->baskets as $entity):
+    ?>
+        <tr>
+            <td>
+            <img style="border:solid 1px #dedede;border-radius:10px;margin-right: 10px;max-height: 6em;float: left;" src="<?php echo $this->basePath($entity['image_path'] . 'thumb/' . $entity['image_name']); ?>" />
+            <a href="<?php echo $this->url('index', array('controller'=>'product','action'=>'show','id'=>$entity['product_id'])); ?>"><?php echo $entity['name']; ?></a><br />
+                <?php foreach(json_decode($entity['attributes']) as $key=>$attribute): ?>
+                    <b><?php echo $key; ?></b>
+                    <?php echo $attribute; ?>
+                <?php endforeach; ?>
+            </td>
+            <td style="text-align:center;">
+                <?php echo $entity['count']; ?>
+            </td>
+            <td><?php echo $entity['price']; ?> &euro;</td>
+            <td><?php echo $entity['total']; ?> &euro;</td>
+        </tr>
+    <?php endforeach; ?>
+
+    <tr>
+        <td></td>
+        <td></td>
+        <td>Frais de port</td>
+        <td style="font-weight:bold;">
+            <?php echo $this->transport; ?> &euro;
+            <?php /*
+            (<?php $kg = $this->weight/1000; echo $kg; ?>kg)
+             */ ?>
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <td>
+        </td>
+        <td><b>Total HT</b></td>
+        <td style="font-weight:bold;"><?php $total = $this->totalht + $this->transport; echo $total; ?> &euro;</td>
+    </tr>
+
+    <tr>
+        <td></td>
+        <td>
+        </td>
+        <td><b>Total</b></td>
+        <td style="font-weight:bold;"><?php $total = $this->total + $this->transport; echo $total; ?> &euro;</td>
+    </tr>
+    
+    <?php endif; ?>
+
+    </table>
+
+
+<a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'bill','action'=>'pdf', 'id'=>$this->entity['id'])); ?>">Imprimer</a>

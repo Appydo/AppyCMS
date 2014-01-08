@@ -1,0 +1,12 @@
+
+
+<?php foreach($topics as $topic): ?>
+    <?php /* <h1><?php echo $topic['name']; ?></h1> */ ?>
+    <?php echo $topic['content']; ?>
+    <?php if($this->user!=null): ?>
+        <p><a class="btn" href="<?php echo $this->url('admin', array('controller'=>'topic','action'=>'edit', 'id'=>$topic['id']), 'default', true); ?>">Edit</a></p>
+    <?php endif; ?>
+    <?php /*
+     <a href="<?php echo $this->url('topicbyname',array('name'=>$topic['name'])); ?>">Permalink</a>
+     */?>
+<?php endforeach;?>

@@ -1,0 +1,35 @@
+<?php
+foreach($this->form->getMessages() as $key=>$errors) {
+    echo '<div class="alert alert-error">';
+    echo '<h4 class="alert-heading">';
+    echo $key;
+    echo '</h4>';
+    foreach($errors as $error) {
+        echo $error;
+        echo '.<br />';
+    }
+    echo '</div>';
+}
+?>
+
+<form action="<?php echo $this->url('admin', array('controller'=>'mail','action'=>'create')); ?>" method="post">
+<fieldset>
+<legend>Send message</legend>
+
+    <div class="well" style="text-align:center;">
+        <textarea name="message" style="width:400px;height: 100px;"></textarea>
+    </div>
+
+    <?php echo $this->formInput($this->form->get('csrf')); ?>
+
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">
+            Save
+        </button>
+        <a class="btn" href="<?php echo $this->url('admin', array('controller'=>'mail','action'=>'index')); ?>">
+            List
+        </a>
+    </div>
+
+</fieldset>
+</form>

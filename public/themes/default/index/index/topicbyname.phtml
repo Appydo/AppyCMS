@@ -1,0 +1,26 @@
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/fr_FR/all.js#xfbml=1&appId=374508785922632";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<?php echo $this->topic['content']; ?>
+
+<?php if($this->topic['comment']): ?>
+<form method="POST" action="<?php echo $this->url('topicbyname', array('name'=>$this->topic['name'])); ?>" style="text-align: center;">
+    <input type="text" name="name" placeholder="Nom" />
+    <br />
+    <textarea name="content" id="content" placeholder="Entrez votre texte ici" style="border-radius: 10px;width: 300px;height: 75px;"></textarea>
+    <br />
+    <?php echo $this->formInput($this->form->get('csrf')); ?>
+    <input class="btn" type="submit" value="Envoyer" />
+</form>
+    <?php foreach($this->comments as $comment): ?>
+        <div>
+            <?php echo $comment['content']; ?>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>

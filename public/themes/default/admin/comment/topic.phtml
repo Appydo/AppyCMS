@@ -1,0 +1,66 @@
+<form class="form-search" action="" method="post">
+<div class="input-append">
+    <input type="text" class="search-query">
+    <button type="submit" class="btn">Search</button>
+  </div>
+</form>
+</form>
+
+<table class="table table-striped">
+    <tbody>
+    <?php foreach($this->entities as $entity): ?>
+        <tr>            
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'user', 'action'=>'edit', 'id'=>$entity['id'])); ?>"><?php echo $entity['author'] ?></a></td>
+            <td><?php echo date('d-m-Y H:i',$entity['created']); ?></td>
+            <td><?php echo date('d-m-Y H:i',$entity['updated']); ?></td>
+        </tr>
+        <tr>
+            <td style="column-span: 4"><?php echo $entity['content']; ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<div class="pagination">
+  <ul>
+    <li><a href="{{ path('_topic_list',{page:previous}) }}">Prev</a></li>
+    <li class="active">
+      <a href="{{ path('_topic_list',{page:1}) }}">1</a>
+    </li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="{{ path('_topic_list',{page:next}) }}">Next</a></li>
+  </ul>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Topic</th>
+            <th>Created</th>
+            <th>Updated</th>
+            <th>Author</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach($this->topics as $topic): ?>
+        <tr>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'comment','action'=>'topic', 'id'=>$topic['id'])); ?>"><?php echo $topic['name']; ?></a></td>
+            <td><?php echo date('d-m-Y H:i',$topic['created']); ?></td>
+            <td><?php echo date('d-m-Y H:i',$topic['updated']); ?></td>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'user', 'action'=>'topic', 'id'=>$topic['id'])); ?>"><?php echo $topic['user_id'] ?></a></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<div class="form-actions">
+    <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'comment','action'=>'new')); ?>">
+        <i class="icon-plus icon-white"></i>
+        Comment
+    </a>
+    <a class="btn" href="<?php echo $this->url('admin', array('controller'=>'index','action'=>'index')); ?>">
+        Back
+    </a>
+</div>

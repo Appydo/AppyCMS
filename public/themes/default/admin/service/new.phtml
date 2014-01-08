@@ -1,0 +1,82 @@
+<?php
+foreach($this->form->getMessages() as $key=>$errors) {
+    echo '<div class="alert alert-error">';
+    echo '<h4 class="alert-heading">';
+    echo $key;
+    echo '</h4>';
+    foreach($errors as $error) {
+        echo $error;
+    }
+    echo '</div>';
+}
+?>
+
+<form enctype="application/x-www-form-urlencoded" method="post" action="<?php echo $this->url('admin', array('controller'=>'service','action'=>'create')); ?>">
+	
+    <fieldset>
+	
+    <div class="control-group">
+        <label for="name">Title</label>
+        <div class="controls"><input type="text" name="name" id="name" value="<?php echo $this->entity['name']; ?>" /></div>
+    </div>
+    
+    <div class="control-group">
+        <label for="name">Url</label>
+        <div class="controls"><input type="text" name="link" id="link" value="<?php echo $this->entity['name']; ?>" /></div>
+    </div>
+    
+    <?php echo $this->formInput($this->form->get('service_csrf')); ?>
+
+<div class="form-actions">
+        <button class="btn btn-primary" type="submit">
+            <i class="icon-plus icon-white"></i>
+            <?php echo $this->translate('Bookmark'); ?>
+        </button>
+</div>
+	
+	</fieldset>
+
+</form>
+
+<form enctype="application/x-www-form-urlencoded" method="post" action="<?php echo $this->url('admin', array('controller'=>'service','action'=>'new')); ?>">
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Link</th>
+            <th>Created</th>
+            <th>Updated</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach($this->services as $service): ?>
+        <tr>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'service','action'=>'edit', 'id'=>$service['id'])); ?>"><?php echo $service['name']; ?></a></td>
+            <td><?php echo $service['url'] ?></td>
+            <td><?php echo date('d-m-Y H:i',$service['created']); ?></td>
+            <td><?php echo date('d-m-Y H:i',$service['updated']); ?></td>
+            <td><input type="checkbox" name="ids[<?php echo $service['id']; ?>]" id="ids[<?php echo $service['id']; ?>]" /></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<div class="input-append" style="float:right">
+    <select>
+        <option>Delete</option>
+    </select>
+    <button class="btn" type="submit">Valider</button>
+</div>
+
+<div class="pagination">
+    <ul>
+        <li><a href="">&lt;</a></li>
+        <li class="active">
+            <a href="">1</a>
+        </li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li><a href="#">4</a></li>
+        <li><a href="">&gt;</a></li>
+    </ul>

@@ -1,0 +1,186 @@
+<style>
+    ul {
+        margin: 0;
+    }
+    li {
+        list-style-type:none;
+    }
+</style>
+
+<?php
+    echo $this->flashMessenger()->render('error',   array('alert', 'alert-dismissable', 'alert-danger'));
+    echo $this->flashMessenger()->render('info',    array('alert', 'alert-dismissable', 'alert-info'));
+    echo $this->flashMessenger()->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
+    echo $this->flashMessenger()->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+?>
+
+<?php
+foreach($this->form->getMessages() as $key=>$errors) {
+    echo '<div class="alert alert-error">';
+    echo '<h4 class="alert-heading">';
+    echo $key;
+    echo '</h4>';
+    foreach($errors as $error) {
+        echo $error;
+        echo '.<br />';
+    }
+    echo '</div>';
+}
+?>
+
+<form
+    class="form-horizontal"
+    action="<?php echo $this->url('admin', array('controller' => 'project', 'action' => 'update', 'id' => $this->entity['id'])); ?>"
+    method="post">
+    <fieldset>
+
+        <?php $element = 'name'; ?>
+        <div class="control-group<?php if(count($this->form->get($element)->getMessages())>0): ?> error<?php endif; ?>">
+            <label class="control-label" for="<?php echo $element; ?>"><?php echo $this->formLabel($this->form->get($element)); ?></label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="<?php echo $element; ?>" name="<?php echo $element; ?>" value="<?php echo $this->entity[$element]; ?>">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="description">Description</label>
+            <div class="controls">
+                <textarea type="text" class="input-xlarge" name="description" id="description"><?php echo $this->entity['description']; ?></textarea>
+            </div>
+        </div>
+        
+        <?php $element = 'url'; ?>
+        <div class="control-group<?php if(count($this->form->get($element)->getMessages())>0): ?> error<?php endif; ?>">
+            <label class="control-label" for="<?php echo $element; ?>"><?php echo $this->formLabel($this->form->get($element)); ?></label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="<?php echo $element; ?>" name="<?php echo $element; ?>" value="<?php echo $this->entity[$element]; ?>">
+            </div>
+        </div>
+        
+        <?php $element = 'keywords'; ?>
+        <div class="control-group<?php if(count($this->form->get($element)->getMessages())>0): ?> error<?php endif; ?>">
+            <label class="control-label" for="<?php echo $element; ?>"><?php echo $this->formLabel($this->form->get($element)); ?></label>
+            <div class="controls">
+                <textarea type="text" class="input-xlarge" id="<?php echo $element; ?>" name="<?php echo $element; ?>"><?php echo $this->entity[$element]; ?></textarea>
+            </div>
+        </div>
+        
+        <?php $element = 'banner'; ?>
+        <div class="control-group<?php if(count($this->form->get($element)->getMessages())>0): ?> error<?php endif; ?>">
+            <label class="control-label" for="<?php echo $element; ?>"><?php echo $this->formLabel($this->form->get($element)); ?></label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="<?php echo $element; ?>" name="<?php echo $element; ?>" value="<?php echo $this->entity[$element]; ?>">
+            </div>
+        </div>
+        
+        <?php $element = 'footer'; ?>
+        <div class="control-group<?php if(count($this->form->get($element)->getMessages())>0): ?> error<?php endif; ?>">
+            <label class="control-label" for="<?php echo $element; ?>"><?php echo $this->formLabel($this->form->get($element)); ?></label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="<?php echo $element; ?>" name="<?php echo $element; ?>" value="<?php echo $this->entity[$element]; ?>">
+            </div>
+        </div>
+        
+        <?php $element = 'subtitle'; ?>
+        <div class="control-group<?php if(count($this->form->get($element)->getMessages())>0): ?> error<?php endif; ?>">
+            <label class="control-label" for="<?php echo $element; ?>"><?php echo $this->formLabel($this->form->get($element)); ?></label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="<?php echo $element; ?>" name="<?php echo $element; ?>" value="<?php echo $this->entity[$element]; ?>">
+            </div>
+        </div>
+        
+        <?php $element = 'analytics'; ?>
+        <div class="control-group<?php if(count($this->form->get($element)->getMessages())>0): ?> error<?php endif; ?>">
+            <label class="control-label" for="<?php echo $element; ?>"><?php echo $this->formLabel($this->form->get($element)); ?></label>
+            <div class="controls">
+                <textarea type="text" class="input-xlarge" id="<?php echo $element; ?>" name="<?php echo $element; ?>"><?php echo $this->entity[$element]; ?></textarea>
+            </div>
+        </div>
+
+        <?php $element = 'maintenance'; ?>
+        <div class="control-group<?php if(count($this->form->get($element)->getMessages())>0): ?> error<?php endif; ?>">
+            <label class="control-label" for="<?php echo $element; ?>"><?php echo $this->formLabel($this->form->get($element)); ?></label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="<?php echo $element; ?>" name="<?php echo $element; ?>" value="<?php echo $this->entity[$element]; ?>">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Parameter</label>
+            <div class="controls">
+                <label class="checkbox" for="hide">
+                    <input type="checkbox" name="hide" id="hide" value="<?php echo $this->entity['hide']; ?>" />
+                    Maintenance
+                </label>
+            </div>
+            <div class="controls">
+                <label class="checkbox" for="comment">
+                    <input type="checkbox" name="comment" id="comment" value="<?php echo $this->entity['comment']; ?>" />
+                    Comment
+                </label>
+            </div>
+            <div class="controls">
+                <label class="checkbox" for="menu">
+                    <input type="checkbox" name="menu" id="menu" value="<?php echo $this->entity['menu']; ?>" />
+                    Menu
+                </label>
+            </div>
+            <div class="controls">
+                <label class="checkbox" for="hits">
+                    <input type="checkbox" name="hits" id="hits" value="<?php echo $this->entity['hits']; ?>" />
+                    Hits
+                </label>
+            </div>
+            <div class="controls">
+                <label class="checkbox" for="contact">
+                    <input type="checkbox" name="contact" id="contact" value="<?php echo $this->entity['contact']; ?>" />
+                    Contact
+                </label>
+            </div>
+            <div class="controls">
+                <label class="checkbox" for="config">
+                    <input type="checkbox" name="config" id="config" value="<?php echo $this->entity['config']; ?>" />
+                    Config
+                </label>
+            </div>
+
+            <div class="controls">
+                <label class="checkbox" for="log">
+                    <input type="checkbox" name="log" id="log" value="<?php echo $this->entity['log']; ?>" />
+                    Log
+                </label>
+            </div>
+        </div>
+
+        <?php echo $this->formInput($this->form->get('csrf')); ?>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Save</button>
+            <a class="btn" href="<?php echo $this->url('admin', array('controller' => 'project', 'action' => 'index')); ?>">
+                List
+            </a>
+        </div>
+
+    </fieldset>
+</form>
+
+
+
+<form action="{{ path('project_delete', { 'id': entity.id }) }}" method="post">
+    <fieldset>
+        <legend>Delete project</legend>
+
+        <div class="well">
+            <div>
+                Warning: Once your account will be deleted, you can't recover that.
+            </div>
+            <div>
+                You will have to create a new account and will have to start from scratch.
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-danger" type="submit">Delete</button>
+        </div>
+    </fieldset>
+</form>

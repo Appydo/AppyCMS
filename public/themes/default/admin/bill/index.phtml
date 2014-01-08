@@ -1,0 +1,100 @@
+<script type="text/javascript">
+function checkAll(field)
+{
+    var elements = document.getElementsByName(field);
+    for (i = 0; i < elements.length; i++)
+	elements[i].checked = !elements[i].checked ;
+}
+</script>
+
+<style>
+    th {
+        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -ms-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        -o-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 1px white inset;
+        line-height: 12px;text-shadow: white 0px 1px 0px;font-size: 12px;background-color:#dedede;
+        color:#5E6469;
+        border: solid 1px #cdcdcd;
+        padding: 0;
+    }
+</style>
+
+<div class="form-actions" method="post" style="padding:0;margin:0;padding-top:10px;margin-bottom:10px;padding-left:10px;">
+    <form class="form-search" action="" method="post">
+        <a class="btn btn-primary" href="<?php echo $this->url('admin', array('controller'=>'bill','action'=>'new')); ?>">
+            <i class="icon-plus icon-white"></i>
+            <?php echo $this->translate('Bill'); ?>
+        </a>
+        <div style="padding-left: 20px;" class="input-append">
+            <input type="text" class="search-query" name="query">
+            <button type="submit" class="btn"><i class="icon-search"></i></button>
+        </div>
+    </form>
+</div>
+
+<form name="ship_form" method="post" action="<?php echo $this->url('admin', array('controller'=>'bill','action'=>'delete')); ?>">
+
+<p>Total facturé : <?php echo $this->total; ?> &euro;</p>
+
+<table class="table table-striped">
+    
+    <?php $thead=false; ?>
+    <?php foreach($this->entities as $entity): ?>
+    <?php if($thead==false): ?>
+        <thead>
+            <tr>
+                <th><a href="?order=id&sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>">Code facture</a></th>
+                <th><a href="?order=count&sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>">Count</a></th>
+                <th><a href="?order=price&sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>">Price</a></th>
+                <th><a href="?order=price&sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>">Payment</a></th>
+                <th><a href="?order=created&sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>">Created</a></th>
+                <th><a href="?order=shipment&sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>">Shipment</a></th>
+                <th><a href="?order=shipment_date&sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>">Shipment Date</a></th>
+                <th><a href="?order=username&sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>">Client</a></th>
+                <th><a href="?order=email&sort=<?php echo ($this->sort=='ASC') ? 'DESC' : 'ASC'; ?>">Email</a></th>
+                <th><input type="checkbox" name="action" onclick="javascript:checkAll('action[]')" /></th>
+            </tr>
+        </thead>
+        <tbody>
+    <?php $thead=true; ?>
+    <?php endif; ?>
+        <tr>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'bill','action'=>'show', 'id'=>$entity['id'])); ?>"><?php echo date('y-m-',$entity['created']).$entity['id']; ?></a></td>
+            <td><?php echo $entity['count']; ?></td>
+            <td><?php echo $entity['price']; ?></td>
+            <td><?php if($entity['bank_code']=='00') echo '<span class="label label-success">success</span>'; else echo '<span class="label label-important">error</span>'; ?></td>
+            <td><?php echo date('d/m/Y h:i', $entity['created']); ?></td>
+            <td><?php if($entity['shipment']==1) echo '<span class="label label-success">envoyé</span>'; else echo '<span class="label">non envoyé</span>'; ?></td>
+            <td><?php echo date('d/m/Y h:i', $entity['shipment_date']); ?></td>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'edit', 'id'=>$entity['user_id'])); ?>"><?php echo $entity['firstname']; ?> <?php echo $entity['username']; ?></a></td>
+            <td><a href="<?php echo $this->url('admin', array('controller'=>'user','action'=>'edit', 'id'=>$entity['user_id'])); ?>"><?php echo $entity['email']; ?></a></td>
+            </td>
+            <td><input type="checkbox" name="action[]" value="<?php echo $entity['id']; ?>" /></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+    <div class="input-append" style="float:right">
+        <select>
+            <option>Delete</option>
+        </select>
+        <button class="btn" type="submit">Valider</button>
+    </div>
+    
+    <div class="pagination">
+  <ul>
+    <li><a href="">&lt;</a></li>
+    <li class="active">
+      <a href="">1</a>
+    </li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="">&gt;</a></li>
+  </ul>
+</div>
+
+</form>
